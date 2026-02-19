@@ -18,6 +18,15 @@ export type { UMECompetency, UMESubcompetency } from "./ume.types";
 export type { EPAActivity } from "./epa.types";
 export type { BloomLevelNode } from "./bloom.types";
 export type { MillerLevelNode } from "./miller.types";
+export type {
+  SeedResult,
+  SeedNodeError,
+  VerificationResult,
+  Seeder,
+  SeedRunnerConfig,
+  SeedBatch,
+  SeedRunReport,
+} from "./seeder.types";
 
 import type {
   USMLESystem,

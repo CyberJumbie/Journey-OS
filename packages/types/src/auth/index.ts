@@ -1,4 +1,5 @@
 export { AuthRole, ROLE_HIERARCHY, isValidRole } from "./roles.types";
+export { isAuthenticated } from "./auth-request.types";
 export type {
   AuthTokenPayload,
   AuthUser,

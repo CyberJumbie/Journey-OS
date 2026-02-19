@@ -9,7 +9,8 @@
     "start": "node dist/index.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "kg:seed": "tsx scripts/seed-frameworks.ts"
   },
   "dependencies": {
     "@journey-os/types": "workspace:*",
@@ -17,6 +18,7 @@
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "neo4j-driver": "^5.28.3",
     "zod": "^4.3.6"
   },
   "devDependencies": {
