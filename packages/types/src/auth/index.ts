@@ -15,3 +15,11 @@ export type {
   PaginationMeta,
   AuthResponse,
 } from "./auth.types";
+export type {
+  Resource,
+  ResourceAction,
+  Permission,
+  PermissionCheckResult,
+  RequireRoleOptions,
+} from "./rbac.types";
+export type { PermissionMatrix } from "./permissions.types";
