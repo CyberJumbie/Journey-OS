@@ -19,9 +19,9 @@ lanes:
   universal:
     priority: 0
     total: 14       # E-01: 4, E-02: 4, E-03: 2, E-16: 4
-    done: 4         # U-1 (Auth Setup), U-2 (Framework Models), U-3 (Auth Middleware), U-4 (Seed Infra)
-    ready: 0        # U-6 (RBAC) next — needs brief; U-7 (USMLE Seed) needs brief
-    blocked: 10
+    done: 5         # U-1 (Auth Setup), U-2 (Framework Models), U-3 (Auth Middleware), U-4 (Seed Infra), U-6 (RBAC)
+    ready: 4        # U-5 (Forgot Password), U-7 (USMLE Seed), U-8 (Registration Wizard), U-10 (Dashboard Routing)
+    blocked: 5
   superadmin:
     priority: 1
     total: 9        # E-04: 4, E-05: 3, E-07: 2
@@ -79,6 +79,12 @@ completed:
     completed: 2026-02-19
     api_tests: 24      # neo4j.config (5) + base-seeder (8) + seed-runner (11)
     e2e_tests: 0
+  - id: STORY-U-6
+    title: "RBAC Middleware"
+    lane: universal
+    completed: 2026-02-19
+    api_tests: 32      # rbac.service (15) + rbac.middleware (17)
+    e2e_tests: 0
 
 # Error-to-rule pipeline
 error_pipeline:
@@ -88,12 +94,12 @@ error_pipeline:
 
 # Time allocation tracking
 metrics:
-  stories_completed: 4
+  stories_completed: 5
   stories_total: 166
   avg_story_time_minutes: 0    # not tracked yet
   planning_pct: 0    # target: 40%
   review_pct: 0      # target: 40%
   execution_pct: 0   # target: 10%
   learning_pct: 0    # target: 10%
-  api_tests_total: 89   # U-1: 15, U-2: 39, U-3: 26 (new), U-4: 9 (new — env.config gained 0 new)
+  api_tests_total: 121  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-6: 32
   e2e_tests_total: 0
