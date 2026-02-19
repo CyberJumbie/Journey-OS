@@ -2,7 +2,13 @@
 # Every AI mistake becomes a prevention rule.
 # Recurrence is tracked monthly. Target: < 5% recurrence rate.
 
-errors: []
+errors:
+  - date: 2026-02-19
+    story: spec-features
+    error: "Added Co-Authored-By: Claude line to git commit without asking"
+    rule: "Never add Co-Authored-By: Claude to commits — user preference"
+    location: "Auto Memory → User Preferences"
+    recurrence: 0
 
 # Example entry:
 # - date: 2026-03-15
