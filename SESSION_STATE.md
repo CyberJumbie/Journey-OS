@@ -3,46 +3,43 @@
 ## Position
 - Story: [none — spec phase]
 - Lane: [none]
-- Phase: Spec pipeline (features complete)
+- Phase: Spec pipeline (Tier 0 user flows complete)
 - Branch: main
 - Mode: Standard
-- Task: Next → /user-flow (map persona journeys through features)
+- Task: Next → /user-flow Tier 1 (F-11 to F-18), then Tier 2 (F-19 to F-21), then /epic
 
 ## Handoff
-Completed /feature — defined all 21 user-facing features covering all 78 screens across 14 functional areas. Features organized into Tier 0 (F-01 to F-10, foundation), Tier 1 (F-11 to F-18, ECD core + polish), and Tier 2 (F-19 to F-21, student/advisor). Full dependency graph and screen-to-feature mapping created in FEATURE-EPIC-MAP.md. Three core jobs mapped: Assessment Automation (F-09, F-10, F-11, F-12), Accreditation Compliance (F-14), Precision Advising (F-19, F-20, F-21). All 8 frameworks documented (492 nodes total). Next step: /user-flow to map persona journeys through features.
+Completed Tier 0 /user-flow — generated 17 user flows (UF-01 through UF-17) covering all 10 Tier 0 features (F-01 to F-10) across 3 persona types (SuperAdmin, Inst Admin, Faculty/CD). Each flow has: happy path step table with screen/page/action/result, error paths (3-6 per flow), APIs called table, Playwright test scenario outline, and source references. Flow breakdown by feature: Auth & Onboarding (UF-01 to UF-03), Institution Mgmt (UF-04), User Mgmt (UF-05 to UF-06), Courses (UF-07 to UF-08), Content Upload (UF-09), Concept Review (UF-10), Learning Objectives (UF-11 to UF-12), Frameworks (UF-13), Generation Workbench (UF-14 to UF-15), Question Review (UF-16 to UF-17). Key patterns: dual-write mentioned in course/concept flows, SSE for upload processing + generation, Inngest for bulk generation, TEACHES→TEACHES_VERIFIED upgrade in concept review, FULFILLS proposal/approval as 2-step cross-persona workflow. Next step: generate Tier 1 user flows (F-11 to F-18 will likely produce ~10-12 more flows) then Tier 2 (F-19 to F-21, ~5-6 flows for Student/Advisor).
 
 ## Files Modified This Session
-- .context/spec/features/F-01-authentication-onboarding.md (created)
-- .context/spec/features/F-02-institution-management.md (created)
-- .context/spec/features/F-03-user-role-management.md (created)
-- .context/spec/features/F-04-course-management.md (created)
-- .context/spec/features/F-05-content-upload-processing.md (created)
-- .context/spec/features/F-06-concept-extraction.md (created)
-- .context/spec/features/F-07-learning-objective-management.md (created)
-- .context/spec/features/F-08-framework-management.md (created)
-- .context/spec/features/F-09-generation-workbench.md (created)
-- .context/spec/features/F-10-question-review-quality.md (created)
-- .context/spec/features/F-11-item-bank-repository.md (created)
-- .context/spec/features/F-12-exam-assembly.md (created)
-- .context/spec/features/F-13-coverage-gap-detection.md (created)
-- .context/spec/features/F-14-lcme-compliance.md (created)
-- .context/spec/features/F-15-faculty-dashboard-analytics.md (created)
-- .context/spec/features/F-16-notifications-collaboration.md (created)
-- .context/spec/features/F-17-admin-dashboard-data-integrity.md (created)
-- .context/spec/features/F-18-settings-profile.md (created)
-- .context/spec/features/F-19-adaptive-practice.md (created)
-- .context/spec/features/F-20-student-dashboard-progress.md (created)
-- .context/spec/features/F-21-at-risk-prediction-advising.md (created)
-- .context/spec/maps/FEATURE-EPIC-MAP.md (created)
+- .context/spec/user-flows/UF-01-faculty-registration-onboarding.md (created)
+- .context/spec/user-flows/UF-02-admin-invitation-onboarding.md (created)
+- .context/spec/user-flows/UF-03-superadmin-login.md (created)
+- .context/spec/user-flows/UF-04-institution-approval.md (created)
+- .context/spec/user-flows/UF-05-user-role-management.md (created)
+- .context/spec/user-flows/UF-06-cross-institution-user-management.md (created)
+- .context/spec/user-flows/UF-07-course-creation-configuration.md (created)
+- .context/spec/user-flows/UF-08-course-oversight.md (created)
+- .context/spec/user-flows/UF-09-content-upload-processing.md (created)
+- .context/spec/user-flows/UF-10-concept-review-verification.md (created)
+- .context/spec/user-flows/UF-11-ilo-management-framework-mapping.md (created)
+- .context/spec/user-flows/UF-12-slo-creation-fulfills-proposal.md (created)
+- .context/spec/user-flows/UF-13-framework-seeding.md (created)
+- .context/spec/user-flows/UF-14-single-question-generation.md (created)
+- .context/spec/user-flows/UF-15-bulk-question-generation.md (created)
+- .context/spec/user-flows/UF-16-question-review-queue.md (created)
+- .context/spec/user-flows/UF-17-self-review-own-question.md (created)
+- SESSION_STATE.md (updated)
 
 ## Open Questions
 - None
 
 ## Context Files to Read on Resume
-- .context/doc-manifest.yaml (full manifest with conflict resolutions)
-- .context/priority-stack.md (doc priority order)
+- .context/spec/maps/FEATURE-EPIC-MAP.md (feature inventory + dependency graph — needed for Tier 1+2 flows)
 - .context/spec/personas/PERSONA-MATRIX.md (capability matrix)
-- .context/spec/maps/FEATURE-EPIC-MAP.md (feature inventory + dependency graph)
+- .context/spec/features/F-11-item-bank-repository.md through F-21 (Tier 1+2 features for remaining flows)
+- .context/spec/personas/PERSONA-STUDENT.md (needed for Tier 2 flows)
+- .context/spec/personas/PERSONA-ADVISOR.md (needed for Tier 2 flows)
 - CLAUDE.md (project rules)
 
 ## Decisions Made
@@ -53,7 +50,7 @@ Completed /feature — defined all 21 user-facing features covering all 78 scree
 - [x] /classify
 - [x] /personas
 - [x] ALL /feature (21 features defined)
-- [ ] ALL /user-flow
+- [~] ALL /user-flow (Tier 0: 17/17 done, Tier 1+2: pending)
 - [ ] ALL /epic
 - [ ] /decompose-all
 - [ ] /prioritize
