@@ -3,56 +3,60 @@
 ## Position
 - Story: [none — spec phase]
 - Lane: [none]
-- Phase: Spec pipeline (Tier 0 user flows complete)
+- Phase: Spec pipeline — decompose_all COMPLETE, next is /prioritize
 - Branch: main
 - Mode: Standard
-- Task: Next → /user-flow Tier 1 (F-11 to F-18), then Tier 2 (F-19 to F-21), then /epic
+- Task: Next → /prioritize (assign persona lane ordering + cross-lane dependency detection)
 
 ## Handoff
-Completed Tier 0 /user-flow — generated 17 user flows (UF-01 through UF-17) covering all 10 Tier 0 features (F-01 to F-10) across 3 persona types (SuperAdmin, Inst Admin, Faculty/CD). Each flow has: happy path step table with screen/page/action/result, error paths (3-6 per flow), APIs called table, Playwright test scenario outline, and source references. Flow breakdown by feature: Auth & Onboarding (UF-01 to UF-03), Institution Mgmt (UF-04), User Mgmt (UF-05 to UF-06), Courses (UF-07 to UF-08), Content Upload (UF-09), Concept Review (UF-10), Learning Objectives (UF-11 to UF-12), Frameworks (UF-13), Generation Workbench (UF-14 to UF-15), Question Review (UF-16 to UF-17). Key patterns: dual-write mentioned in course/concept flows, SSE for upload processing + generation, Inngest for bulk generation, TEACHES→TEACHES_VERIFIED upgrade in concept review, FULFILLS proposal/approval as 2-step cross-persona workflow. Next step: generate Tier 1 user flows (F-11 to F-18 will likely produce ~10-12 more flows) then Tier 2 (F-19 to F-21, ~5-6 flows for Student/Advisor).
+Completed /decompose-all — decomposed all 45 epics into 166 implementable user stories across 26 sprints and 6 persona lanes (U=14, SA=9, IA=44, F=75, ST=15, AD=9). Used 5 parallel subagents to generate story files in batches by sprint group, then created ALL-STORIES.md master index, 26 SPRINT-NN-STORIES.md per-sprint execution plans, and FULL-DEPENDENCY-GRAPH.md with critical path analysis and full adjacency list. Two schedule conflicts resolved: E-17 moved Sprint 1→Sprint 3 (auth dependency), E-42 uses mock mastery data in Sprint 27 (BKT/IRT not ready until Sprint 31). Ran /compound which captured the parallel-agent coverage.yaml race condition as a new rule in CLAUDE.md and created docs/solutions/parallel-batch-decomposition.md. Next session should run /prioritize to assign within-lane ordering and detect cross-lane blocking dependencies.
 
 ## Files Modified This Session
-- .context/spec/user-flows/UF-01-faculty-registration-onboarding.md (created)
-- .context/spec/user-flows/UF-02-admin-invitation-onboarding.md (created)
-- .context/spec/user-flows/UF-03-superadmin-login.md (created)
-- .context/spec/user-flows/UF-04-institution-approval.md (created)
-- .context/spec/user-flows/UF-05-user-role-management.md (created)
-- .context/spec/user-flows/UF-06-cross-institution-user-management.md (created)
-- .context/spec/user-flows/UF-07-course-creation-configuration.md (created)
-- .context/spec/user-flows/UF-08-course-oversight.md (created)
-- .context/spec/user-flows/UF-09-content-upload-processing.md (created)
-- .context/spec/user-flows/UF-10-concept-review-verification.md (created)
-- .context/spec/user-flows/UF-11-ilo-management-framework-mapping.md (created)
-- .context/spec/user-flows/UF-12-slo-creation-fulfills-proposal.md (created)
-- .context/spec/user-flows/UF-13-framework-seeding.md (created)
-- .context/spec/user-flows/UF-14-single-question-generation.md (created)
-- .context/spec/user-flows/UF-15-bulk-question-generation.md (created)
-- .context/spec/user-flows/UF-16-question-review-queue.md (created)
-- .context/spec/user-flows/UF-17-self-review-own-question.md (created)
-- SESSION_STATE.md (updated)
+### Created (45 epic files)
+- .context/spec/epics/E-01-auth-infrastructure.md through E-45-advisor-cohort-dashboard.md
+
+### Created (166 story files)
+- .context/spec/stories/S-U-01-1.md through S-U-16-4.md (14 universal)
+- .context/spec/stories/S-SA-04-1.md through S-SA-07-2.md (9 superadmin)
+- .context/spec/stories/S-IA-06-1.md through S-IA-37-4.md (44 institutional_admin)
+- .context/spec/stories/S-F-08-1.md through S-F-39-4.md (75 faculty)
+- .context/spec/stories/S-ST-40-1.md through S-ST-43-3.md (15 student)
+- .context/spec/stories/S-AD-44-1.md through S-AD-45-5.md (9 advisor)
+
+### Created (index files)
+- .context/spec/stories/ALL-STORIES.md
+- .context/spec/stories/SPRINT-01-STORIES.md through SPRINT-39-STORIES.md (26 files)
+- .context/spec/maps/FULL-DEPENDENCY-GRAPH.md
+- docs/solutions/parallel-batch-decomposition.md
+
+### Modified
+- docs/coverage.yaml (decompose_all: done, stories_total: 166, lane totals, error_pipeline: 2)
+- .context/spec/maps/FEATURE-EPIC-MAP.md (E-17 sprint change noted)
+- CLAUDE.md (added Spec Pipeline Rules section, updated Things Claude Gets Wrong)
+- docs/error-log.yaml (added coverage.yaml race condition error)
 
 ## Open Questions
 - None
 
 ## Context Files to Read on Resume
-- .context/spec/maps/FEATURE-EPIC-MAP.md (feature inventory + dependency graph — needed for Tier 1+2 flows)
-- .context/spec/personas/PERSONA-MATRIX.md (capability matrix)
-- .context/spec/features/F-11-item-bank-repository.md through F-21 (Tier 1+2 features for remaining flows)
-- .context/spec/personas/PERSONA-STUDENT.md (needed for Tier 2 flows)
-- .context/spec/personas/PERSONA-ADVISOR.md (needed for Tier 2 flows)
-- CLAUDE.md (project rules)
+- docs/coverage.yaml (pipeline status — decompose_all: done, prioritize: pending)
+- .context/spec/stories/ALL-STORIES.md (master story index with lane/size/sprint data)
+- .context/spec/maps/FULL-DEPENDENCY-GRAPH.md (critical path, cross-lane blocking points)
+- .context/spec/maps/FEATURE-EPIC-MAP.md (feature→epic→sprint mapping)
+- CLAUDE.md (project rules, including new Spec Pipeline Rules)
 
 ## Decisions Made
-- C-002: Dual embedding (OpenAI 1536 + Voyage 1024) in production, not Voyage-only
-- C-002a: ARCHITECTURE_v10.md and SUPABASE_DDL_v1.md need dual-column vector updates at implementation time
+- D-003: E-17 (Framework Browser UI) moved Sprint 1 → Sprint 3 (requires auth middleware from E-01)
+- D-004: E-42 (Student Dashboard) builds with mock mastery data in Sprint 27; real BKT/IRT data available Sprint 31
+- D-005: Story ID convention: S-{LANE}-{EPIC}-{SEQ} with lane prefixes U/SA/IA/F/ST/AD
 
 ## Spec Pipeline Progress
 - [x] /classify
 - [x] /personas
 - [x] ALL /feature (21 features defined)
-- [~] ALL /user-flow (Tier 0: 17/17 done, Tier 1+2: pending)
-- [ ] ALL /epic
-- [ ] /decompose-all
+- [x] ALL /user-flow (35 flows: T0=17, T1=13, T2=5)
+- [x] ALL /epic (45 epics across 21 features)
+- [x] /decompose-all (166 stories, 45 epics, 26 sprints, 6 lanes)
 - [ ] /prioritize
 - [ ] ALL /brief
 - [ ] /spec-status → READY FOR DEVELOPMENT

@@ -48,5 +48,9 @@ packages/types, packages/ui (shadcn/ui), packages/python-api (Tier 2+).
 ## Implementation Order
 Types → Model → Repository → Service → Controller → View → API Tests → E2E
 
+## Spec Pipeline Rules
+- Parallel subagents must ONLY write artifact files (stories, specs, briefs). Shared tracking files (coverage.yaml, FEATURE-EPIC-MAP.md, MEMORY.md) must ONLY be updated by the main orchestrator after all subagents complete.
+
 ## Things Claude Gets Wrong
 (Updated by /compound — the error-to-rule pipeline)
+- Parallel subagents each updated coverage.yaml with partial totals, causing data loss. See spec pipeline rule above.

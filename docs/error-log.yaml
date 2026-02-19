@@ -10,6 +10,13 @@ errors:
     location: "Auto Memory → User Preferences"
     recurrence: 0
 
+  - date: 2026-02-19
+    story: decompose-all
+    error: "Parallel subagents each overwrote coverage.yaml with partial story totals (30 → 57 → 97 instead of 166)"
+    rule: "Subagents write artifacts only; orchestrator owns shared tracking files"
+    location: "Root CLAUDE.md → Spec Pipeline Rules"
+    recurrence: 0
+
 # Example entry:
 # - date: 2026-03-15
 #   story: STORY-1.1

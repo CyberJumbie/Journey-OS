@@ -7,9 +7,9 @@ spec_status:
   classify: done
   personas: done
   features: done           # 21 features (T0: 10, T1: 8, T2: 3)
-  user_flows: in_progress  # 30/~36 flows (T0: 17, T1: 13, T2: pending)
-  epics: pending
-  decompose_all: pending
+  user_flows: done          # 35 flows (T0: 17, T1: 13, T2: 5)
+  epics: done               # 45 epics across 21 features
+  decompose_all: done       # 166 stories across 45 epics, 26 sprints
   prioritize: pending
   briefs: pending  # ALL briefs must complete before development
   ready_for_development: false
@@ -18,40 +18,40 @@ spec_status:
 lanes:
   universal:
     priority: 0
-    total: 0
+    total: 14       # E-01: 4, E-02: 4, E-03: 2, E-16: 4
     done: 0
-    ready: 0
-    blocked: 0
+    ready: 2        # S-U-16-1, S-U-01-1 (zero dependencies)
+    blocked: 12
   superadmin:
     priority: 1
-    total: 0
+    total: 9        # E-04: 4, E-05: 3, E-07: 2
     done: 0
     ready: 0
-    blocked: 0
+    blocked: 9      # all blocked by S-U-01-3
   institutional_admin:
     priority: 2
-    total: 0
+    total: 44       # E-06: 3, E-09: 3, E-14: 4, E-15: 4, E-17: 4, E-28: 5, E-29: 3, E-30: 3, E-31: 3, E-33: 4, E-36: 4, E-37: 4
     done: 0
     ready: 0
-    blocked: 0
+    blocked: 44     # all blocked by upstream dependencies
   faculty:
     priority: 3
-    total: 0
+    total: 75       # E-08: 4, E-10: 3, E-11: 4, E-12: 4, E-13: 3, E-18: 4, E-19: 4, E-20: 4, E-21: 4, E-22: 3, E-23: 4, E-24: 4, E-25: 4, E-26: 4, E-27: 4, E-32: 4, E-34: 4, E-35: 3, E-38: 3, E-39: 4
     done: 0
     ready: 0
-    blocked: 0
+    blocked: 75     # all blocked by upstream dependencies
   student:
     priority: 4
-    total: 0
+    total: 15       # E-40: 4, E-41: 4, E-42: 4, E-43: 3
     done: 0
     ready: 0
-    blocked: 0
+    blocked: 15     # all blocked by upstream dependencies
   advisor:
     priority: 5
-    total: 0
+    total: 9        # E-44: 4, E-45: 5
     done: 0
     ready: 0
-    blocked: 0
+    blocked: 9      # all blocked by upstream dependencies
 
 # Completed stories log
 completed: []
@@ -66,14 +66,14 @@ completed: []
 
 # Error-to-rule pipeline
 error_pipeline:
-  total_errors_captured: 1
-  total_rules_created: 1
+  total_errors_captured: 2
+  total_rules_created: 2
   recurrence_rate: 0
 
 # Time allocation tracking
 metrics:
   stories_completed: 0
-  stories_total: 0
+  stories_total: 166
   avg_story_time_minutes: 0
   planning_pct: 0    # target: 40%
   review_pct: 0      # target: 40%
