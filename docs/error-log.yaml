@@ -17,10 +17,44 @@ errors:
     location: "Root CLAUDE.md → Spec Pipeline Rules"
     recurrence: 0
 
-# Example entry:
-# - date: 2026-03-15
-#   story: STORY-1.1
-#   error: "Used default export in new component"
-#   rule: "Named exports only — default exports forbidden"
-#   location: "Root CLAUDE.md → Architecture Rules"
-#   recurrence: 0
+  - date: 2026-02-19
+    story: STORY-U-1
+    error: "Removed default export from Next.js layout.tsx and page.tsx, breaking App Router"
+    rule: "Next.js App Router requires export default for page/layout/loading/error/not-found/middleware files"
+    location: "Root CLAUDE.md → Architecture Rules (exception added)"
+    recurrence: 0
+
+  - date: 2026-02-19
+    story: STORY-U-1
+    error: "Used TS private keyword instead of JS #private, allowing runtime access via bracket notation"
+    rule: "Use JS #field syntax for true runtime encapsulation, not TS private keyword"
+    location: "Root CLAUDE.md → Architecture Rules (OOP rule updated)"
+    recurrence: 0
+
+  - date: 2026-02-19
+    story: STORY-U-2
+    error: "Used .toThrow('InvalidFrameworkNodeError') which matches error message text, not class"
+    rule: "Use .toThrow(ErrorClass) for custom error assertions in vitest"
+    location: "Root CLAUDE.md → Monorepo Conventions"
+    recurrence: 0
+
+  - date: 2026-02-19
+    story: STORY-U-2
+    error: "Used relative ../../../../ path for cross-workspace import in vitest test file"
+    rule: "Use vitest aliases for cross-workspace imports, never deep relative paths"
+    location: "Root CLAUDE.md → Monorepo Conventions + docs/solutions/monorepo-cross-package-imports.md"
+    recurrence: 0
+
+  - date: 2026-02-19
+    story: STORY-U-1
+    error: "Server rootDir: src conflicted with path aliases resolving to packages/types/src"
+    rule: "Use TypeScript project references (composite: true) for cross-package type resolution"
+    location: "Root CLAUDE.md → Monorepo Conventions + docs/solutions/monorepo-cross-package-imports.md"
+    recurrence: 0
+
+  - date: 2026-02-19
+    story: STORY-U-1
+    error: "Express app variable without type annotation caused TS2742 non-portable type error"
+    rule: "Always annotate Express app with explicit Express type: const app: Express = express()"
+    location: "Root CLAUDE.md → Monorepo Conventions"
+    recurrence: 0

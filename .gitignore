@@ -2,11 +2,12 @@
 node_modules/
 .pnpm-store/
 
-# Build
+# Build output
 dist/
 .next/
 .turbo/
 out/
+*.tsbuildinfo
 
 # Environment
 .env
@@ -25,6 +26,9 @@ Thumbs.db
 
 # Claude Code (local settings, not project config)
 .claude/settings.local.json
+
+# MCP config (contains access tokens)
+.mcp.json
 
 # Archives
 *.zip

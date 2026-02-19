@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "types": ["node"],
+    "paths": {
+      "@journey-os/types": ["../../packages/types/src"],
+      "@journey-os/types/*": ["../../packages/types/src/*"],
+      "@test/fixtures/*": ["../../packages/types/src/frameworks/__tests__/*"]
+    }
+  },
+  "include": ["src"],
+  "references": [{ "path": "../../packages/types" }],
+  "exclude": ["node_modules", "dist"]
+}

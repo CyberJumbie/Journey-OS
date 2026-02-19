@@ -21,10 +21,10 @@ packages/types, packages/ui (shadcn/ui), packages/python-api (Tier 2+).
 6. advisor (P5) — Student monitoring, interventions, alerts
 
 ## Architecture Rules
-- OOP: Private fields, public getters, constructor DI.
+- OOP: Private fields (`#field` JS private, not TS `private`), public getters, constructor DI.
 - MVC: View → Controller → Service → Repository → Database. No skipping.
 - Atomic Design: Atoms → Molecules → Organisms → Templates → Pages.
-- Named exports only. No default exports.
+- Named exports only. No default exports. EXCEPTION: Next.js App Router requires `export default` for page.tsx, layout.tsx, loading.tsx, error.tsx, not-found.tsx, and middleware.ts.
 - Custom error classes only. No raw throw new Error().
 - Design tokens only. No hardcoded hex/font/spacing values.
 - TypeScript strict. No `any` without JSDoc justification.
@@ -51,6 +51,17 @@ Types → Model → Repository → Service → Controller → View → API Tests
 ## Spec Pipeline Rules
 - Parallel subagents must ONLY write artifact files (stories, specs, briefs). Shared tracking files (coverage.yaml, FEATURE-EPIC-MAP.md, MEMORY.md) must ONLY be updated by the main orchestrator after all subagents complete.
 
+## Monorepo Conventions
+- Server imports types via `@journey-os/types` path alias + TypeScript project references (`composite: true` in types tsconfig).
+- Vitest cross-workspace imports need aliases in `vitest.config.ts`, not relative `../../../../` paths.
+- Express app variable needs explicit `Express` type annotation to avoid TS2742.
+- Vitest `.toThrow(ErrorClass)` checks `instanceof`. `.toThrow("string")` checks the message text. Use the class form for custom errors.
+
 ## Things Claude Gets Wrong
 (Updated by /compound — the error-to-rule pipeline)
 - Parallel subagents each updated coverage.yaml with partial totals, causing data loss. See spec pipeline rule above.
+- Applied "no default exports" rule to Next.js page/layout files, breaking App Router. See exception in Architecture Rules.
+- Used TS `private` keyword instead of JS `#private` syntax, making fields accessible at runtime via bracket notation.
+- Used `.toThrow("ErrorClassName")` in vitest which matches error message, not class name. Use `.toThrow(ErrorClass)` instead.
+- Used relative `../../../../` paths for cross-workspace imports in vitest. Use vitest aliases instead.
+- Server `rootDir: "src"` breaks when path aliases resolve to files outside src. Use TypeScript project references with `composite: true`.
