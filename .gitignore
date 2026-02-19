@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build
+dist/
+.next/
+.turbo/
+out/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Claude Code (local settings, not project config)
+.claude/settings.local.json
+
+# Archives
+*.zip
+
+# Test artifacts
+tests/screenshots/
+tests/traces/
+playwright-report/
+test-results/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Figma Make (prototype source, not production)
+.figma-make/
+
+# Duplicate docs directory (originals in .context/source/)
+journey-os-docs/

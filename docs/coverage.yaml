@@ -1,0 +1,83 @@
+# docs/coverage.yaml — Progress tracking with persona lanes
+project: "[project name]"
+updated: "[date]"
+
+# Spec pipeline completion
+spec_status:
+  classify: pending
+  personas: pending
+  features: pending
+  user_flows: pending
+  epics: pending
+  decompose_all: pending
+  prioritize: pending
+  briefs: pending  # ALL briefs must complete before development
+  ready_for_development: false
+
+# Per-lane backlog tracking
+lanes:
+  universal:
+    priority: 0
+    total: 0
+    done: 0
+    ready: 0
+    blocked: 0
+  superadmin:
+    priority: 1
+    total: 0
+    done: 0
+    ready: 0
+    blocked: 0
+  institutional_admin:
+    priority: 2
+    total: 0
+    done: 0
+    ready: 0
+    blocked: 0
+  faculty:
+    priority: 3
+    total: 0
+    done: 0
+    ready: 0
+    blocked: 0
+  student:
+    priority: 4
+    total: 0
+    done: 0
+    ready: 0
+    blocked: 0
+  advisor:
+    priority: 5
+    total: 0
+    done: 0
+    ready: 0
+    blocked: 0
+
+# Completed stories log
+completed: []
+# Example:
+# - id: STORY-U-1
+#   title: "Auth + RBAC middleware"
+#   lane: universal
+#   completed: 2026-03-01
+#   time_minutes: 120
+#   api_tests: 18
+#   e2e_tests: 0
+
+# Error-to-rule pipeline
+error_pipeline:
+  total_errors_captured: 0
+  total_rules_created: 0
+  recurrence_rate: 0
+
+# Time allocation tracking
+metrics:
+  stories_completed: 0
+  stories_total: 0
+  avg_story_time_minutes: 0
+  planning_pct: 0    # target: 40%
+  review_pct: 0      # target: 40%
+  execution_pct: 0   # target: 10%
+  learning_pct: 0    # target: 10%
+  api_tests_total: 0
+  e2e_tests_total: 0

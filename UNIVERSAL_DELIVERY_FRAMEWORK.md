@@ -1,0 +1,512 @@
+# Universal Delivery Framework for AI-Assisted Development
+
+**Version:** 1.1  
+**Date:** February 19, 2026  
+**Engine:** Claude Code + RLM + MCP Servers + Playwright + Figma Make  
+**Purpose:** Drop project documents into `.context/source/`, spec the entire product, prioritize by persona, pull from lanes, ship production software.
+
+---
+
+## What This Is
+
+A project-agnostic delivery framework for AI-assisted software development. You provide source documents describing what to build. The framework discovers, classifies, and processes those documents through a structured pipeline that produces everything needed for implementation: personas, features, user flows, epics, stories, prioritized persona-lane backlogs, and self-contained context-packet briefs.
+
+The entire product is specced before any code is written. Every story brief contains all TypeScript interfaces, SQL, API contracts, test fixtures, and acceptance criteria inline — Claude Code never touches the source documents during development. At build time, you choose which persona lane to work on and pull the next unblocked story.
+
+---
+
+## Core Principles
+
+**1. Documents are the source of truth.** Every decision traces to a source document. The AI extracts, structures, and implements — it never invents.
+
+**2. RLM processes large contexts.** Source documents are never loaded directly into Claude Code's context. The RLM pattern uses a persistent Python REPL to chunk, search, and extract via Haiku sub-LLM calls.
+
+**3. Full upfront spec.** The ENTIRE product is specced before any code is written. All features, flows, epics, stories, lane assignments, and briefs are complete and reviewed. This front-loads the thinking and makes implementation sessions pure execution.
+
+**4. Persona-lane prioritization.** Stories are assigned to persona lanes with a defined priority order. At development time, you choose a lane and pull the next unblocked story. Cross-lane dependencies are tracked automatically.
+
+**5. Briefs are self-contained.** A story brief contains every interface, schema snippet, API contract, test fixture, and acceptance criterion inline. The implementing session needs zero additional lookups.
+
+**6. 70/30 test split.** API-level tests (vitest) cover CRUD, validation, authorization, and data integrity. Playwright E2E tests cover only the 3–5 most critical user journeys.
+
+**7. Prototype in Figma Make, produce in Claude Code.** Figma Make generates visual scaffolding for layout validation. Claude Code `/adapt` refactors prototypes into production-grade code.
+
+**8. CLAUDE.md under 300 lines.** Specialized context lives in Skills with YAML frontmatter. Subdirectory CLAUDE.md files lazy-load per package.
+
+**9. Every mistake becomes a rule.** The error-to-rule pipeline captures AI mistakes during validation, converts them to prevention rules, and tracks recurrence.
+
+**10. Compound before advancing.** Every completed story triggers the 5-question codify checklist. The system improves with every cycle.
+
+---
+
+## Two-Phase Workflow
+
+The framework has two distinct phases:
+
+### SPEC PHASE — Complete Before Any Code
+
+```
+/classify         → Discover and classify all source documents
+/personas         → Extract and validate personas from docs
+ALL /feature      → Define every user-facing feature
+ALL /user-flow    → Map every persona journey
+ALL /epic         → Break every feature into shippable increments
+/decompose-all    → Decompose ALL epics into stories
+/prioritize       → Assign stories to persona lanes, order, detect dependencies
+ALL /brief        → Generate self-contained context packets for every story
+/spec-status      → Verify: READY FOR DEVELOPMENT
+```
+
+Human reviews and approves at each gate. No code until `/spec-status` says READY.
+
+### BUILD PHASE — Pull From Persona Lanes
+
+```
+/pull LANE        → Get next unblocked story from chosen lane
+/plan STORY-ID    → Create implementation plan
+[implement]       → Claude Code writes code, self-verifies
+/validate STORY-ID → 4-pass review
+/compound         → Capture learnings, error-to-rule
+/pull LANE        → Next story
+```
+
+Repeat until the product is complete.
+
+---
+
+## The Document Folder: `.context/source/`
+
+### Recommended Structure
+
+```
+.context/source/
+├── 00-orientation/          # What is this project? Reading order.
+├── 01-product/              # Why we're building. Who it's for.
+├── 02-architecture/         # How the system works technically.
+├── 03-schema/               # Exact contracts: tables, nodes, endpoints.
+├── 04-process/              # How we build: code standards, deployment.
+└── 05-reference/            # Deep reference: design specs, examples.
+```
+
+### Flexible Structure
+
+If your docs don't use numbered tiers, `/classify` auto-classifies each document via RLM. Both approaches produce the same `doc-manifest.yaml` that all downstream commands use.
+
+### The Doc Manifest
+
+Generated by `/classify`. Contains: document paths, roles, summaries, key entities, tech stack detection, persona references, and the priority stack for conflict resolution.
+
+```yaml
+# .context/doc-manifest.yaml
+documents:
+  - path: "source/02-architecture/ARCHITECTURE.md"
+    role: architecture
+    size_kb: 62
+    summary: "Four-layer data architecture, 14-node pipeline"
+    priority: 1
+# ...
+priority_stack:
+  - Schema docs (exact contracts)
+  - Architecture docs (system design)
+  - Process docs (code standards)
+  - Reference docs (design specs)
+  - Product docs (business context)
+```
+
+---
+
+## Spec Phase: The Full Pipeline
+
+### Phase -1: `/classify` — Discover and Map Documents
+
+Scan `.context/source/`, classify each document's role, detect tech stack, extract personas, build the manifest. Human reviews before proceeding.
+
+### Phase 0: `/personas` — Extract Personas
+
+Use RLM to extract personas from product and architecture docs. Cross-reference across documents. Generate persona files with pain points, workflows, data needs, and permissions. Generate the persona matrix.
+
+### Phase 1: Ideation Pipeline
+
+**Pass 1: `/feature NAME`** — Define each user-facing feature with personas, screens, data domains, dependencies. Cite source docs.
+
+**Pass 2: `/user-flow NAME`** — Map each persona's step-by-step journey through a feature. Include happy path, error paths, APIs called, and Playwright test outline.
+
+**Pass 3: `/epic F-ID`** — Break each feature into 2–5 shippable increments with definition of done and user flows enabled.
+
+**Pass 4: `/decompose-all`** — Decompose ALL epics into stories across the entire product. Every story is a vertical slice. Flag XL stories for splitting. Generate the full dependency graph.
+
+### Phase 2: `/prioritize` — Persona Lane Assignment
+
+This is the key differentiator. After all stories exist, `/prioritize` assigns each to a persona lane, orders within lanes, and detects cross-lane dependencies.
+
+#### Persona Lanes
+
+Stories are categorized into **lanes** based on their primary persona:
+
+| Lane | Priority | Prefix | Description |
+|------|----------|--------|-------------|
+| `universal` | 0 (highest) | U | Infrastructure, auth, shared services |
+| `superadmin` | 1 | SA | Platform-wide management |
+| `institutional_admin` | 2 | IA | Institution config, programs, analytics |
+| `faculty` | 3 | F | Content creation, generation, curriculum |
+| `student` | 4 | S | Learning, assessments, progress |
+| `advisor` | 5 | A | Monitoring, interventions, alerts |
+
+Lane configuration is stored in `.context/spec/backlog/LANE-CONFIG.yaml` and is human-editable. For non-Journey-OS projects, lanes are generated from detected personas during `/prioritize`.
+
+#### Lane Assignment Rules
+
+1. **Primary persona determines lane.** If a story's user flow is owned by a single persona, it goes in that persona's lane.
+
+2. **Universal catches infrastructure.** Auth, RBAC, shared services, database schema, background jobs, design system foundation — anything that serves all personas.
+
+3. **Multi-persona stories use highest-priority persona.** Building it for the higher-priority persona first enables downstream features.
+
+4. **Enable before consume.** Within a lane, stories that unblock more downstream stories come first.
+
+#### Within-Lane Ordering
+
+Stories within a lane are ordered by:
+1. Dependency depth (zero dependencies first)
+2. Unblock count (enables more downstream = higher)
+3. Feature completeness (finish a flow before starting another)
+4. Size (smaller stories first for faster feedback)
+
+#### Cross-Lane Dependencies
+
+Tracked in `.context/spec/backlog/CROSS-LANE-DEPENDENCIES.md`:
+```
+STORY-F-3 (faculty) ← blocked by → STORY-U-2 (universal)
+STORY-S-1 (student) ← blocked by → STORY-F-5 (faculty)
+```
+
+#### Story ID Convention
+
+`STORY-{LANE_PREFIX}-{N}` where N reflects within-lane priority order:
+- STORY-U-1, STORY-U-2, ... (universal)
+- STORY-SA-1, STORY-SA-2, ... (superadmin)
+- STORY-IA-1, STORY-IA-2, ... (institutional admin)
+- STORY-F-1, STORY-F-2, ... (faculty)
+- STORY-S-1, STORY-S-2, ... (student)
+- STORY-A-1, STORY-A-2, ... (advisor)
+
+#### Backlog Files Generated
+
+```
+.context/spec/backlog/
+├── LANE-CONFIG.yaml
+├── BACKLOG-UNIVERSAL.md
+├── BACKLOG-SUPERADMIN.md
+├── BACKLOG-INSTITUTIONAL-ADMIN.md
+├── BACKLOG-FACULTY.md
+├── BACKLOG-STUDENT.md
+├── BACKLOG-ADVISOR.md
+└── CROSS-LANE-DEPENDENCIES.md
+```
+
+### Phase 3: `/brief STORY-ID` — Context Packets for Every Story
+
+Run for EVERY story. Each brief is a 16-section self-contained context packet with lane metadata (Section 0), full TypeScript interfaces, SQL/Cypher, API contracts, test fixtures, acceptance criteria, and source citations.
+
+The brief includes dependency status — which stories must complete first, which lane they're in, and what this story blocks downstream.
+
+### Phase 4: `/spec-status` — Verify Readiness
+
+Shows completion across the entire spec pipeline. Development cannot start until all briefs are complete and `/spec-status` shows READY FOR DEVELOPMENT.
+
+---
+
+## Build Phase: Pull From Lanes
+
+### `/pull LANE` — Development-Time Story Selection
+
+The primary command during development. Choose which persona lane to work on:
+
+```
+> /pull institutional_admin
+
+Next unblocked: STORY-IA-4 "Program management CRUD"
+  Lane: institutional_admin (priority 2)
+  Size: M
+  Dependencies met:
+    ✅ STORY-U-2 "Auth + RBAC middleware" (universal) — done
+    ✅ STORY-IA-3 "Institution settings page" (this lane) — done
+  Brief: .context/spec/stories/STORY-IA-4-BRIEF.md
+
+Ready to go. Run /plan STORY-IA-4 to start.
+```
+
+If the lane is fully blocked:
+
+```
+> /pull student
+
+All student stories are blocked.
+
+Blockers:
+  STORY-S-1 ← blocked by STORY-F-5 (faculty) [NOT STARTED]
+  STORY-S-3 ← blocked by STORY-U-8 (universal) [NOT STARTED]
+
+Suggestion: /pull universal — STORY-U-8 unblocks 3 stories across 2 lanes
+Alternative: /pull faculty — STORY-F-5 unblocks 2 student stories
+```
+
+**No-argument mode:** `/pull` with no lane returns the next story from the highest-priority lane with available work.
+
+**Lane shortcuts:** `/pull u`, `/pull sa`, `/pull ia`, `/pull f`, `/pull s`, `/pull a`
+
+### `/backlog` — Full Status Visualization
+
+```
+═══════════════════════════════════════════════════
+UNIVERSAL (P0)     ████████░░  8/10  | 1 ready | 1 blocked
+SUPERADMIN (P1)    ██░░░░░░░░  2/6   | 1 ready | 3 blocked
+INST ADMIN (P2)    ███░░░░░░░  3/12  | 2 ready | 7 blocked
+FACULTY (P3)       ░░░░░░░░░░  0/18  | 3 ready | 15 blocked
+STUDENT (P4)       ░░░░░░░░░░  0/14  | 0 ready | 14 blocked
+ADVISOR (P5)       ░░░░░░░░░░  0/8   | 0 ready | 8 blocked
+
+Total: 13/68 (19%) | 7 ready | 48 blocked
+Next: /pull universal — STORY-U-9 unblocks 5 downstream
+═══════════════════════════════════════════════════
+```
+
+`/backlog LANE` shows detailed per-story status within a lane with blocker analysis.
+
+### `/blocked LANE` — Blocker Analysis
+
+Shows what's blocking a lane with the fastest unblock path:
+```
+Fastest path to unblock faculty:
+  1. Complete STORY-U-6 → unblocks 3 faculty stories
+  2. Complete STORY-U-4 → unblocks 2 faculty stories
+```
+
+### PIVC Loop (Per Story)
+
+Once a story is pulled, it follows **Plan → Implement → Validate → Compound**:
+
+| Phase | % Time | What Happens |
+|-------|--------|--------------|
+| Plan | 20% | `/plan STORY-ID` → implementation plan, human approves |
+| Implement | 10% | Claude Code writes + self-verifies with test loop |
+| Validate | 40% | 4-pass: code quality, API tests, E2E, domain review |
+| Compound | 10% | 5-question codify, error-to-rule, solution docs |
+| *(Brief already done)* | *(20%)* | |
+
+### `/validate STORY-ID` — Four-Pass Review
+
+**Pass 1: Code Quality** — tsc, eslint, vitest (automated)
+**Pass 2: API Tests (70%)** — CRUD, validation, authorization, data integrity
+**Pass 3: E2E Tests (30%)** — Critical user journeys only (Playwright)
+**Pass 4: Domain Review** — Security, Performance, Data Integrity, Architecture
+
+### `/compound` — Error-to-Rule Pipeline
+
+Five-question codify checklist (mandatory after every story):
+- Q1: What confused Claude? → CLAUDE.md rule
+- Q2: What instruction prevents the first mistake? → CLAUDE.md
+- Q3: What automated check catches it earlier? → hook or test
+- Q4: What pattern should become default? → solution doc
+- Q5: Where should this learning live? → decide location
+
+Error-to-rule: every mistake becomes a prevention rule with recurrence tracking.
+
+---
+
+## The `/adapt` Command: Figma Make → Production Code
+
+Figma Make generates React prototypes (not production code). The workflow:
+
+```
+Design in Figma → Prototype with Figma Make → Copy to .figma-make/STORY-ID/
+→ /adapt STORY-ID → Production code in project source directories
+```
+
+`/adapt` restructures to project component architecture, converts to framework patterns, replaces prototype styling with design system tokens, wires the data layer from the brief, and adds production requirements (TypeScript strict, accessibility, responsive).
+
+---
+
+## CLAUDE.md Architecture
+
+### Root CLAUDE.md: Under 300 Lines
+
+Repo-wide conventions only: project description, context protocol, persona lane priorities, architecture rules (10-15), database rules, testing rules, implementation order, and "Things Claude Gets Wrong" (populated by `/compound`).
+
+### Subdirectory CLAUDE.md Files
+
+One per major package, lazy-loaded when Claude accesses that directory.
+
+### Skills for Specialized Knowledge
+
+```
+.claude/skills/
+├── rlm/              → RLM pattern for processing source docs
+├── doc-classifier/   → Document classification logic
+├── ideation/         → Feature/flow/epic/story generation
+├── briefing/         → Context packet generation
+├── prioritization/   → Persona lanes, ordering, cross-lane dependencies
+├── testing/          → 70/30 test strategy, Playwright patterns
+├── adapt/            → Figma Make → production refactoring
+└── compound/         → Error-to-rule pipeline, solution docs
+```
+
+---
+
+## Context Budget Rules
+
+| Indicator | Threshold | Action |
+|-----------|-----------|--------|
+| 🟢 Normal | < 40 exchanges | Continue |
+| 🟡 Warning | 40+ exchanges | `/checkpoint` after current task |
+| 🔴 Critical | 80+ exchanges | `/checkpoint` then new session NOW |
+
+Never load `.context/source/` directly. Briefs are the implementation input.
+
+---
+
+## File System Layout
+
+```
+project-root/
+├── .claude/
+│   ├── agents/rlm-subcall.md
+│   ├── skills/ (8 skills)
+│   ├── commands/ (24 commands)
+│   ├── settings.json (permissions + hooks)
+│   ├── mcp.json
+│   └── settings.json
+│
+├── .context/
+│   ├── source/              # YOUR PROJECT DOCS
+│   ├── doc-manifest.yaml    # Generated by /classify
+│   ├── priority-stack.md    # Human-editable
+│   └── spec/
+│       ├── personas/
+│       ├── features/
+│       ├── user-flows/
+│       ├── epics/
+│       ├── stories/         # Briefs live here
+│       ├── maps/
+│       ├── screen-reqs/
+│       └── backlog/         # Lane backlogs + dependencies
+│
+├── docs/
+│   ├── plans/
+│   ├── solutions/
+│   ├── coverage.yaml
+│   └── error-log.yaml
+│
+├── tests/
+│   ├── api/                 # vitest (70%)
+│   ├── e2e/                 # Playwright (30%)
+│   ├── traces/
+│   └── screenshots/
+│
+├── .figma-make/             # Temporary prototypes
+├── CLAUDE.md                # Root system prompt (<300 lines)
+└── SESSION_STATE.md         # Session state + active lane
+```
+
+---
+
+## Complete Command Reference
+
+### Spec Phase Commands
+| Command | Purpose |
+|---------|---------|
+| `/classify` | Discover and classify source documents |
+| `/personas` | Extract personas from docs |
+| `/feature NAME` | Define a user-facing feature |
+| `/user-flow NAME` | Map a persona journey through a feature |
+| `/epic F-ID` | Break feature into shippable increments |
+| `/decompose-all` | Decompose ALL epics into stories |
+| `/decompose N` | Re-decompose a specific sprint |
+| `/prioritize` | Assign stories to persona lanes |
+| `/brief STORY-ID` | Generate self-contained context packet |
+| `/screen-req ID` | Generate screen requirements |
+| `/spec-status` | Check spec pipeline completion |
+
+### Build Phase Commands
+| Command | Purpose |
+|---------|---------|
+| `/pull LANE` | Get next unblocked story from lane |
+| `/plan STORY-ID` | Create implementation plan |
+| `/validate STORY-ID` | 4-pass validation |
+| `/compound` | Capture learnings, error-to-rule |
+| `/adapt STORY-ID` | Figma Make → production code |
+| `/test-flow FLOW-ID` | Run Playwright E2E journey |
+| `/backlog` | Full status across all lanes |
+| `/blocked LANE` | Blocker analysis for a lane |
+
+### Utility Commands
+| Command | Purpose |
+|---------|---------|
+| `/next` | Delegates to /pull (highest-priority lane) |
+| `/status` | Current session dashboard |
+| `/checkpoint` | Save session state |
+| `/design-query "Q"` | Query source docs via RLM |
+| `/dep-map N` | Dependency map for a sprint |
+
+---
+
+## Getting Started
+
+```bash
+# 1. Copy framework into your project
+cp -r framework/.claude/ your-project/.claude/
+cp -r framework/.context/ your-project/.context/
+cp framework/SESSION_STATE.md framework/CLAUDE.md your-project/
+mkdir -p your-project/docs/{plans,solutions}
+cp framework/docs/*.yaml your-project/docs/
+
+# 2. Drop your project documents into .context/source/
+
+# 3. Edit CLAUDE.md with your project's specific rules (<300 lines)
+
+# 4. Configure MCP servers in .claude/mcp.json
+
+# 5. Run the spec phase (complete before any code)
+cd your-project && claude
+/classify
+/personas
+/feature [each feature]
+/user-flow [each flow]
+/epic [each feature]
+/decompose-all
+/prioritize              # Assign to persona lanes
+/brief [every story]     # ALL briefs before development
+/spec-status             # Must show READY
+
+# 6. Build phase — pull from lanes
+/pull institutional_admin   # Or whatever lane you choose
+/plan STORY-IA-1
+# [Claude implements]
+/validate STORY-IA-1
+/compound
+/pull institutional_admin   # Next story
+```
+
+---
+
+## The Ten Laws
+
+1. **Documents are truth.** Every feature, schema, and pattern traces to `[DOC § Section]`.
+
+2. **Spec everything first.** All features, flows, epics, stories, lanes, and briefs complete before any code. `/spec-status` must show READY.
+
+3. **Persona lanes govern priority.** Universal → SuperAdmin → Institutional Admin → Faculty → Student → Advisor. At dev time, choose a lane and `/pull`.
+
+4. **Brief = complete context packet.** All interfaces, schemas, contracts, fixtures, and criteria inline. Zero lookups during implementation.
+
+5. **Test logic at the API, experience at the UI.** 70% vitest, 30% Playwright for critical journeys only.
+
+6. **Prototype in Figma Make, produce in Claude Code.** `/adapt` refactors to production-grade.
+
+7. **CLAUDE.md under 300 lines.** Skills for specialized context. Every instruction earns its place.
+
+8. **Every mistake becomes a rule.** Error-to-rule pipeline with recurrence tracking.
+
+9. **Four review perspectives.** Security. Performance. Data integrity. Architecture.
+
+10. **Compound before advancing.** Five-question codify after every story. The system learns.

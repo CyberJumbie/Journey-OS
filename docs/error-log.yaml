@@ -1,0 +1,13 @@
+# docs/error-log.yaml — Error-to-rule pipeline tracking
+# Every AI mistake becomes a prevention rule.
+# Recurrence is tracked monthly. Target: < 5% recurrence rate.
+
+errors: []
+
+# Example entry:
+# - date: 2026-03-15
+#   story: STORY-1.1
+#   error: "Used default export in new component"
+#   rule: "Named exports only — default exports forbidden"
+#   location: "Root CLAUDE.md → Architecture Rules"
+#   recurrence: 0

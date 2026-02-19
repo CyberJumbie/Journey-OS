@@ -1,0 +1,37 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@anthropic/playwright-mcp"
+      ],
+      "env": {
+        "PLAYWRIGHT_BASE_URL": "http://localhost:3000"
+      }
+    },
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "supabase-mcp@latest"
+      ],
+      "env": {
+        "SUPABASE_URL": "https://hifqdotmnirepgscankl.supabase.co",
+        "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpZnFkb3RtbmlyZXBnc2NhbmtsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0NDcxMTksImV4cCI6MjA4NzAyMzExOX0.1VjSRi1MUqweIqVsb2TXi4ug5nPvFaUCP6g4lq2a8EM",
+        "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpZnFkb3RtbmlyZXBnc2NhbmtsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0NDcxMTksImV4cCI6MjA4NzAyMzExOX0.1VjSRi1MUqweIqVsb2TXi4ug5nPvFaUCP6g4lq2a8EM",
+        "SUPABASE_PROJECT_REF": "Journey-OS"
+      }
+    },
+    "neo4j": {
+      "command": "neo4j-mcp",
+      "args": [],
+      "env": {
+        "NEO4J_URI": "neo4j+s://4f0c6918.databases.neo4j.io",
+        "NEO4J_USERNAME": "neo4j",
+        "NEO4J_PASSWORD": "y3nSh2LkKqQpdf5E2fqZeqQJrL_AroOFK536cZGz6Uk",
+        "NEO4J_DATABASE": "Journey-OS"
+      }
+    }
+  }
+}

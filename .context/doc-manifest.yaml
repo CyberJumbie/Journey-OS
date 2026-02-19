@@ -1,0 +1,450 @@
+# Journey OS — Document Manifest
+# Generated: 2026-02-19
+# Total documents: 21
+# Total size: 623 KB
+# Review this manifest before proceeding to /personas
+
+documents:
+  # ── Tier 00: Orientation ──────────────────────────────────
+  - path: .context/source/00-orientation/00-START-HERE.md
+    role: orientation
+    summary: Developer quickstart covering stack, monorepo layout, and top-5 gotchas.
+    size_kb: 5
+    key_entities:
+      - monorepo layout
+      - tech stack overview
+      - Neo4j naming conventions
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: false
+    defines_visual_design: false
+
+  # ── Tier 01: Product ──────────────────────────────────────
+  - path: .context/source/01-product/PRODUCT_BRIEF.md
+    role: product
+    summary: Product vision, three core jobs (assessment, accreditation, advising), and detailed persona profiles with pain points.
+    size_kb: 10
+    key_entities:
+      - Dr. Amara Osei (Course Director)
+      - Marcus Williams (M2 Student)
+      - Dr. Kenji Takahashi (Associate Dean)
+      - assessment automation
+      - accreditation compliance
+      - precision advising
+    defines_personas: true
+    defines_api_endpoints: false
+    defines_database_schema: false
+    defines_visual_design: false
+
+  - path: .context/source/01-product/ROADMAP_v2_3.md
+    role: product
+    summary: 56-sprint implementation roadmap with tier milestones, exit criteria, and reconciliation changelog.
+    size_kb: 19
+    key_entities:
+      - sprint plan
+      - tier milestones (0-3)
+      - reconciliation tracker (R-001 to R-041)
+      - framework counts
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: false
+    defines_visual_design: false
+
+  - path: .context/source/01-product/COST_MODEL.md
+    role: product
+    summary: AI model costs per item, infrastructure budget projections from dev through Tier 3 production.
+    size_kb: 7
+    key_entities:
+      - per-item generation cost ($0.094)
+      - per-chunk ingestion cost ($0.0025)
+      - monthly spend projections
+      - Neo4j Aura pricing
+      - Supabase pricing
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: false
+    defines_visual_design: false
+
+  # ── Tier 02: Architecture ─────────────────────────────────
+  - path: .context/source/02-architecture/ARCHITECTURE_v10.md
+    role: architecture
+    summary: Definitive system architecture — 4-layer hybrid data model, 14-node generation pipeline, AG-UI protocol, all reconciliation resolutions.
+    size_kb: 63
+    key_entities:
+      - four-layer hybrid data architecture
+      - Neo4j (structure/semantics)
+      - Supabase PostgreSQL (content/transactions)
+      - pgvector (similarity/search)
+      - Claude (generation/intelligence)
+      - LangGraph.js pipeline (14 nodes)
+      - AG-UI/CopilotKit
+      - Socket.io
+      - Inngest
+      - skinny node principle
+    defines_personas: false
+    defines_api_endpoints: true
+    defines_database_schema: true
+    defines_visual_design: false
+
+  - path: .context/source/02-architecture/WORKBENCH_SPEC_v2.md
+    role: architecture
+    summary: Split-screen generation workbench spec — chat + context panel, AG-UI protocol, 3 modes (generate, bulk, review).
+    size_kb: 10
+    key_entities:
+      - generation workbench
+      - split-screen UI
+      - AG-UI over SSE
+      - CopilotKit
+      - journey_generation agent
+      - Inngest events (journey/*)
+    defines_personas: false
+    defines_api_endpoints: true
+    defines_database_schema: false
+    defines_visual_design: true
+
+  # ── Tier 03: Schema ───────────────────────────────────────
+  - path: .context/source/03-schema/NODE_REGISTRY_v1.md
+    role: schema
+    summary: Canonical Neo4j node type and relationship registry — every label, property, relationship type, and tier assignment.
+    size_kb: 16
+    key_entities:
+      - 37 Tier 0 node types
+      - Layer 1 (institutional structure)
+      - Layer 2 (framework alignment)
+      - Layer 3 (content/concepts)
+      - Layer 4 (assessment)
+      - Layer 5 (student state)
+      - naming conventions (SCREAMING_SNAKE, PascalCase)
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: true
+    defines_visual_design: false
+
+  - path: .context/source/03-schema/SUPABASE_DDL_v1.md
+    role: schema
+    summary: Canonical Supabase PostgreSQL DDL — all tables, columns, constraints, indexes, RLS policies, and vector indexes.
+    size_kb: 18
+    key_entities:
+      - content_chunks
+      - content_chunk_embeddings (1024-dim)
+      - assessment_items
+      - uploads (WORM store)
+      - institutions
+      - users/profiles
+      - sync_status pattern
+      - graph_node_id bridge
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: true
+    defines_visual_design: false
+
+  - path: .context/source/03-schema/API_CONTRACT_v1.md
+    role: schema
+    summary: Complete REST API contract — every endpoint, request/response shape, auth requirements, and pagination conventions.
+    size_kb: 8
+    key_entities:
+      - /api/v1 base URL
+      - auth endpoints
+      - users CRUD
+      - institutions/waitlist
+      - courses
+      - content upload
+      - generation
+      - assessment items
+      - response envelope (data, error, meta)
+    defines_personas: false
+    defines_api_endpoints: true
+    defines_database_schema: false
+    defines_visual_design: false
+
+  # ── Tier 04: Process ──────────────────────────────────────
+  - path: .context/source/04-process/CODE_STANDARDS.md
+    role: process
+    summary: Mandatory code standards — OOP, MVC, Atomic Design, layer boundaries, naming conventions, testing rules.
+    size_kb: 32
+    key_entities:
+      - MVC architecture mapping
+      - Atomic Design (5 levels)
+      - implementation order (Types→Model→Repo→Service→Controller→View→Tests)
+      - layer boundaries
+      - naming conventions
+      - testing rules (70/30 API/UI)
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: false
+    defines_visual_design: false
+
+  - path: .context/source/04-process/CLAUDE_MD_TEMPLATE.md
+    role: process
+    summary: Template for CLAUDE.md system prompt — layer boundaries, Neo4j labels, relationship types, error patterns.
+    size_kb: 7
+    key_entities:
+      - CLAUDE.md template
+      - Neo4j label registry (exact)
+      - relationship type registry (exact)
+      - deprecated labels
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: false
+    defines_visual_design: false
+
+  - path: .context/source/04-process/SEED_VALIDATION_SPEC_v1.md
+    role: process
+    summary: Acceptance criteria for every graph seeding phase — exact counts, validation Cypher queries, pass/fail thresholds.
+    size_kb: 10
+    key_entities:
+      - Phase 1 (institutional structure) counts
+      - Phase 2 (framework alignment) counts
+      - validation Cypher queries
+      - idempotency checks
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: true
+    defines_visual_design: false
+
+  - path: .context/source/04-process/DEPLOYMENT_GUIDE.md
+    role: process
+    summary: Deployment and infrastructure guide — environments, topology, Docker Compose, CI/CD, monitoring.
+    size_kb: 10
+    key_entities:
+      - environments (local, preview, staging, production)
+      - Vercel (frontend)
+      - Railway/AWS ECS (backend)
+      - Docker Compose
+      - CI/CD (GitHub Actions)
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: false
+    defines_visual_design: false
+
+  # ── Tier 05: Reference ────────────────────────────────────
+  - path: .context/source/05-reference/DESIGN_SPEC.md
+    role: reference
+    summary: Complete design specification — 78 screens, 5 templates, design reasoning system, color tokens, typography, component specs.
+    size_kb: 100
+    key_entities:
+      - three sheets of paper (cream/white/parchment)
+      - MSM brand identity
+      - woven tapestry motif
+      - 78 screens
+      - 4 personas (Faculty, Admin, Advisor, Student)
+      - typography (Lora, Source Sans 3, DM Mono)
+      - color tokens
+    defines_personas: true
+    defines_api_endpoints: false
+    defines_database_schema: false
+    defines_visual_design: true
+
+  - path: .context/source/05-reference/Journey-OS-Seeding-Blueprint-v1_1.md
+    role: reference
+    summary: Ontology and seeding blueprint — 5-layer graph ontology, authority matrix, ILO/SLO model, chunking pipeline, LOD enrichment.
+    size_kb: 83
+    key_entities:
+      - 5-layer ontology
+      - connection authority matrix (Claude vs Human)
+      - ILO/SLO relationship
+      - USMLE tagging pipeline
+      - chunking/vectorization
+      - Graph RAG vs Vector RAG
+      - LOD enrichment
+      - Hetionet integration
+      - seeding sequence
+      - validation trust gates
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: true
+    defines_visual_design: false
+
+  - path: .context/source/05-reference/Journey_OS_E2E_Colab_Plan_v3.md
+    role: reference
+    summary: E2E Colab pipeline plan — production seeding tool and regression test harness, dual embedding strategy, topic modeling.
+    size_kb: 67
+    key_entities:
+      - Colab seeding pipeline
+      - dual embedding (OpenAI + Voyage)
+      - topic modeling (BERTopic)
+      - MEDI 531 vertical slice
+      - progressive question quality
+      - UME framework integration
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: true
+    defines_visual_design: false
+
+  - path: .context/source/05-reference/QWEST_Source_Document_Traceability_by_Phase.md
+    role: reference
+    summary: Source document traceability — every node type traced to its authoritative source document by seeding phase.
+    size_kb: 25
+    key_entities:
+      - node type provenance
+      - source documents per phase
+      - ingestion methods
+      - data owners at MSM
+      - msm-catalog.json
+      - usmle-content-outline.json
+      - lcme-standards.json
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: false
+    defines_visual_design: false
+
+  - path: .context/source/05-reference/screens/SCREENS.md
+    role: reference
+    summary: Reference screen index — three canonical JSX components (login, dashboard, landing) as visual design authority.
+    size_kb: 3
+    key_entities:
+      - login page spec
+      - faculty dashboard spec
+      - landing page spec
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: false
+    defines_visual_design: true
+
+  - path: .context/source/05-reference/screens/journey-os-login.jsx
+    role: reference
+    summary: Canonical login page React component — split-panel layout, woven thread motif, MSM brand tokens.
+    size_kb: 23
+    key_entities:
+      - login UI
+      - split-panel layout
+      - woven thread canvas
+      - form validation states
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: false
+    defines_visual_design: true
+
+  - path: .context/source/05-reference/screens/journey-os-dashboard.jsx
+    role: reference
+    summary: Canonical faculty dashboard React component — sidebar, KPI strip, activity feed, course overview cards.
+    size_kb: 39
+    key_entities:
+      - faculty dashboard UI
+      - collapsible sidebar
+      - KPI stat cards
+      - 3-layer surface hierarchy
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: false
+    defines_visual_design: true
+
+  - path: .context/source/05-reference/screens/journey-os-responsive.jsx
+    role: reference
+    summary: Canonical landing/marketing page React component — hero, features, social proof, responsive breakpoints.
+    size_kb: 69
+    key_entities:
+      - landing page UI
+      - responsive design
+      - hero section
+      - feature showcase
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: false
+    defines_visual_design: true
+
+# ── Tech Stack ──────────────────────────────────────────────
+tech_stack:
+  frontend:
+    - Next.js 15 (App Router)
+    - React 19
+    - CopilotKit (AG-UI)
+    - Tailwind CSS
+    - shadcn/ui (Radix primitives)
+    - Lucide icons
+  backend:
+    - Express.js
+    - LangGraph.js (14-node pipeline)
+    - Socket.io (collaboration)
+    - Inngest (background jobs)
+  databases:
+    - Neo4j Aura (knowledge graph)
+    - Supabase PostgreSQL (content, auth, transactions)
+    - pgvector (1024-dim embeddings, HNSW index)
+  ai_ml:
+    - Claude (Opus/Sonnet/Haiku) — generation, extraction, validation
+    - Voyage AI voyage-large-2 — embeddings (1024-dim)
+    - BERTopic — topic modeling (Tier 3)
+    - Python FastAPI — IRT/GNN (Tier 2)
+  testing:
+    - Vitest (unit/API tests — 70%)
+    - Playwright (E2E — 30%)
+    - React Testing Library
+  deployment:
+    - Vercel (frontend)
+    - Railway / AWS ECS (backend)
+    - Docker Compose (local)
+    - GitHub Actions (CI/CD)
+  monorepo:
+    - Turborepo
+    - pnpm workspaces
+
+# ── Personas ────────────────────────────────────────────────
+personas:
+  - name: Dr. Amara Osei
+    role: Course Director (Faculty)
+    lane: faculty
+    pain_points:
+      - Spends 2 full weekends per semester writing exam questions
+      - No objective USMLE coverage tracking
+      - LCME evidence assembly is manual and slow
+      - Cannot objectively flag low-quality faculty questions
+      - Lacks granular student performance data for early intervention
+
+  - name: Marcus Williams
+    role: M2 Student
+    lane: student
+    pain_points:
+      - No connection between coursework and board prep
+      - Blind practice with no adaptive targeting
+      - Exam results as single score, not concept-level breakdown
+      - No Step 1 readiness tracking
+
+  - name: Dr. Kenji Takahashi
+    role: Associate Dean for Academic Affairs
+    lane: institutional_admin
+    pain_points:
+      - LCME compliance reporting is weeks of manual work
+      - Curriculum quality depends on individual faculty diligence
+      - Student performance tracking is reactive, not predictive
+
+  - name: Academic Advisor (unnamed)
+    role: Advisor
+    lane: advisor
+    pain_points:
+      - Identifies struggling students too late
+      - No concept-level diagnostic data
+      - Remediation recommendations are generic
+
+# ── Conflict Check ──────────────────────────────────────────
+conflicts:
+  - id: C-001
+    type: branding
+    description: "QWEST_Source_Document_Traceability uses old 'QWEST' branding instead of 'Journey OS'. Content is valid but names are outdated."
+    resolution: "Use Journey OS branding. QWEST references are historical only."
+    affected_docs:
+      - .context/source/05-reference/QWEST_Source_Document_Traceability_by_Phase.md
+
+  - id: C-002
+    type: embedding_model
+    description: "E2E Colab Plan v3 references dual embedding strategy (OpenAI 1536 + Voyage 1024). Architecture v10 originally standardized on Voyage 1024 only."
+    resolution: "Production uses both: OpenAI text-embedding-3-small (1536-dim) and Voyage AI voyage-large-2 (1024-dim). Dual embedding columns on all vector tables."
+    affected_docs:
+      - .context/source/05-reference/Journey_OS_E2E_Colab_Plan_v3.md
+      - .context/source/02-architecture/ARCHITECTURE_v10.md
+
+  - id: C-002a
+    type: doc_update_needed
+    description: "ARCHITECTURE_v10.md §2.1 says 'Voyage 1024 only' and SUPABASE_DDL_v1.md defines single vector columns. Both need dual embedding columns (OpenAI 1536 + Voyage 1024) per C-002 resolution."
+    resolution: "Update both docs when implementation begins: add second vector column to all embedding tables, revise architecture language from 'Voyage only' to dual embedding."
+    affected_docs:
+      - .context/source/02-architecture/ARCHITECTURE_v10.md
+      - .context/source/03-schema/SUPABASE_DDL_v1.md
+
+  - id: C-003
+    type: node_types
+    description: "Traceability doc lists CurriculumUnit, Clerkship, LearningCommunity, PromotionGate, ClinicalSite which are not in NODE_REGISTRY v1.0. These may be deferred or merged."
+    resolution: "NODE_REGISTRY v1.0 is canonical. Extra node types in traceability doc are informational — implement only if added to registry."
+    affected_docs:
+      - .context/source/05-reference/QWEST_Source_Document_Traceability_by_Phase.md
+      - .context/source/03-schema/NODE_REGISTRY_v1.md
