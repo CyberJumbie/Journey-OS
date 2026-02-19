@@ -1,0 +1,33 @@
+{
+  "_comment": "LCME Standards and Elements — ~95 nodes. Source: LCME.org 'Functions and Structure of a Medical School' (current edition).",
+  "_populate_instructions": [
+    "Download the current LCME standards document from lcme.org",
+    "Each Standard becomes an LCME_Standard node",
+    "Each Element under a standard becomes an LCME_Element node",
+    "Use Gemini to extract and format: gemini -p 'Extract LCME standards and elements from this document...' --files [lcme-pdf]",
+    "Expected count: ~12 standards, ~93 elements = ~95 total nodes"
+  ],
+
+  "standards": [
+    {
+      "id": "lcme-std-1",
+      "name": "Mission, Planning, Organization, and Integrity",
+      "number": "1",
+      "elements": [
+        { "id": "lcme-1.1", "standard_id": "lcme-std-1", "number": "1.1", "name": "Strategic Planning and Continuous Quality Improvement", "text": "TODO" },
+        { "id": "lcme-1.2", "standard_id": "lcme-std-1", "number": "1.2", "name": "Conflict of Interest Policies", "text": "TODO" },
+        { "id": "lcme-1.3", "standard_id": "lcme-std-1", "number": "1.3", "name": "Mechanisms for Governance and Administration", "text": "TODO" }
+      ]
+    },
+    {
+      "id": "lcme-std-2",
+      "name": "Leadership and Administration",
+      "number": "2",
+      "elements": [
+        { "id": "lcme-2.1", "standard_id": "lcme-std-2", "number": "2.1", "name": "Administrative Officer and Faculty", "text": "TODO" }
+      ]
+    }
+  ],
+
+  "_note": "This file shows the structure. Populate all 12 standards and ~93 elements from the official LCME document before seeding."
+}

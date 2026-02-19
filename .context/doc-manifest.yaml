@@ -1,7 +1,7 @@
 # Journey OS — Document Manifest
-# Generated: 2026-02-19
-# Total documents: 21
-# Total size: 623 KB
+# Generated: 2026-02-19 | Updated: 2026-02-19
+# Total documents: 32
+# Total size: 647 KB
 # Review this manifest before proceeding to /personas
 
 documents:
@@ -343,6 +343,148 @@ documents:
     defines_database_schema: false
     defines_visual_design: true
 
+  # ── Tier 05: Reference — Seed Data ─────────────────────────
+  - path: .context/source/05-reference/seed/usmle-systems.json
+    role: reference
+    summary: USMLE Step 1 organ systems — 16 entries with id, name, order. Authoritative seed data for USMLE_System nodes.
+    size_kb: 1
+    key_entities:
+      - 16 USMLE organ systems
+      - General Principles through Pharmacology/Therapeutics
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: true
+    defines_visual_design: false
+    status: complete
+
+  - path: .context/source/05-reference/seed/usmle-disciplines.json
+    role: reference
+    summary: USMLE preclinical disciplines — 7 entries (Anatomy, Biochemistry, Pathology, etc.). Seed data for USMLE_Discipline nodes.
+    size_kb: 1
+    key_entities:
+      - 7 USMLE disciplines
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: true
+    defines_visual_design: false
+    status: complete
+
+  - path: .context/source/05-reference/seed/usmle-tasks.json
+    role: reference
+    summary: USMLE physician tasks — 4 entries (Diagnosis, Management, Prevention, Mechanisms). Seed data for USMLE_Task nodes.
+    size_kb: 1
+    key_entities:
+      - 4 USMLE physician tasks
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: true
+    defines_visual_design: false
+    status: complete
+
+  - path: .context/source/05-reference/seed/lcme-standards.json
+    role: reference
+    summary: LCME accreditation standards skeleton — 2 of ~12 standards with 1 element. INCOMPLETE — needs full extraction.
+    size_kb: 2
+    key_entities:
+      - LCME standards
+      - LCME elements
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: true
+    defines_visual_design: false
+    status: incomplete
+
+  - path: .context/source/05-reference/seed/acgme-competencies.json
+    role: reference
+    summary: ACGME 6-domain competency framework — 6 domains + 30 competencies (36 total). Seed data for ACGME_Domain and ACGME_Subdomain nodes.
+    size_kb: 4
+    key_entities:
+      - 6 ACGME domains
+      - 30 ACGME competencies
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: true
+    defines_visual_design: false
+    status: complete
+
+  - path: .context/source/05-reference/seed/aamc-competencies.json
+    role: reference
+    summary: AAMC 8-domain competency framework with descriptions. Seed data for AAMC_Domain nodes.
+    size_kb: 1
+    key_entities:
+      - 8 AAMC competency domains
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: true
+    defines_visual_design: false
+    status: complete
+
+  - path: .context/source/05-reference/seed/epa-ume-competencies.json
+    role: reference
+    summary: Core EPAs for UME — 8 domains + 13 EPAs. Subcompetencies marked TODO. Seed data for EPA and UME_Domain nodes.
+    size_kb: 3
+    key_entities:
+      - 13 EPAs
+      - 8 UME domains
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: true
+    defines_visual_design: false
+    status: partial
+
+  - path: .context/source/05-reference/seed/Ume.json
+    role: reference
+    summary: UME/DO competency framework — 6 competencies with 60 subcompetencies. Seed data for UME_Competency and UME_Subcompetency nodes.
+    size_kb: 7
+    key_entities:
+      - 6 UME competencies
+      - 60 UME subcompetencies
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: true
+    defines_visual_design: false
+    status: complete
+
+  - path: .context/source/05-reference/seed/bloom-levels.json
+    role: reference
+    summary: Revised Bloom's taxonomy — 6 cognitive levels with action verbs. Seed data for BloomLevel nodes.
+    size_kb: 1
+    key_entities:
+      - 6 Bloom levels (Remember through Create)
+      - action verbs per level
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: true
+    defines_visual_design: false
+    status: complete
+
+  - path: .context/source/05-reference/seed/miller-levels.json
+    role: reference
+    summary: Miller's pyramid — 4 competence levels with assessment methods. Seed data for MillerLevel nodes.
+    size_kb: 1
+    key_entities:
+      - 4 Miller levels (Knows through Does)
+      - assessment methods per level
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: true
+    defines_visual_design: false
+    status: complete
+
+  - path: .context/source/05-reference/seed/msm-catalog.json
+    role: reference
+    summary: MSM institutional catalog — 1 institution, 1 program, 4 phases, 21 courses. Layer 1 institutional seed data.
+    size_kb: 4
+    key_entities:
+      - Morehouse School of Medicine
+      - MD program structure
+      - 21 courses across 4 phases
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: true
+    defines_visual_design: false
+    status: complete
+
 # ── Tech Stack ──────────────────────────────────────────────
 tech_stack:
   frontend:
@@ -440,6 +582,14 @@ conflicts:
     affected_docs:
       - .context/source/02-architecture/ARCHITECTURE_v10.md
       - .context/source/03-schema/SUPABASE_DDL_v1.md
+
+  - id: C-004
+    type: seed_data_completeness
+    description: "Seed JSON files have varying completeness. lcme-standards.json has only 2 of ~12 standards. epa-ume-competencies.json has subcompetencies marked TODO. No usmle-topics.json file exists (~200 topics needed)."
+    resolution: "Use complete files as-is. For incomplete files, fill from authoritative sources during implementation. USMLE topics must be authored during STORY-U-7."
+    affected_docs:
+      - .context/source/05-reference/seed/lcme-standards.json
+      - .context/source/05-reference/seed/epa-ume-competencies.json
 
   - id: C-003
     type: node_types

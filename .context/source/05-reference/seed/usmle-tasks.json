@@ -1,0 +1,6 @@
+[
+  { "id": "usmle-task-01", "name": "Diagnosis", "order": 1 },
+  { "id": "usmle-task-02", "name": "Management / Treatment", "order": 2 },
+  { "id": "usmle-task-03", "name": "Health Maintenance / Disease Prevention", "order": 3 },
+  { "id": "usmle-task-04", "name": "Mechanisms of Disease / Basic Science Concepts", "order": 4 }
+]

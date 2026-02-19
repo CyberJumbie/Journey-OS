@@ -1,0 +1,18 @@
+[
+  { "id": "usmle-sys-01", "name": "General Principles", "order": 1 },
+  { "id": "usmle-sys-02", "name": "Blood & Lymphoreticular System", "order": 2 },
+  { "id": "usmle-sys-03", "name": "Behavioral Health", "order": 3 },
+  { "id": "usmle-sys-04", "name": "Nervous System & Special Senses", "order": 4 },
+  { "id": "usmle-sys-05", "name": "Skin & Subcutaneous Tissue", "order": 5 },
+  { "id": "usmle-sys-06", "name": "Musculoskeletal System", "order": 6 },
+  { "id": "usmle-sys-07", "name": "Cardiovascular System", "order": 7 },
+  { "id": "usmle-sys-08", "name": "Respiratory System", "order": 8 },
+  { "id": "usmle-sys-09", "name": "Gastrointestinal System", "order": 9 },
+  { "id": "usmle-sys-10", "name": "Renal & Urinary System", "order": 10 },
+  { "id": "usmle-sys-11", "name": "Pregnancy, Childbirth & Puerperium", "order": 11 },
+  { "id": "usmle-sys-12", "name": "Female Reproductive & Breast", "order": 12 },
+  { "id": "usmle-sys-13", "name": "Male Reproductive", "order": 13 },
+  { "id": "usmle-sys-14", "name": "Endocrine System", "order": 14 },
+  { "id": "usmle-sys-15", "name": "Immune System", "order": 15 },
+  { "id": "usmle-sys-16", "name": "Biostatistics & Epidemiology / Population Health", "order": 16 }
+]

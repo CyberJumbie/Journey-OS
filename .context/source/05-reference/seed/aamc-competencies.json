@@ -1,0 +1,10 @@
+[
+  { "id": "aamc-1", "name": "Knowledge for Practice", "description": "Demonstrate knowledge of established and evolving biomedical, clinical, epidemiological, and social-behavioral sciences" },
+  { "id": "aamc-2", "name": "Patient Care", "description": "Provide patient-centered care that is compassionate, appropriate, and effective" },
+  { "id": "aamc-3", "name": "Practice-Based Learning and Improvement", "description": "Demonstrate the ability to investigate and evaluate patient care practices" },
+  { "id": "aamc-4", "name": "Interpersonal and Communication Skills", "description": "Demonstrate interpersonal and communication skills that result in effective exchange of information" },
+  { "id": "aamc-5", "name": "Professionalism", "description": "Demonstrate a commitment to carrying out professional responsibilities and adherence to ethical principles" },
+  { "id": "aamc-6", "name": "Systems-Based Practice", "description": "Demonstrate awareness of and responsiveness to the larger context and system of health care" },
+  { "id": "aamc-7", "name": "Interprofessional Collaboration", "description": "Demonstrate the ability to engage in an interprofessional team in a manner that optimizes safe, effective patient care" },
+  { "id": "aamc-8", "name": "Personal and Professional Development", "description": "Demonstrate qualities required to sustain lifelong personal and professional growth" }
+]

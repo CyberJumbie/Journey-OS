@@ -1,0 +1,89 @@
+{
+    "competencies": [
+        {
+            "name": "Professionalism",
+            "definition": "Demonstrates integrity, respect, and ethical reasoning, and promotes inclusion of differences in all interactions to improve health care for patients, communities, and populations.",
+            "subcompetencies": [
+                "1. Demonstrates respect and compassion for patients, caregivers, families, and team members.",
+                "2. Safeguards patient privacy, confidentiality, and autonomy.",
+                "3. Uses ethical principles and reasoning to guide behavior.",
+                "4. Adapts actions and communication according to the situation.",
+                "5. Takes ownership of mistakes and acts to address them.",
+                "6. Identifies personal limits of knowledge and skills and seeks help appropriately.",
+                "7. Identifies biases and strategies to mitigate their effects.",
+                "8. Demonstrates humility and a willingness to learn from others with different backgrounds and experiences.",
+                "9. Recognizes and addresses personal well-being needs that may impact professional performance.",
+                "10. Completes duties and tasks in a thorough, reliable, and timely manner.",
+                "11. DO-specific: Demonstrates the philosophy of osteopathic medicine by promoting its four tenets."
+            ]
+        },
+        {
+            "name": "Patient Care and Procedural Skills",
+            "definition": "Demonstrates compassionate, effective, holistic, evidence-informed, equitable, and patient-centered care.",
+            "subcompetencies": [
+                "1. Integrates patient and caregiver context, needs, values, preferences, and experiences into patient care.",
+                "2. Gathers relevant patient histories from multiple data sources, as necessary.",
+                "3. Performs relevant physical examinations using appropriate techniques and tools.",
+                "4. Identifies patients in need of urgent or emergent care, seeks assistance, and recommends initial evaluation and management.",
+                "5. Creates and prioritizes differential diagnoses.",
+                "6. Proposes hypothesis-driven diagnostic testing and interprets results.",
+                "7. Formulates therapeutic management plans for commonly encountered clinical conditions.",
+                "8. Uses patient-centered language to describe common diagnostic and therapeutic interventions and plans.",
+                "9. Demonstrates basic procedural techniques.",
+                "10. Incorporates health promotion and disease prevention into patient care plans.",
+                "11. Identifies individual and structural factors that impact health and wellness.",
+                "12. DO-specific: Incorporates osteopathic principles, practices, and tenets into patient care.",
+                "13. DO-specific: Performs an osteopathic, structural examination and treats altered function of the body framework system or somatic dysfunction with osteopathic manipulative treatment (OMT)."
+            ]
+        },
+        {
+            "name": "Medical Knowledge",
+            "definition": "Applies and integrates foundational knowledge to improve health care for patients and populations.",
+            "subcompetencies": [
+                "1. Demonstrates knowledge of basic, clinical, pathophysiologic, social, and health systems sciences, as well as humanities, needed for clinical practice.",
+                "2. Applies foundational knowledge for clinical problem-solving, diagnostic reasoning, and decision-making to clinical scenarios.",
+                "3. Discerns the accuracy of information and relevance to clinical problems.",
+                "4. Demonstrates knowledge of research design, interpretation, and application to clinical questions.",
+                "5. Accesses knowledge relevant to clinical problems using appropriate resources, including emerging technologies.",
+                "6. DO-specific: Demonstrates knowledge of how to integrate osteopathic principles, practices, and tenets into patient care."
+            ]
+        },
+        {
+            "name": "Practice-Based Learning and Improvement",
+            "definition": "Integrates feedback, evidence, and reflection to adapt behavior, foster improvement, and cultivate lifelong learning.",
+            "subcompetencies": [
+                "1. Actively seeks and incorporates feedback and assessment data to improve performance.",
+                "2. Identifies opportunities for growth in one's own performance through informed self-assessment and reflective practice.",
+                "3. Develops, implements, and reassesses learning and improvement goals.",
+                "4. Locates, critically appraises, and synthesizes information to support evidence-informed, patient-centered clinical decisions.",
+                "5. Demonstrates inquiry and ability to grow and seek new knowledge."
+            ]
+        },
+        {
+            "name": "Interpersonal and Communication Skills",
+            "definition": "Effectively communicates and interacts with patients, caregivers, and the health care team to contribute to high-quality, patient-centered care.",
+            "subcompetencies": [
+                "1. Collaborates with patients, caregivers, and team members to enhance the therapeutic relationship.",
+                "2. Collaborates with health care and administrative team members to enhance team and organizational function.",
+                "3. Demonstrates active listening.",
+                "4. Communicates clearly, accurately, and compassionately in verbal, nonverbal, written, and electronic formats.",
+                "5. Demonstrates skills in educating patients, caregivers, peers, and team members.",
+                "6. Formulates and shares feedback constructively with others."
+            ]
+        },
+        {
+            "name": "Systems-Based Practice",
+            "definition": "Applies knowledge of the larger context of health, including its social and structural determinants, and of systems and resources within and outside of health care, to optimize high-quality care for patients, communities, and populations.",
+            "subcompetencies": [
+                "1. Applies knowledge of social and structural drivers of health.",
+                "2. Recognizes mechanisms to reduce disparities in patient care and health care systems.",
+                "3. Adapts performance to various health care teams, delivery settings, and systems.",
+                "4. Collaborates in transitions and coordination of patient care.",
+                "5. Evaluates the risks and benefits of using current and emerging technologies in patient care.",
+                "6. Identifies patient safety concerns, systems issues, and opportunities for quality improvement.",
+                "7. Describes health policy and the financial context of health care.",
+                "8. Applies knowledge of local population and community health needs, disparities, and resources."
+            ]
+        }
+    ]
+}

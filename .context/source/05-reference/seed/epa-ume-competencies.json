@@ -1,0 +1,40 @@
+{
+  "_comment": "Core EPAs for Entering Residency — ~80 nodes. Source: AAMC Core Entrustable Professional Activities (Core EPAs) for Entering Residency.",
+  "_populate_instructions": [
+    "Source: AAMC 'Core Entrustable Professional Activities for Entering Residency' (2014, updated drafts)",
+    "13 Core EPAs, each with key functions (subcompetencies)",
+    "Use Gemini to extract: gemini -p 'Extract EPA domains, competencies, and subcompetencies...'",
+    "Expected count: ~8 domains + ~13 competencies (EPAs) + ~60 subcompetencies = ~80 nodes"
+  ],
+
+  "domains": [
+    { "id": "ume-dom-1", "name": "Patient Care" },
+    { "id": "ume-dom-2", "name": "Knowledge for Practice" },
+    { "id": "ume-dom-3", "name": "Practice-Based Learning & Improvement" },
+    { "id": "ume-dom-4", "name": "Interpersonal & Communication Skills" },
+    { "id": "ume-dom-5", "name": "Professionalism" },
+    { "id": "ume-dom-6", "name": "Systems-Based Practice" },
+    { "id": "ume-dom-7", "name": "Interprofessional Collaboration" },
+    { "id": "ume-dom-8", "name": "Personal & Professional Development" }
+  ],
+
+  "competencies": [
+    { "id": "epa-1", "name": "Gather a history and perform a physical examination", "domain_ids": ["ume-dom-1", "ume-dom-4"] },
+    { "id": "epa-2", "name": "Prioritize a differential diagnosis following a clinical encounter", "domain_ids": ["ume-dom-1", "ume-dom-2"] },
+    { "id": "epa-3", "name": "Recommend and interpret common diagnostic and screening tests", "domain_ids": ["ume-dom-1", "ume-dom-2"] },
+    { "id": "epa-4", "name": "Enter and discuss orders and prescriptions", "domain_ids": ["ume-dom-1", "ume-dom-6"] },
+    { "id": "epa-5", "name": "Document a clinical encounter in the patient record", "domain_ids": ["ume-dom-1", "ume-dom-4"] },
+    { "id": "epa-6", "name": "Provide an oral presentation of a clinical encounter", "domain_ids": ["ume-dom-4"] },
+    { "id": "epa-7", "name": "Form clinical questions and retrieve evidence to advance patient care", "domain_ids": ["ume-dom-2", "ume-dom-3"] },
+    { "id": "epa-8", "name": "Give or receive a patient handover to transition care responsibility", "domain_ids": ["ume-dom-4", "ume-dom-6"] },
+    { "id": "epa-9", "name": "Collaborate as a member of an interprofessional team", "domain_ids": ["ume-dom-7"] },
+    { "id": "epa-10", "name": "Recognize a patient requiring urgent or emergent care and initiate evaluation and management", "domain_ids": ["ume-dom-1"] },
+    { "id": "epa-11", "name": "Obtain informed consent for tests and/or procedures", "domain_ids": ["ume-dom-4", "ume-dom-5"] },
+    { "id": "epa-12", "name": "Perform general procedures of a physician", "domain_ids": ["ume-dom-1"] },
+    { "id": "epa-13", "name": "Identify system failures and contribute to a culture of safety and improvement", "domain_ids": ["ume-dom-6", "ume-dom-3"] }
+  ],
+
+  "subcompetencies": [
+    { "_note": "TODO: Populate ~60 subcompetencies from the full AAMC EPA framework. Each EPA has 3-6 key functions that become UME_Subcompetency nodes." }
+  ]
+}

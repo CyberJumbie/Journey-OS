@@ -1,0 +1,9 @@
+[
+  { "id": "usmle-disc-01", "name": "Anatomy", "order": 1 },
+  { "id": "usmle-disc-02", "name": "Biochemistry & Nutrition", "order": 2 },
+  { "id": "usmle-disc-03", "name": "Microbiology", "order": 3 },
+  { "id": "usmle-disc-04", "name": "Pathology", "order": 4 },
+  { "id": "usmle-disc-05", "name": "Pharmacology", "order": 5 },
+  { "id": "usmle-disc-06", "name": "Physiology", "order": 6 },
+  { "id": "usmle-disc-07", "name": "Behavioral Science", "order": 7 }
+]

@@ -1,0 +1,75 @@
+{
+  "_comment": "Layer 1: Catalog — Morehouse School of Medicine institutional structure. ~65 nodes. CUSTOMIZE THIS for your institution.",
+
+  "institution": {
+    "id": "inst-msm",
+    "name": "Morehouse School of Medicine",
+    "lcme_id": "TODO — add LCME institutional ID"
+  },
+
+  "programs": [
+    {
+      "id": "prog-md",
+      "name": "Doctor of Medicine",
+      "degree_type": "MD",
+      "tracks": [
+        {
+          "id": "track-4yr",
+          "name": "4-Year Standard",
+          "phases": [
+            {
+              "id": "phase-1",
+              "name": "Phase 1: Foundations of Medicine",
+              "order": 1,
+              "courses": [
+                { "id": "course-medi530", "code": "MEDI 530", "title": "Molecular & Cellular Foundations of Medicine", "credits": 6, "department": "Biomedical Sciences" },
+                { "id": "course-medi531", "code": "MEDI 531", "title": "Structure & Function of the Human Body", "credits": 8, "department": "Anatomy" },
+                { "id": "course-medi532", "code": "MEDI 532", "title": "Host Defense & Infectious Disease", "credits": 4, "department": "Microbiology" },
+                { "id": "course-medi533", "code": "MEDI 533", "title": "Neuroscience & Behavioral Medicine", "credits": 5, "department": "Neuroscience" }
+              ]
+            },
+            {
+              "id": "phase-2",
+              "name": "Phase 2: Clinical Sciences",
+              "order": 2,
+              "courses": [
+                { "id": "course-clrk-im", "code": "CLRK 601", "title": "Internal Medicine Clerkship", "credits": 12, "department": "Internal Medicine" },
+                { "id": "course-clrk-surg", "code": "CLRK 602", "title": "Surgery Clerkship", "credits": 8, "department": "Surgery" },
+                { "id": "course-clrk-peds", "code": "CLRK 603", "title": "Pediatrics Clerkship", "credits": 6, "department": "Pediatrics" },
+                { "id": "course-clrk-obgyn", "code": "CLRK 604", "title": "Obstetrics & Gynecology Clerkship", "credits": 6, "department": "OB/GYN" },
+                { "id": "course-clrk-psych", "code": "CLRK 605", "title": "Psychiatry Clerkship", "credits": 6, "department": "Psychiatry" },
+                { "id": "course-clrk-fm", "code": "CLRK 606", "title": "Family Medicine Clerkship", "credits": 6, "department": "Family Medicine" }
+              ]
+            },
+            {
+              "id": "phase-3",
+              "name": "Phase 3: Advanced Clinical Experience",
+              "order": 3,
+              "courses": [
+                { "id": "course-sub-im", "code": "SUB 701", "title": "Sub-Internship: Internal Medicine", "credits": 4, "department": "Internal Medicine" },
+                { "id": "course-elec-01", "code": "ELEC 710", "title": "Clinical Elective I", "credits": 4, "department": "Various" },
+                { "id": "course-elec-02", "code": "ELEC 720", "title": "Clinical Elective II", "credits": 4, "department": "Various" }
+              ]
+            },
+            {
+              "id": "phase-4",
+              "name": "Phase 4: Transition to Residency",
+              "order": 4,
+              "courses": [
+                { "id": "course-capstone", "code": "CAPS 801", "title": "Capstone Course", "credits": 2, "department": "Medical Education" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+
+  "_populate_instructions": [
+    "Replace TODO values with actual institutional data",
+    "Add/remove courses to match your actual curriculum",
+    "Course IDs must be unique and stable — they become Neo4j node IDs",
+    "Sessions (term-specific offerings) are created dynamically, not seeded here",
+    "Gemini will generate the Cypher MERGE statements from this JSON"
+  ]
+}
