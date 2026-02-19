@@ -10,7 +10,7 @@ spec_status:
   user_flows: done          # 35 flows (T0: 17, T1: 13, T2: 5)
   epics: done               # 45 epics across 21 features
   decompose_all: done       # 166 stories across 45 epics, 26 sprints
-  prioritize: pending
+  prioritize: done         # 166 stories ordered across 6 lanes, 41 cross-lane deps
   briefs: pending  # ALL briefs must complete before development
   ready_for_development: false
 
@@ -38,8 +38,8 @@ lanes:
     priority: 3
     total: 75       # E-08: 4, E-10: 3, E-11: 4, E-12: 4, E-13: 3, E-18: 4, E-19: 4, E-20: 4, E-21: 4, E-22: 3, E-23: 4, E-24: 4, E-25: 4, E-26: 4, E-27: 4, E-32: 4, E-34: 4, E-35: 3, E-38: 3, E-39: 4
     done: 0
-    ready: 0
-    blocked: 75     # all blocked by upstream dependencies
+    ready: 3        # STORY-F-3 (Import Parser), F-4 (Template Model), F-8 (Help Pages) — zero deps
+    blocked: 72     # rest blocked by upstream dependencies
   student:
     priority: 4
     total: 15       # E-40: 4, E-41: 4, E-42: 4, E-43: 3

@@ -1,0 +1,51 @@
+# .context/spec/backlog/LANE-CONFIG.yaml
+# Lane configuration for Journey OS backlog prioritization
+# Generated: 2026-02-19
+
+lanes:
+  universal:
+    priority: 0
+    prefix: "U"
+    description: "Infrastructure, auth, shared services — no single persona"
+    stories: 14
+    epics: [E-01, E-02, E-03, E-16]
+
+  superadmin:
+    priority: 1
+    prefix: "SA"
+    description: "Platform-wide management across institutions"
+    persona: "System Administrator"
+    stories: 9
+    epics: [E-04, E-05, E-07]
+
+  institutional_admin:
+    priority: 2
+    prefix: "IA"
+    description: "Institution config, programs, faculty, analytics"
+    persona: "Dr. Kenji Takahashi"
+    stories: 44
+    epics: [E-06, E-09, E-14, E-15, E-17, E-28, E-29, E-30, E-31, E-33, E-36, E-37]
+
+  faculty:
+    priority: 3
+    prefix: "F"
+    description: "Content creation, generation workbench, curriculum mapping"
+    persona: "Dr. Amara Osei"
+    stories: 75
+    epics: [E-08, E-10, E-11, E-12, E-13, E-18, E-19, E-20, E-21, E-22, E-23, E-24, E-25, E-26, E-27, E-32, E-34, E-35, E-38, E-39]
+
+  student:
+    priority: 4
+    prefix: "ST"
+    description: "Learning path, assessments, adaptive practice, progress"
+    persona: "Marcus Williams"
+    stories: 15
+    epics: [E-40, E-41, E-42, E-43]
+
+  advisor:
+    priority: 5
+    prefix: "AD"
+    description: "Student monitoring, intervention alerts, progress dashboards"
+    persona: "Fatima Al-Rashid"
+    stories: 9
+    epics: [E-44, E-45]
