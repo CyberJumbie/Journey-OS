@@ -1,13 +1,13 @@
 # docs/coverage.yaml — Progress tracking with persona lanes
-project: "[project name]"
-updated: "[date]"
+project: "Journey OS"
+updated: "2026-02-19"
 
 # Spec pipeline completion
 spec_status:
-  classify: pending
-  personas: pending
-  features: pending
-  user_flows: pending
+  classify: done
+  personas: done
+  features: done           # 21 features (T0: 10, T1: 8, T2: 3)
+  user_flows: in_progress  # 30/~36 flows (T0: 17, T1: 13, T2: pending)
   epics: pending
   decompose_all: pending
   prioritize: pending
@@ -66,8 +66,8 @@ completed: []
 
 # Error-to-rule pipeline
 error_pipeline:
-  total_errors_captured: 0
-  total_rules_created: 0
+  total_errors_captured: 1
+  total_rules_created: 1
   recurrence_rate: 0
 
 # Time allocation tracking
