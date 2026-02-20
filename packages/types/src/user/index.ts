@@ -14,3 +14,8 @@ export type {
   InviteUserRequest,
   InviteUserResponse,
 } from "./institution-user.types";
+export type {
+  UserReassignmentRequest,
+  UserReassignmentResult,
+  ReassignmentAuditEntry,
+} from "./reassignment.types";

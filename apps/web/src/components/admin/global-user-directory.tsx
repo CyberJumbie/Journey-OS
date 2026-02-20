@@ -197,13 +197,14 @@ export function GlobalUserDirectory() {
                 dir={sortDir}
                 onSort={handleSort}
               />
+              <th className="px-4 py-3">Actions</th>
             </tr>
           </thead>
           <tbody>
             {status === "loading" &&
               Array.from({ length: 5 }).map((_, i) => (
                 <tr key={i} className="border-b">
-                  {Array.from({ length: 6 }).map((__, j) => (
+                  {Array.from({ length: 7 }).map((__, j) => (
                     <td key={j} className="px-4 py-3">
                       <div className="h-4 w-24 animate-pulse rounded bg-gray-200" />
                     </td>
@@ -249,12 +250,22 @@ export function GlobalUserDirectory() {
                       ? new Date(user.last_login_at).toLocaleDateString()
                       : "Never"}
                   </td>
+                  <td className="px-4 py-3">
+                    {user.institution_id && (
+                      <button
+                        onClick={() => setReassignUser(user)}
+                        className="rounded border border-gray-300 px-2 py-1 text-xs text-gray-700 hover:bg-gray-50"
+                      >
+                        Reassign
+                      </button>
+                    )}
+                  </td>
                 </tr>
               ))}
 
             {status === "empty" && (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
+                <td colSpan={7} className="px-4 py-8 text-center text-gray-500">
                   No users found.{" "}
                   <button
                     onClick={resetFilters}
@@ -268,7 +279,7 @@ export function GlobalUserDirectory() {
 
             {status === "error" && (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-red-600">
+                <td colSpan={7} className="px-4 py-8 text-center text-red-600">
                   {errorMsg}{" "}
                   <button
                     onClick={fetchUsers}
@@ -306,6 +317,18 @@ export function GlobalUserDirectory() {
             </button>
           </div>
         </div>
+      )}
+
+      {/* Reassignment Modal */}
+      {reassignUser && (
+        <ReassignmentConfirmModal
+          user={reassignUser}
+          onClose={() => setReassignUser(null)}
+          onReassigned={() => {
+            setReassignUser(null);
+            fetchUsers();
+          }}
+        />
       )}
     </div>
   );

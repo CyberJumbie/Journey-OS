@@ -22,8 +22,11 @@ import { InstitutionService } from "./services/institution/institution.service";
 import { ApprovalController } from "./controllers/institution/approval.controller";
 import { InvitationEmailService } from "./services/email/invitation-email.service";
 import { UserInvitationEmailService } from "./services/email/user-invitation-email.service";
+import { ReassignmentEmailService } from "./services/email/reassignment-email.service";
 import { InstitutionUserService } from "./services/user/institution-user.service";
 import { InstitutionUserController } from "./controllers/user/institution-user.controller";
+import { UserReassignmentService } from "./services/user/user-reassignment.service";
+import { UserReassignmentController } from "./controllers/user/user-reassignment.controller";
 import { getSupabaseClient } from "./config/supabase.config";
 import { envConfig } from "./config/env.config";
 import { AuthRole } from "@journey-os/types";
@@ -109,6 +112,21 @@ app.patch(
   "/api/v1/admin/applications/:id/approve",
   rbac.require(AuthRole.SUPERADMIN),
   (req, res) => approvalController.handleApprove(req, res),
+);
+
+// User reassignment — SuperAdmin only
+const reassignmentEmailService = new ReassignmentEmailService();
+const userReassignmentService = new UserReassignmentService(
+  supabaseClient,
+  reassignmentEmailService,
+);
+const userReassignmentController = new UserReassignmentController(
+  userReassignmentService,
+);
+app.post(
+  "/api/v1/admin/users/:userId/reassign",
+  rbac.require(AuthRole.SUPERADMIN),
+  (req, res) => userReassignmentController.handleReassign(req, res),
 );
 
 // Institution user management — InstitutionalAdmin only

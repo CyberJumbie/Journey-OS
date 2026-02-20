@@ -25,8 +25,8 @@ lanes:
   superadmin:
     priority: 1
     total: 9        # E-04: 4, E-05: 3, E-07: 2
-    done: 4         # SA-1 (Waitlist Application), SA-2 (Global User Directory), SA-3 (Application Review Queue), SA-5 (Approval Workflow)
-    ready: 3        # SA-4 (User Reassignment), SA-6 (Rejection Workflow), SA-7 (Institution List — unblocked by SA-5)
+    done: 5         # SA-1 (Waitlist Application), SA-2 (Global User Directory), SA-3 (Application Review Queue), SA-4 (User Reassignment), SA-5 (Approval Workflow)
+    ready: 2        # SA-6 (Rejection Workflow), SA-7 (Institution List — unblocked by SA-5)
     blocked: 2      # SA-8 (blocked by SA-7), SA-9 (blocked by SA-7)
   institutional_admin:
     priority: 2
@@ -139,21 +139,27 @@ completed:
     completed: 2026-02-20
     api_tests: 17      # institution.service (8) + approval.controller (9)
     e2e_tests: 0
+  - id: STORY-SA-4
+    title: "User Reassignment"
+    lane: superadmin
+    completed: 2026-02-20
+    api_tests: 19      # user-reassignment.service (10) + user-reassignment.controller (9)
+    e2e_tests: 0
 
 # Error-to-rule pipeline
 error_pipeline:
-  total_errors_captured: 21
-  total_rules_created: 21
-  recurrence_rate: 0
+  total_errors_captured: 23
+  total_rules_created: 23
+  recurrence_rate: 4    # 1 recurrence out of 23 = ~4%
 
 # Time allocation tracking
 metrics:
-  stories_completed: 14
+  stories_completed: 15
   stories_total: 166
   avg_story_time_minutes: 0    # not tracked yet
   planning_pct: 0    # target: 40%
   review_pct: 0      # target: 40%
   execution_pct: 0   # target: 10%
   learning_pct: 0    # target: 10%
-  api_tests_total: 329  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33, U-8: 15, U-10: 38, U-11: 16, SA-1: 28, SA-2: 22, SA-3: 20, SA-5: 17
+  api_tests_total: 348  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33, U-8: 15, U-10: 38, U-11: 16, SA-1: 28, SA-2: 22, SA-3: 20, SA-4: 19, SA-5: 17
   e2e_tests_total: 0

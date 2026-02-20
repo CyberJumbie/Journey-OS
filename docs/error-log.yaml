@@ -169,4 +169,18 @@ errors:
     error: "PostToolUse eslint hook stripped newly-added barrel exports from index.ts, causing runtime 'is not a constructor' errors"
     rule: "After editing barrel export files (index.ts), re-read the file to verify the hook didn't strip new exports. Re-add if stripped."
     location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 1
+
+  - date: 2026-02-20
+    story: STORY-SA-4
+    error: "Added imports to index.ts in one edit and route registration in a second edit. PostToolUse hook stripped the imports before route was added."
+    rule: "Add imports AND their usage in a single Edit call. Never split across two edits when PostToolUse hook runs eslint --fix."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-SA-4
+    error: "Test assertion used 'NOT_FOUND' for InstitutionNotFoundError code, but actual code is 'INSTITUTION_NOT_FOUND'. Copied from ApprovalController test which uses ApplicationNotFoundError ('NOT_FOUND')."
+    rule: "Read error class source to verify exact code string before writing test assertions. Don't copy codes across different error classes."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
     recurrence: 0
