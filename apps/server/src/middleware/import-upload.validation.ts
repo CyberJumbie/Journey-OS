@@ -1,4 +1,5 @@
 import multer from "multer";
+import type { RequestHandler } from "express";
 import { FileTypeForbiddenError } from "../errors/import-mapping.errors";
 
 const IMPORT_ACCEPTED_MIME_TYPES = [
@@ -26,4 +27,5 @@ const importUploadMiddleware = multer({
   fileFilter: importFileFilter,
 });
 
-export const importSingleFile = importUploadMiddleware.single("file");
+export const importSingleFile: RequestHandler =
+  importUploadMiddleware.single("file");

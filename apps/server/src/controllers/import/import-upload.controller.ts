@@ -11,7 +11,7 @@ import {
 } from "../../errors/import-mapping.errors";
 
 const FieldMappingSchema = z.object({
-  source_column: z.string().min(1),
+  source_column: z.string().min(1).max(255),
   target_field: z.enum(
     IMPORT_TARGET_FIELDS as unknown as [string, ...string[]],
   ),
@@ -124,14 +124,7 @@ export class ImportUploadController {
       const user = (req as unknown as Record<string, unknown>).user as {
         id: string;
       };
-      const presetId = req.params.id;
-      if (typeof presetId !== "string") {
-        res.status(400).json({
-          data: null,
-          error: { code: "VALIDATION_ERROR", message: "Invalid preset ID" },
-        });
-        return;
-      }
+      const presetId = z.string().uuid().parse(req.params.id);
       await this.#presetService.delete(user.id, presetId);
       res.status(204).send();
     } catch (err) {
@@ -158,9 +151,13 @@ export class ImportUploadController {
 
   async handleExecute(req: Request, res: Response): Promise<void> {
     try {
+      const user = (req as unknown as Record<string, unknown>).user as {
+        id: string;
+      };
       const parsed = ExecuteRequestSchema.parse(req.body);
       // totalRows not known here; pass 0 — STORY-F-57 will look it up
       const result = await this.#uploadService.execute(
+        user.id,
         parsed.upload_id,
         parsed.mappings as unknown as FieldMapping[],
         0,

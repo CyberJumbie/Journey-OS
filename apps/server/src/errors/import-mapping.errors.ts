@@ -23,3 +23,18 @@ export class FileTypeForbiddenError extends JourneyOSError {
     );
   }
 }
+
+export class PresetNotFoundError extends JourneyOSError {
+  constructor(presetId: string) {
+    super(`Preset '${presetId}' not found`, "PRESET_NOT_FOUND");
+  }
+}
+
+export class PresetOperationError extends JourneyOSError {
+  constructor(operation: string, detail: string) {
+    super(
+      `Failed to ${operation} preset: ${detail}`,
+      "PRESET_OPERATION_FAILED",
+    );
+  }
+}

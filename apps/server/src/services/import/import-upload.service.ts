@@ -178,6 +178,7 @@ export class ImportUploadService {
   }
 
   async execute(
+    userId: string,
     uploadId: string,
     mappings: readonly FieldMapping[],
     totalRows: number,

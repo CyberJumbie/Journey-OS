@@ -3,7 +3,10 @@ import type {
   MappingPreset,
   MappingPresetCreateInput,
 } from "@journey-os/types";
-import { UploadNotFoundError } from "../../errors/import-mapping.errors";
+import {
+  PresetNotFoundError,
+  PresetOperationError,
+} from "../../errors/import-mapping.errors";
 
 export class MappingPresetService {
   readonly #supabase: SupabaseClient;
@@ -20,7 +23,7 @@ export class MappingPresetService {
       .order("created_at", { ascending: false });
 
     if (error) {
-      throw new Error(`Failed to list presets: ${error.message}`);
+      throw new PresetOperationError("list", error.message);
     }
 
     return (data ?? []) as MappingPreset[];
@@ -43,21 +46,23 @@ export class MappingPresetService {
       .single();
 
     if (error) {
-      throw new Error(`Failed to create preset: ${error.message}`);
+      throw new PresetOperationError("create", error.message);
     }
 
     return data as MappingPreset;
   }
 
   async delete(userId: string, presetId: string): Promise<void> {
-    const { error, count } = await this.#supabase
+    const { error } = await this.#supabase
       .from("import_presets")
       .delete()
       .eq("id", presetId)
-      .eq("user_id", userId);
+      .eq("user_id", userId)
+      .select()
+      .single();
 
     if (error) {
-      throw new UploadNotFoundError(presetId);
+      throw new PresetNotFoundError(presetId);
     }
   }
 }

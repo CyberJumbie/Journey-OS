@@ -112,4 +112,6 @@ export {
   UploadNotFoundError,
   MappingIncompleteError,
   FileTypeForbiddenError,
+  PresetNotFoundError,
+  PresetOperationError,
 } from "./import-mapping.errors";

@@ -14,10 +14,11 @@ type ApiResponse<T> = { data?: T; error?: { code: string; message: string } };
 
 function getAuthHeaders(): HeadersInit {
   if (typeof window === "undefined") return {};
-  const token = document.cookie
+  const cookiePrefix = "sb-access-token=";
+  const cookie = document.cookie
     .split("; ")
-    .find((c) => c.startsWith("sb-access-token="))
-    ?.split("=")[1];
+    .find((c) => c.startsWith(cookiePrefix));
+  const token = cookie ? cookie.slice(cookiePrefix.length) : undefined;
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
