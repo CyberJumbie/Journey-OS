@@ -12,3 +12,11 @@ export {
   type MarkAllReadResponse,
   VALID_NOTIFICATION_TYPES,
 } from "./notification.types";
+
+export {
+  type SocketNotificationPayload,
+  type ServerToClientEvents,
+  type ClientToServerEvents,
+  type PresenceUpdate,
+  type SocketAuthData,
+} from "./socket.types";
