@@ -14,3 +14,9 @@ export class InvalidApplicationError extends JourneyOSError {
     super(message, "VALIDATION_ERROR");
   }
 }
+
+export class ApplicationNotFoundError extends JourneyOSError {
+  constructor(id: string) {
+    super(`Application not found: ${id}`, "NOT_FOUND");
+  }
+}

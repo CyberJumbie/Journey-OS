@@ -15,6 +15,8 @@ import { ApplicationController } from "./controllers/institution/application.con
 import { createRbacMiddleware } from "./middleware/rbac.middleware";
 import { GlobalUserService } from "./services/user/global-user.service";
 import { GlobalUserController } from "./controllers/user/global-user.controller";
+import { ApplicationReviewService } from "./services/institution/application-review.service";
+import { ApplicationReviewController } from "./controllers/institution/application-review.controller";
 import { getSupabaseClient } from "./config/supabase.config";
 import { envConfig } from "./config/env.config";
 import { AuthRole } from "@journey-os/types";
@@ -74,6 +76,22 @@ const globalUserService = new GlobalUserService(supabaseClient);
 const globalUserController = new GlobalUserController(globalUserService);
 app.get("/api/v1/admin/users", rbac.require(AuthRole.SUPERADMIN), (req, res) =>
   globalUserController.handleList(req, res),
+);
+
+// Application review queue — SuperAdmin only
+const applicationReviewService = new ApplicationReviewService(supabaseClient);
+const applicationReviewController = new ApplicationReviewController(
+  applicationReviewService,
+);
+app.get(
+  "/api/v1/admin/applications",
+  rbac.require(AuthRole.SUPERADMIN),
+  (req, res) => applicationReviewController.handleList(req, res),
+);
+app.get(
+  "/api/v1/admin/applications/:id",
+  rbac.require(AuthRole.SUPERADMIN),
+  (req, res) => applicationReviewController.handleGetById(req, res),
 );
 
 app.listen(PORT, () => {

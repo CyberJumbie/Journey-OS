@@ -78,3 +78,4 @@ Types → Model → Repository → Service → Controller → View → API Tests
 - Used string literal `"superadmin"` instead of `AuthRole.SUPERADMIN` enum when calling `rbac.require()`. Always use the `AuthRole` enum — the method signature requires it.
 - Accessed `.mock.calls[0][0]` in vitest without non-null assertion. TypeScript strict mode requires `.mock.calls[0]![0]` since array index access returns `T | undefined`.
 - Supabase mock with `mockReturnThis()` across insert/select chains caused `single is not a function`. Create separate mock objects per chain stage. See `docs/solutions/supabase-mock-factory.md`.
+- Defined `SortDirection` type in a new file when it already existed in `user/global-user.types.ts`. Barrel re-exported both, causing TS2308 duplicate export. Always grep `packages/types/src` for existing type names before creating new ones.

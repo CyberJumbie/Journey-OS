@@ -121,3 +121,10 @@ errors:
     rule: "Use .mock.calls[0]![0] (non-null assertion) when accessing vitest mock call args"
     location: "Root CLAUDE.md → Things Claude Gets Wrong"
     recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-SA-3
+    error: "Defined SortDirection type in review.types.ts when it already existed in user/global-user.types.ts, causing TS2308 duplicate export"
+    rule: "Grep packages/types/src for existing type names before creating new ones. Reuse shared types from their original location."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0

@@ -10,3 +10,10 @@ export type {
   WaitlistApplication,
   WaitlistApplicationResponse,
 } from "./application.types";
+export type {
+  ApplicationReviewSortField,
+  ApplicationReviewQuery,
+  ApplicationReviewItem,
+  ApplicationDetail,
+  ApplicationReviewResponse,
+} from "./review.types";
