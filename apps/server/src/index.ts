@@ -29,6 +29,8 @@ import { UserReassignmentService } from "./services/user/user-reassignment.servi
 import { UserReassignmentController } from "./controllers/user/user-reassignment.controller";
 import { InvitationAcceptanceService } from "./services/auth/invitation-acceptance.service";
 import { InvitationAcceptanceController } from "./controllers/auth/invitation-acceptance.controller";
+import { OnboardingService } from "./services/auth/onboarding.service";
+import { OnboardingController } from "./controllers/auth/onboarding.controller";
 import { RejectionService } from "./services/institution/rejection.service";
 import { RejectionController } from "./controllers/institution/rejection.controller";
 import { RejectionEmailService } from "./services/email/rejection-email.service";
@@ -116,6 +118,16 @@ app.post("/api/v1/invitations/accept", (req, res) =>
 
 // All other /api/v1 routes require authentication
 app.use("/api/v1", createAuthMiddleware());
+
+// Onboarding — authenticated, no RBAC (all roles access their own onboarding)
+const onboardingService = new OnboardingService(supabaseClient);
+const onboardingController = new OnboardingController(onboardingService);
+app.get("/api/v1/onboarding/status", (req, res) =>
+  onboardingController.handleGetStatus(req, res),
+);
+app.post("/api/v1/onboarding/complete", (req, res) =>
+  onboardingController.handleComplete(req, res),
+);
 
 // Protected routes — SuperAdmin only
 const rbac = createRbacMiddleware();

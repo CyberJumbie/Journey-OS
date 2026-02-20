@@ -45,3 +45,10 @@ export type {
   InvitationAcceptRequest,
   InvitationAcceptResult,
 } from "./invitation.types";
+export type {
+  OnboardingStep,
+  OnboardingConfig,
+  OnboardingStatus,
+  OnboardingCompleteRequest,
+  OnboardingCompleteResult,
+} from "./onboarding.types";

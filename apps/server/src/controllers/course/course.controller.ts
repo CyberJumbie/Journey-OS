@@ -8,6 +8,9 @@ import type {
   ApiResponse,
   CourseDTO,
   CourseListResponse,
+  CourseListQuery,
+  CourseStatus,
+  CourseType,
 } from "@journey-os/types";
 import type { CourseService } from "../../services/course/course.service";
 import {
