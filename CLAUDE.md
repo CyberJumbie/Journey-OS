@@ -40,6 +40,7 @@ packages/types, packages/ui (shadcn/ui), packages/python-api (Tier 2+).
 - All Neo4j operations through Neo4j MCP. Never raw cypher-shell.
 - DualWriteService: Supabase first → Neo4j second → sync_status = 'synced'.
 - Multi-table writes that must be atomic → use `supabase.rpc()` with a Postgres function. Never sequential client-side queries. See `docs/solutions/supabase-transactional-rpc-pattern.md`.
+- Before writing migration DDL, run `list_tables` via Supabase MCP to verify actual table/column names. Story briefs may reference outdated names (e.g., `user_profiles` vs `profiles`, `display_name` vs `full_name`).
 
 ## Testing Rules
 - API tests (70%): vitest for CRUD, auth, validation, data integrity, dual-write.
@@ -53,6 +54,7 @@ Types → Model → Repository → Service → Controller → View → API Tests
 - Parallel subagents must ONLY write artifact files (stories, specs, briefs). Shared tracking files (coverage.yaml, FEATURE-EPIC-MAP.md, MEMORY.md) must ONLY be updated by the main orchestrator after all subagents complete.
 
 ## Monorepo Conventions
+- This monorepo uses **pnpm**. Never use `npm install` or `yarn add`. Use `pnpm add` or `pnpm --filter <workspace> add <package>` (e.g., `pnpm --filter server add multer`).
 - Server imports types via `@journey-os/types` path alias + TypeScript project references (`composite: true` in types tsconfig).
 - Vitest cross-workspace imports need aliases in `vitest.config.ts`, not relative `../../../../` paths.
 - Express app variable needs explicit `Express` type annotation to avoid TS2742.
@@ -97,3 +99,8 @@ Types → Model → Repository → Service → Controller → View → API Tests
 - When using Edit `replace_all: true`, verify the target string's current state in the file first. A previous rename may have already changed the string, and `replace_all` will double the change (e.g., `setFoo` → `setFooOpen` then `replace_all` of `setFoo` → `setFooOpen` produces `setFooOpenOpen`).
 - Test mock response helpers must NOT use `Partial<Response>` as the return type — chainable `.status()` returns don't satisfy Express's full `Response` type (TS2322). Use a plain object type: `{ statusCode: number; body: unknown; status: (code: number) => unknown; json: (data: unknown) => unknown }`. See `docs/solutions/pluggable-rule-engine-pattern.md` for the lint rule engine pattern.
 - The `packages/types` package does NOT include `@types/node`. Use `Uint8Array` instead of `Buffer` for binary data in shared type definitions. `Buffer` is Node-specific and causes TS2580 in the types package build.
+- Used `npm install` in a pnpm workspace — fails with `EUNSUPPORTEDPROTOCOL workspace:*`. Always use `pnpm add` or `pnpm --filter <workspace> add`.
+- Migration DDL referenced `user_profiles` table but actual table is `profiles`. Always run `list_tables` via Supabase MCP before writing DDL. Brief-specified table names may be wrong (recurrence from STORY-F-4).
+- Zod schema with `.optional().default("")` creates divergent input/output types (`string | undefined` vs `string`). When used with `zodResolver` from `@hookform/resolvers`, this causes TS2322 on the `resolver` prop. Use plain `.string().max()` validators and provide defaults via RHF's `defaultValues` instead. See `docs/solutions/react-hook-form-zod-pattern.md`.
+- Configured `multer({ storage: multer.memoryStorage() })` without `limits.fileSize`, allowing unbounded memory allocation before service-layer validation. Always set `limits: { fileSize: DOMAIN_CONSTANT }` on multer to reject oversized payloads at the stream level.
+- When building Supabase queries with conditional filters, apply all `.eq()` filters BEFORE `.order()` and `.range()`. These terminal methods finalize the builder chain — appending `.eq()` after `.range()` fails in mocks (`eq is not a function`) and may silently drop filters in production. Pattern: `from().select().eq(scope)` → conditional `.eq()` filters → `.order().range()` last.

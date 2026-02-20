@@ -232,7 +232,7 @@ errors:
     error: "Ran npx tsc -b from monorepo root which has no typescript install — got 'this is not the tsc command you are looking for'"
     rule: "Already documented in CLAUDE.md — run tsc from within the workspace directory"
     location: "Root CLAUDE.md → Monorepo Conventions"
-    recurrence: 3
+    recurrence: 7
 
   - date: 2026-02-20
     story: STORY-F-2
@@ -273,12 +273,82 @@ errors:
     story: STORY-F-4
     error: "Supabase migration referenced user_profiles FK target but actual table is profiles. Brief DDL had wrong table name."
     rule: "Always verify FK target table names via list_tables MCP before writing migration DDL. Story briefs may reference outdated table names."
-    location: "docs/error-log.yaml (tracking only — brief authoring issue, not code rule)"
-    recurrence: 0
+    location: "Root CLAUDE.md → Database Rules (promoted from tracking-only after recurrence in STORY-F-5)"
+    recurrence: 1
 
   - date: 2026-02-20
     story: STORY-F-4
     error: "Cast Express req.query values as `string | undefined` instead of specific union type, causing TS2345 against TemplateSharingLevel"
     rule: "Cast req.query values to the exact union type (e.g., TemplateDTO['sharing_level'] | undefined), not string | undefined."
     location: "Root CLAUDE.md → Monorepo Conventions (req.params rule extended)"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-11
+    error: "Ran npx tsc -b from monorepo root (recurrence of existing error). Self-corrected to cd into workspace."
+    rule: "Existing rule in CLAUDE.md. Recurrence bumped on STORY-IA-12 entry."
+    location: "Root CLAUDE.md → Monorepo Conventions"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-5
+    error: "Migration DDL referenced user_profiles but actual table is profiles. Recurrence of STORY-F-4 table name error."
+    rule: "Run list_tables via Supabase MCP before writing migration DDL. Brief table names may be wrong."
+    location: "Root CLAUDE.md → Database Rules (new rule added)"
+    recurrence: 1
+
+  - date: 2026-02-20
+    story: STORY-F-5
+    error: "Used npm install multer in pnpm workspace — EUNSUPPORTEDPROTOCOL error."
+    rule: "Always use pnpm add or pnpm --filter <workspace> add. Never npm/yarn."
+    location: "Root CLAUDE.md → Monorepo Conventions (new rule added)"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-5
+    error: "Brief specified display_name column but DB has full_name. Required mapping layer in repository."
+    rule: "Run list_tables or check actual column names via MCP before assuming brief DDL is accurate."
+    location: "Root CLAUDE.md → Database Rules (covered by table name verification rule)"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-5
+    error: "Zod schema used .optional().default('') creating input type string|undefined vs output type string. zodResolver TS2322 on resolver prop."
+    rule: "Don't chain .optional().default() on Zod fields used with zodResolver. Use plain validators + RHF defaultValues."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong + docs/solutions/react-hook-form-zod-pattern.md"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-5
+    error: "multer configured with memoryStorage() but no limits.fileSize. Allows unbounded memory allocation before service validation."
+    rule: "Always set multer limits.fileSize to match domain constant when configuring file upload middleware."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-5
+    error: "profile-form.tsx sent Authorization: Bearer undefined when session was null instead of aborting."
+    rule: "Guard for null session/token before authenticated API calls. Abort with user-facing error, don't send invalid auth headers."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong (not added — one-off, caught by review)"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-SA-8
+    error: "Ran npx tsc -b from monorepo root (recurrence of existing error, now at 6). No other errors — clean implementation. 24 tests pass."
+    rule: "Existing rule in CLAUDE.md. Recurrence bumped on STORY-IA-12 entry."
+    location: "Root CLAUDE.md → Monorepo Conventions"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-IA-8
+    error: "Built Supabase data query as .select().eq().order().range() upfront, then appended .eq() filters after .range(). In mocks, .range() finalizes the chain so subsequent .eq() calls fail with 'eq is not a function'."
+    rule: "Apply all conditional .eq() filters BEFORE .order() and .range(). These terminal methods finalize the Supabase builder chain."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-IA-8
+    error: "Ran npx tsc -b from monorepo root (recurrence of existing error, now at 7)."
+    rule: "Existing rule in CLAUDE.md. Recurrence bumped on STORY-IA-12 entry."
+    location: "Root CLAUDE.md → Monorepo Conventions"
     recurrence: 0
