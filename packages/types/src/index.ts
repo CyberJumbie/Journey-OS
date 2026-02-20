@@ -7,4 +7,5 @@ export * from "./institution";
 export * from "./kaizen";
 export * from "./notification";
 export * from "./objective";
+export * from "./template";
 export * from "./user";

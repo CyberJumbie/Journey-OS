@@ -18,13 +18,16 @@
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "fast-xml-parser": "^5.3.7",
     "neo4j-driver": "^5.28.3",
+    "papaparse": "^5.5.3",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^20.19.33",
+    "@types/papaparse": "^5.5.2",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"

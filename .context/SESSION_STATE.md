@@ -1,11 +1,11 @@
 # Session State — 2026-02-20
 
 ## Current Position
-- **Active story:** STORY-F-2 (Notification Model & Repository)
+- **Active story:** STORY-F-3 (Import Parser)
 - **Lane:** faculty (P3)
-- **Phase:** PULLED — ready for /plan
+- **Phase:** PLANNED — awaiting approval
 - **Branch:** main
-- **Previous story:** STORY-U-14 (Email Verification Gate) — done
+- **Previous story:** STORY-F-2 (Notification Model & Repository) — done (recorded retroactively)
 
 ## Narrative Handoff
 

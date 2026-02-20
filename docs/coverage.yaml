@@ -37,8 +37,8 @@ lanes:
   faculty:
     priority: 3
     total: 75       # E-08: 4, E-10: 3, E-11: 4, E-12: 4, E-13: 3, E-18: 4, E-19: 4, E-20: 4, E-21: 4, E-22: 3, E-23: 4, E-24: 4, E-25: 4, E-26: 4, E-27: 4, E-32: 4, E-34: 4, E-35: 3, E-38: 3, E-39: 4
-    done: 2         # F-1 (Course Model & Repository), F-2 (Notification Model & Repository)
-    ready: 8        # F-3 (Import Parser), F-4 (Template Model), F-5 (Profile Page), F-8 (Help Pages), F-9 (Upload Dropzone), F-11 (Course Hierarchy), F-12 (Course Cards), F-13 (Course List)
+    done: 3         # F-1 (Course Model & Repository), F-2 (Notification Model & Repository), F-3 (Import Parser)
+    ready: 7        # F-4 (Template Model), F-5 (Profile Page), F-8 (Help Pages), F-9 (Upload Dropzone), F-11 (Course Hierarchy), F-12 (Course Cards), F-13 (Course List)
     blocked: 65     # rest blocked by upstream dependencies
   student:
     priority: 4
@@ -217,21 +217,27 @@ completed:
     completed: 2026-02-20
     api_tests: 21      # slo.service (15) + slo.repository (6)
     e2e_tests: 0
+  - id: STORY-F-3
+    title: "Import Parser"
+    lane: faculty
+    completed: 2026-02-20
+    api_tests: 14      # csv-parser (4) + qti-parser (3) + text-parser (3) + parser-factory (4)
+    e2e_tests: 0
 
 # Error-to-rule pipeline
 error_pipeline:
-  total_errors_captured: 27
-  total_rules_created: 26
+  total_errors_captured: 28
+  total_rules_created: 27
   recurrence_rate: 4    # 1 recurrence out of 27 = ~4%
 
 # Time allocation tracking
 metrics:
-  stories_completed: 27
+  stories_completed: 28
   stories_total: 166
   avg_story_time_minutes: 0    # not tracked yet
   planning_pct: 0    # target: 40%
   review_pct: 0      # target: 40%
   execution_pct: 0   # target: 10%
   learning_pct: 0    # target: 10%
-  api_tests_total: 650  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33, U-8: 15, U-9: 25, U-10: 38, U-11: 16, U-12: 72, U-13: 20, U-14: 14, SA-1: 28, SA-2: 22, SA-3: 20, SA-4: 21, SA-5: 17, SA-6: 16, SA-7: 15, IA-2: 21, IA-5: 18, IA-6: 15, IA-12: 23, F-1: 26, F-2: 35
+  api_tests_total: 664  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33, U-8: 15, U-9: 25, U-10: 38, U-11: 16, U-12: 72, U-13: 20, U-14: 14, SA-1: 28, SA-2: 22, SA-3: 20, SA-4: 21, SA-5: 17, SA-6: 16, SA-7: 15, IA-2: 21, IA-5: 18, IA-6: 15, IA-12: 23, F-1: 26, F-2: 35, F-3: 14
   e2e_tests_total: 0
