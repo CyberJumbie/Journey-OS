@@ -96,9 +96,9 @@ export class CourseController {
 
   async handleList(req: Request, res: Response): Promise<void> {
     try {
-      const query = {
-        status: req.query.status as string | undefined,
-        course_type: req.query.course_type as string | undefined,
+      const query: CourseListQuery = {
+        status: req.query.status as CourseStatus | undefined,
+        course_type: req.query.course_type as CourseType | undefined,
         department: req.query.department as string | undefined,
         search: req.query.search as string | undefined,
         page: req.query.page ? Number(req.query.page) : undefined,

@@ -90,11 +90,7 @@ export class CourseRepository {
     );
     const offset = (page - 1) * limit;
 
-    let dataQuery = this.#supabaseClient
-      .from(TABLE)
-      .select("*")
-      .order("created_at", { ascending: false })
-      .range(offset, offset + limit - 1);
+    let dataQuery = this.#supabaseClient.from(TABLE).select("*");
 
     let countQuery = this.#supabaseClient
       .from(TABLE)
@@ -123,7 +119,9 @@ export class CourseRepository {
     }
 
     const [dataResult, countResult] = await Promise.all([
-      dataQuery,
+      dataQuery
+        .order("created_at", { ascending: false })
+        .range(offset, offset + limit - 1),
       countQuery,
     ]);
 
