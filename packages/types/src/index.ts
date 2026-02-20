@@ -1,5 +1,6 @@
 export * from "./admin";
 export * from "./auth";
+export * from "./content";
 export * from "./course";
 export * from "./import";
 export * from "./frameworks";
