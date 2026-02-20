@@ -37,8 +37,8 @@ lanes:
   faculty:
     priority: 3
     total: 75       # E-08: 4, E-10: 3, E-11: 4, E-12: 4, E-13: 3, E-18: 4, E-19: 4, E-20: 4, E-21: 4, E-22: 3, E-23: 4, E-24: 4, E-25: 4, E-26: 4, E-27: 4, E-32: 4, E-34: 4, E-35: 3, E-38: 3, E-39: 4
-    done: 12        # F-1 (Course Model & Repository), F-2 (Notification Model & Repository), F-3 (Import Parser), F-4 (Template Model & CRUD), F-5 (Profile Page), F-6 (Activity Feed), F-7 (KPI Strip), F-8 (Help Pages), F-9 (Upload Dropzone), F-10 (Socket.io Notification), F-11 (Course Hierarchy), F-13 (Course List & Detail Views)
-    ready: 4        # F-12 (Course Cards), F-14 (Template Management), F-15 (Field Mapping UI), F-20 (Course Creation Wizard)
+    done: 13        # F-1 (Course Model & Repository), F-2 (Notification Model & Repository), F-3 (Import Parser), F-4 (Template Model & CRUD), F-5 (Profile Page), F-6 (Activity Feed), F-7 (KPI Strip), F-8 (Help Pages), F-9 (Upload Dropzone), F-10 (Socket.io Notification), F-11 (Course Hierarchy), F-13 (Course List & Detail Views), F-14 (Template Management Page)
+    ready: 3        # F-12 (Course Cards), F-15 (Field Mapping UI), F-20 (Course Creation Wizard)
     blocked: 59     # rest blocked by upstream dependencies
   student:
     priority: 4
@@ -295,21 +295,27 @@ completed:
     completed: 2026-02-20
     api_tests: 8       # course-view.controller (8): list(5) + detail(3)
     e2e_tests: 0
+  - id: STORY-F-14
+    title: "Template Management Page"
+    lane: faculty
+    completed: 2026-02-20
+    api_tests: 10      # template-management.test (10): grid(3) + card(2) + badge(1) + delete-dialog(1) + validation(2) + filters(1)
+    e2e_tests: 0
 
 # Error-to-rule pipeline
 error_pipeline:
-  total_errors_captured: 57
-  total_rules_created: 46
+  total_errors_captured: 63
+  total_rules_created: 52
   recurrence_rate: 5    # tsc-from-root at 10, hardcoded-hex at 2, .select().single() at 1, table-name-verify at 1, no-dom-in-types at 1, inline-style at 1, barrel-strip at 2, promise-all at 1
 
 # Time allocation tracking
 metrics:
-  stories_completed: 40
+  stories_completed: 41
   stories_total: 166
   avg_story_time_minutes: 0    # not tracked yet
   planning_pct: 0    # target: 40%
   review_pct: 0      # target: 40%
   execution_pct: 0   # target: 10%
   learning_pct: 0    # target: 10%
-  api_tests_total: 895  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33, U-8: 15, U-9: 25, U-10: 38, U-11: 16, U-12: 72, U-13: 20, U-14: 14, SA-1: 28, SA-2: 22, SA-3: 20, SA-4: 21, SA-5: 17, SA-6: 16, SA-7: 15, SA-8: 24, SA-9: 16, IA-2: 21, IA-5: 18, IA-6: 15, IA-7: 20, IA-12: 23, F-1: 26, F-2: 35, F-3: 14, F-4: 18, F-5: 40, F-6: 18, F-7: 16, F-8: 8, F-9: 23, F-10: 20, F-11: 20, F-13: 8
+  api_tests_total: 905  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33, U-8: 15, U-9: 25, U-10: 38, U-11: 16, U-12: 72, U-13: 20, U-14: 14, SA-1: 28, SA-2: 22, SA-3: 20, SA-4: 21, SA-5: 17, SA-6: 16, SA-7: 15, SA-8: 24, SA-9: 16, IA-2: 21, IA-5: 18, IA-6: 15, IA-7: 20, IA-12: 23, F-1: 26, F-2: 35, F-3: 14, F-4: 18, F-5: 40, F-6: 18, F-7: 16, F-8: 8, F-9: 23, F-10: 20, F-11: 20, F-13: 8, F-14: 10
   e2e_tests_total: 0

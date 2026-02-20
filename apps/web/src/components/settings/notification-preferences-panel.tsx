@@ -217,13 +217,13 @@ export function NotificationPreferencesPanel() {
 
   if (status === "loading") {
     return (
-      <div className="animate-pulse space-y-4 rounded-lg border border-cream bg-white p-6">
+      <div className="animate-pulse space-y-4 rounded-lg border border-border-light bg-white p-6">
         {Array.from({ length: 6 }).map((_, i) => (
           <div key={i} className="flex items-center justify-between">
-            <div className="h-4 w-32 rounded bg-gray-200" />
+            <div className="h-4 w-32 rounded bg-warm-gray" />
             <div className="flex gap-8">
-              <div className="h-5 w-8 rounded-full bg-gray-200" />
-              <div className="h-5 w-8 rounded-full bg-gray-200" />
+              <div className="h-5 w-8 rounded-full bg-warm-gray" />
+              <div className="h-5 w-8 rounded-full bg-warm-gray" />
             </div>
           </div>
         ))}
@@ -233,19 +233,17 @@ export function NotificationPreferencesPanel() {
 
   if (status === "error" && !preferences) {
     return (
-      <div className="rounded-lg border border-cream bg-white p-6 text-text-primary">
-        <p className="text-[var(--color-error,#dc2626)]">
-          {error ?? "Something went wrong."}
-        </p>
+      <div className="rounded-lg border border-border-light bg-white p-6 text-text-primary">
+        <p className="text-error">{error ?? "Something went wrong."}</p>
       </div>
     );
   }
 
   return (
-    <div className="rounded-lg border border-cream bg-white p-6">
+    <div className="rounded-lg border border-border-light bg-white p-6">
       {/* Error toast */}
       {error && (
-        <div className="mb-4 rounded-md bg-[var(--color-error-bg,#fef2f2)] px-4 py-2 text-sm text-[var(--color-error,#dc2626)]">
+        <div className="mb-4 rounded-md bg-error/5 px-4 py-2 text-sm text-error">
           {error}
           <button
             className="ml-2 underline"
@@ -261,7 +259,7 @@ export function NotificationPreferencesPanel() {
       <div className="hidden md:block">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-cream">
+            <tr className="border-b border-border-light">
               <th className="pb-3 text-left font-sans text-sm font-semibold text-text-primary">
                 Notification Type
               </th>
@@ -278,7 +276,7 @@ export function NotificationPreferencesPanel() {
               const meta = TYPE_LABELS[type];
               const prefs = preferences?.[type];
               return (
-                <tr key={type} className="border-b border-cream">
+                <tr key={type} className="border-b border-border-light">
                   <td className="py-4">
                     <div className="font-sans text-sm font-medium text-text-primary">
                       {meta.label}
@@ -292,7 +290,7 @@ export function NotificationPreferencesPanel() {
                       checked={prefs?.in_app ?? true}
                       onCheckedChange={() => handleToggle(type, "in_app")}
                       disabled={saving[`${type}_in_app`]}
-                      className="data-[state=checked]:bg-[var(--color-navy-deep,#1a1a2e)]"
+                      className="data-[state=checked]:bg-navy-deep"
                     />
                   </td>
                   <td className="py-4 text-center">
@@ -300,7 +298,7 @@ export function NotificationPreferencesPanel() {
                       checked={prefs?.email ?? false}
                       onCheckedChange={() => handleToggle(type, "email")}
                       disabled={saving[`${type}_email`]}
-                      className="data-[state=checked]:bg-[var(--color-navy-deep,#1a1a2e)]"
+                      className="data-[state=checked]:bg-navy-deep"
                     />
                   </td>
                 </tr>
@@ -316,7 +314,10 @@ export function NotificationPreferencesPanel() {
           const meta = TYPE_LABELS[type];
           const prefs = preferences?.[type];
           return (
-            <div key={type} className="rounded-md border border-cream p-4">
+            <div
+              key={type}
+              className="rounded-md border border-border-light p-4"
+            >
               <div className="mb-2 font-sans text-sm font-medium text-text-primary">
                 {meta.label}
               </div>
@@ -330,7 +331,7 @@ export function NotificationPreferencesPanel() {
                     checked={prefs?.in_app ?? true}
                     onCheckedChange={() => handleToggle(type, "in_app")}
                     disabled={saving[`${type}_in_app`]}
-                    className="data-[state=checked]:bg-[var(--color-navy-deep,#1a1a2e)]"
+                    className="data-[state=checked]:bg-navy-deep"
                   />
                 </div>
                 <div className="flex items-center gap-3">
@@ -339,7 +340,7 @@ export function NotificationPreferencesPanel() {
                     checked={prefs?.email ?? false}
                     onCheckedChange={() => handleToggle(type, "email")}
                     disabled={saving[`${type}_email`]}
-                    className="data-[state=checked]:bg-[var(--color-navy-deep,#1a1a2e)]"
+                    className="data-[state=checked]:bg-navy-deep"
                   />
                 </div>
               </div>
@@ -353,7 +354,7 @@ export function NotificationPreferencesPanel() {
         <button
           type="button"
           onClick={handleReset}
-          className="rounded-md px-4 py-2 font-sans text-sm text-text-muted transition-colors hover:bg-gray-100"
+          className="rounded-md px-4 py-2 font-sans text-sm text-text-muted transition-colors hover:bg-parchment"
         >
           Reset to Defaults
         </button>

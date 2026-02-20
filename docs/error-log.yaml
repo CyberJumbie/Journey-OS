@@ -232,7 +232,7 @@ errors:
     error: "Ran npx tsc -b from monorepo root which has no typescript install — got 'this is not the tsc command you are looking for'"
     rule: "Already documented in CLAUDE.md — run tsc from within the workspace directory. Exact paths added in SA-9."
     location: "Root CLAUDE.md → Monorepo Conventions"
-    recurrence: 9
+    recurrence: 10
 
   - date: 2026-02-20
     story: STORY-F-2
