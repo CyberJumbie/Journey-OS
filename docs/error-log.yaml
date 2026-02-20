@@ -268,3 +268,17 @@ errors:
     rule: "Use Uint8Array instead of Buffer in shared type definitions. packages/types does not include @types/node."
     location: "Root CLAUDE.md → Things Claude Gets Wrong"
     recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-4
+    error: "Supabase migration referenced user_profiles FK target but actual table is profiles. Brief DDL had wrong table name."
+    rule: "Always verify FK target table names via list_tables MCP before writing migration DDL. Story briefs may reference outdated table names."
+    location: "docs/error-log.yaml (tracking only — brief authoring issue, not code rule)"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-4
+    error: "Cast Express req.query values as `string | undefined` instead of specific union type, causing TS2345 against TemplateSharingLevel"
+    rule: "Cast req.query values to the exact union type (e.g., TemplateDTO['sharing_level'] | undefined), not string | undefined."
+    location: "Root CLAUDE.md → Monorepo Conventions (req.params rule extended)"
+    recurrence: 0
