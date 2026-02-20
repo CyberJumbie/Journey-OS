@@ -31,9 +31,9 @@ lanes:
   institutional_admin:
     priority: 2
     total: 44       # E-06: 3, E-09: 3, E-14: 4, E-15: 4, E-17: 4, E-28: 5, E-29: 3, E-30: 3, E-31: 3, E-33: 4, E-36: 4, E-37: 4
-    done: 3         # IA-1 (User List & Invitation), IA-4 (ILO Model & Repository), IA-5 (Admin Dashboard)
+    done: 4         # IA-1 (User List & Invitation), IA-4 (ILO Model & Repository), IA-5 (Admin Dashboard), IA-12 (KaizenML Lint Rule Engine)
     ready: 4        # IA-6 (Framework List Page), IA-17 (User Deactivation), IA-18 (Role Assignment), IA-23 (ILO Management UI)
-    blocked: 37
+    blocked: 36
   faculty:
     priority: 3
     total: 75       # E-08: 4, E-10: 3, E-11: 4, E-12: 4, E-13: 3, E-18: 4, E-19: 4, E-20: 4, E-21: 4, E-22: 3, E-23: 4, E-24: 4, E-25: 4, E-26: 4, E-27: 4, E-32: 4, E-34: 4, E-35: 3, E-38: 3, E-39: 4
@@ -169,21 +169,27 @@ completed:
     completed: 2026-02-20
     api_tests: 16      # rejection.service (7) + rejection.controller (9)
     e2e_tests: 0
+  - id: STORY-IA-12
+    title: "KaizenML Lint Rule Engine"
+    lane: institutional_admin
+    completed: 2026-02-20
+    api_tests: 23      # lint-engine.service (10) + orphan-concepts.rule (3) + dangling-slo.rule (2) + stale-items.rule (3) + lint.controller (5)
+    e2e_tests: 0
 
 # Error-to-rule pipeline
 error_pipeline:
-  total_errors_captured: 25
-  total_rules_created: 25
-  recurrence_rate: 4    # 1 recurrence out of 25 = ~4%
+  total_errors_captured: 27
+  total_rules_created: 26
+  recurrence_rate: 4    # 1 recurrence out of 27 = ~4%
 
 # Time allocation tracking
 metrics:
-  stories_completed: 19
+  stories_completed: 20
   stories_total: 166
   avg_story_time_minutes: 0    # not tracked yet
   planning_pct: 0    # target: 40%
   review_pct: 0      # target: 40%
   execution_pct: 0   # target: 10%
   learning_pct: 0    # target: 10%
-  api_tests_total: 481  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33, U-8: 15, U-9: 25, U-10: 38, U-11: 16, U-12: 72, SA-1: 28, SA-2: 22, SA-3: 20, SA-4: 21, SA-5: 17, SA-6: 16, IA-5: 18
+  api_tests_total: 504  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33, U-8: 15, U-9: 25, U-10: 38, U-11: 16, U-12: 72, SA-1: 28, SA-2: 22, SA-3: 20, SA-4: 21, SA-5: 17, SA-6: 16, IA-5: 18, IA-12: 23
   e2e_tests_total: 0
