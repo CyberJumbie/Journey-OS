@@ -1,11 +1,11 @@
 # Session State — 2026-02-20
 
 ## Current Position
-- **Last completed story:** STORY-IA-12 (KaizenML Lint Rule Engine)
-- **Lane:** institutional_admin (P2)
-- **Phase:** DONE — implemented, validated (4-pass), compounded, committed
+- **Active story:** STORY-F-2 (Notification Model & Repository)
+- **Lane:** faculty (P3)
+- **Phase:** PULLED — ready for /plan
 - **Branch:** main
-- **Uncommitted changes:** Yes — some files from other in-progress work (course controller, onboarding types)
+- **Previous story:** STORY-U-14 (Email Verification Gate) — done
 
 ## Narrative Handoff
 
