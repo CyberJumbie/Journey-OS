@@ -47,6 +47,11 @@ import { NotificationController } from "./controllers/notification/notification.
 import { CourseRepository } from "./repositories/course.repository";
 import { CourseService } from "./services/course/course.service";
 import { CourseController } from "./controllers/course/course.controller";
+import { ProgramRepository } from "./repositories/program.repository";
+import { SectionRepository } from "./repositories/section.repository";
+import { SessionRepository } from "./repositories/session.repository";
+import { HierarchyService } from "./services/course/hierarchy.service";
+import { HierarchyController } from "./controllers/course/hierarchy.controller";
 import { TemplateRepository } from "./repositories/template.repository";
 import { TemplateService } from "./services/template/template.service";
 import { TemplateController } from "./controllers/template/template.controller";
@@ -66,9 +71,18 @@ import { DuplicateMappingsRule } from "./services/kaizen/rules/duplicate-mapping
 import { MissingProvenanceRule } from "./services/kaizen/rules/missing-provenance.rule";
 import { ScoreSkewRule } from "./services/kaizen/rules/score-skew.rule";
 import { LowConfidenceTagsRule } from "./services/kaizen/rules/low-confidence-tags.rule";
+import multer from "multer";
 import { getSupabaseClient } from "./config/supabase.config";
 import { envConfig } from "./config/env.config";
-import { AuthRole } from "@journey-os/types";
+import { AuthRole, AVATAR_MAX_SIZE_BYTES } from "@journey-os/types";
+import { ProfileRepository } from "./repositories/profile.repository";
+import { ProfileService } from "./services/profile/profile.service";
+import { ProfileController } from "./controllers/profile/profile.controller";
+import { CourseOversightService } from "./services/course/course-oversight.service";
+import { CourseOversightController } from "./controllers/course/course-oversight.controller";
+import { InstitutionLifecycleService } from "./services/admin/institution-lifecycle.service";
+import { InstitutionLifecycleController } from "./controllers/admin/institution-lifecycle.controller";
+import { createInstitutionStatusMiddleware } from "./middleware/institution-status.middleware";
 
 const app: Express = express();
 const PORT = process.env.PORT || 3001;
@@ -132,6 +146,9 @@ app.post("/api/v1/invitations/accept", (req, res) =>
 
 // All other /api/v1 routes require authentication
 app.use("/api/v1", createAuthMiddleware());
+
+// Block users from suspended institutions (runs after auth, before email verification)
+app.use("/api/v1", createInstitutionStatusMiddleware());
 
 // Onboarding — authenticated, no RBAC (all roles access their own onboarding)
 const onboardingService = new OnboardingService(supabaseClient);
@@ -213,6 +230,24 @@ app.get(
   "/api/v1/admin/institutions",
   rbac.require(AuthRole.SUPERADMIN),
   (req, res) => institutionMonitoringController.handleList(req, res),
+);
+
+// Institution suspend/reactivate — SuperAdmin only
+const institutionLifecycleService = new InstitutionLifecycleService(
+  supabaseClient,
+);
+const institutionLifecycleController = new InstitutionLifecycleController(
+  institutionLifecycleService,
+);
+app.post(
+  "/api/v1/admin/institutions/:id/suspend",
+  rbac.require(AuthRole.SUPERADMIN),
+  (req, res) => institutionLifecycleController.handleSuspend(req, res),
+);
+app.post(
+  "/api/v1/admin/institutions/:id/reactivate",
+  rbac.require(AuthRole.SUPERADMIN),
+  (req, res) => institutionLifecycleController.handleReactivate(req, res),
 );
 
 // User reassignment — SuperAdmin only
@@ -319,6 +354,17 @@ app.patch(
   (req, res) => lintController.handleUpdateConfig(req, res),
 );
 
+// Course oversight dashboard — InstitutionalAdmin only
+const courseOversightService = new CourseOversightService(supabaseClient);
+const courseOversightController = new CourseOversightController(
+  courseOversightService,
+);
+app.get(
+  "/api/v1/institution/courses/overview",
+  rbac.require(AuthRole.INSTITUTIONAL_ADMIN),
+  (req, res) => courseOversightController.handleGetOverview(req, res),
+);
+
 // Course management — CourseDirector (SuperAdmin, InstitutionalAdmin, Faculty w/ is_course_director)
 const courseRepository = new CourseRepository(supabaseClient);
 const courseService = new CourseService(courseRepository, null);
@@ -344,6 +390,44 @@ app.patch(
   "/api/v1/courses/:id/archive",
   rbac.requireCourseDirector(),
   (req, res) => courseController.handleArchive(req, res),
+);
+
+// Course hierarchy — Programs (InstitutionalAdmin+), Sections/Sessions (Faculty+)
+const programRepository = new ProgramRepository(supabaseClient);
+const sectionRepository = new SectionRepository(supabaseClient);
+const sessionRepository = new SessionRepository(supabaseClient);
+const hierarchyService = new HierarchyService(
+  programRepository,
+  sectionRepository,
+  sessionRepository,
+  courseRepository,
+  null,
+);
+const hierarchyController = new HierarchyController(hierarchyService);
+app.post(
+  "/api/v1/programs",
+  rbac.require(AuthRole.INSTITUTIONAL_ADMIN),
+  (req, res) => hierarchyController.handleCreateProgram(req, res),
+);
+app.get(
+  "/api/v1/courses/:courseId/hierarchy",
+  rbac.require(AuthRole.FACULTY),
+  (req, res) => hierarchyController.handleGetCourseHierarchy(req, res),
+);
+app.post(
+  "/api/v1/courses/:courseId/sections",
+  rbac.require(AuthRole.FACULTY),
+  (req, res) => hierarchyController.handleCreateSection(req, res),
+);
+app.put(
+  "/api/v1/courses/:courseId/sections/reorder",
+  rbac.require(AuthRole.FACULTY),
+  (req, res) => hierarchyController.handleReorderSections(req, res),
+);
+app.post(
+  "/api/v1/sections/:sectionId/sessions",
+  rbac.require(AuthRole.FACULTY),
+  (req, res) => hierarchyController.handleCreateSession(req, res),
 );
 
 // Notifications — any authenticated user (no RBAC role check)
@@ -394,6 +478,31 @@ app.get(
   "/api/v1/templates/:id/versions",
   rbac.require(AuthRole.FACULTY),
   (req, res) => templateController.handleGetVersions(req, res),
+);
+
+// Profile — any authenticated user (no RBAC role check)
+const avatarUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: AVATAR_MAX_SIZE_BYTES },
+});
+const profileRepository = new ProfileRepository(supabaseClient);
+const profileService = new ProfileService(
+  profileRepository,
+  supabaseClient,
+  null,
+);
+const profileController = new ProfileController(profileService);
+app.get("/api/v1/profile", (req, res) =>
+  profileController.handleGetProfile(req, res),
+);
+app.patch("/api/v1/profile", (req, res) =>
+  profileController.handleUpdateProfile(req, res),
+);
+app.post("/api/v1/profile/avatar", avatarUpload.single("avatar"), (req, res) =>
+  profileController.handleUploadAvatar(req, res),
+);
+app.delete("/api/v1/profile/avatar", (req, res) =>
+  profileController.handleRemoveAvatar(req, res),
 );
 
 app.listen(PORT, () => {

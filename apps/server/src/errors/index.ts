@@ -77,3 +77,21 @@ export {
   TemplatePermissionError,
   TemplateVersionNotFoundError,
 } from "./template.error";
+export {
+  HierarchyNotFoundError,
+  HierarchyValidationError,
+  DuplicateProgramCodeError,
+} from "./hierarchy.errors";
+export {
+  ProfileNotFoundError,
+  ProfileValidationError,
+  InvalidAvatarError,
+  ProfileSyncError,
+} from "./profile.error";
+export { CourseOverviewValidationError } from "./course-overview.error";
+export {
+  InstitutionAlreadySuspendedError,
+  InstitutionNotSuspendedError,
+  SuspendReasonRequiredError,
+  InstitutionSuspendedError,
+} from "./institution-lifecycle.error";
