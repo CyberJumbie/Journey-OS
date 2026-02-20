@@ -29,8 +29,24 @@ import { UserReassignmentService } from "./services/user/user-reassignment.servi
 import { UserReassignmentController } from "./controllers/user/user-reassignment.controller";
 import { InvitationAcceptanceService } from "./services/auth/invitation-acceptance.service";
 import { InvitationAcceptanceController } from "./controllers/auth/invitation-acceptance.controller";
+import { RejectionService } from "./services/institution/rejection.service";
+import { RejectionController } from "./controllers/institution/rejection.controller";
+import { RejectionEmailService } from "./services/email/rejection-email.service";
 import { AdminDashboardService } from "./services/admin/admin-dashboard.service";
 import { DashboardController } from "./controllers/admin/dashboard.controller";
+import { LintReportRepository } from "./repositories/lint-report.repository";
+import { LintRuleRegistryService } from "./services/kaizen/lint-rule-registry.service";
+import { LintEngineService } from "./services/kaizen/lint-engine.service";
+import { LintController } from "./controllers/kaizen/lint.controller";
+import { OrphanConceptsRule } from "./services/kaizen/rules/orphan-concepts.rule";
+import { DanglingSloRule } from "./services/kaizen/rules/dangling-slo.rule";
+import { EmbeddingDriftRule } from "./services/kaizen/rules/embedding-drift.rule";
+import { StaleItemsRule } from "./services/kaizen/rules/stale-items.rule";
+import { TagInconsistencyRule } from "./services/kaizen/rules/tag-inconsistency.rule";
+import { DuplicateMappingsRule } from "./services/kaizen/rules/duplicate-mappings.rule";
+import { MissingProvenanceRule } from "./services/kaizen/rules/missing-provenance.rule";
+import { ScoreSkewRule } from "./services/kaizen/rules/score-skew.rule";
+import { LowConfidenceTagsRule } from "./services/kaizen/rules/low-confidence-tags.rule";
 import { getSupabaseClient } from "./config/supabase.config";
 import { envConfig } from "./config/env.config";
 import { AuthRole } from "@journey-os/types";
@@ -132,6 +148,19 @@ app.patch(
   (req, res) => approvalController.handleApprove(req, res),
 );
 
+// Application rejection — SuperAdmin only
+const rejectionEmailService = new RejectionEmailService();
+const rejectionService = new RejectionService(
+  supabaseClient,
+  rejectionEmailService,
+);
+const rejectionController = new RejectionController(rejectionService);
+app.patch(
+  "/api/v1/admin/applications/:id/reject",
+  rbac.require(AuthRole.SUPERADMIN),
+  (req, res) => rejectionController.handleReject(req, res),
+);
+
 // User reassignment — SuperAdmin only
 const reassignmentEmailService = new ReassignmentEmailService();
 const userReassignmentService = new UserReassignmentService(
@@ -174,6 +203,50 @@ app.get(
   "/api/v1/institution/dashboard",
   rbac.require(AuthRole.INSTITUTIONAL_ADMIN, AuthRole.SUPERADMIN),
   (req, res) => dashboardController.getDashboard(req, res),
+);
+
+// KaizenML Lint Engine — InstitutionalAdmin only
+const lintReportRepository = new LintReportRepository(supabaseClient);
+const lintRegistry = new LintRuleRegistryService();
+lintRegistry.register(new OrphanConceptsRule(null));
+lintRegistry.register(new DanglingSloRule(supabaseClient));
+lintRegistry.register(new EmbeddingDriftRule());
+lintRegistry.register(new StaleItemsRule(supabaseClient));
+lintRegistry.register(new TagInconsistencyRule(supabaseClient));
+lintRegistry.register(new DuplicateMappingsRule());
+lintRegistry.register(new MissingProvenanceRule(supabaseClient));
+lintRegistry.register(new ScoreSkewRule(supabaseClient));
+lintRegistry.register(new LowConfidenceTagsRule());
+const lintEngine = new LintEngineService(lintReportRepository, lintRegistry);
+const lintController = new LintController(
+  lintEngine,
+  lintReportRepository,
+  lintRegistry,
+);
+app.get(
+  "/api/v1/institution/lint/reports",
+  rbac.require(AuthRole.INSTITUTIONAL_ADMIN),
+  (req, res) => lintController.handleListReports(req, res),
+);
+app.get(
+  "/api/v1/institution/lint/reports/:id",
+  rbac.require(AuthRole.INSTITUTIONAL_ADMIN),
+  (req, res) => lintController.handleGetReport(req, res),
+);
+app.post(
+  "/api/v1/institution/lint/run",
+  rbac.require(AuthRole.INSTITUTIONAL_ADMIN),
+  (req, res) => lintController.handleRunScan(req, res),
+);
+app.get(
+  "/api/v1/institution/lint/config",
+  rbac.require(AuthRole.INSTITUTIONAL_ADMIN),
+  (req, res) => lintController.handleGetConfig(req, res),
+);
+app.patch(
+  "/api/v1/institution/lint/config/:ruleId",
+  rbac.require(AuthRole.INSTITUTIONAL_ADMIN),
+  (req, res) => lintController.handleUpdateConfig(req, res),
 );
 
 app.listen(PORT, () => {

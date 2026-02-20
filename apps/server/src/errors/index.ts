@@ -44,3 +44,19 @@ export {
   UserNotFoundError,
   ConcurrentModificationError,
 } from "./reassignment.error";
+export {
+  ApplicationAlreadyProcessedError,
+  RejectionReasonRequiredError,
+} from "./rejection.error";
+export {
+  CourseNotFoundError,
+  DuplicateCourseCodeError,
+  InvalidCourseTypeError,
+  InvalidCourseStatusError,
+} from "./course.error";
+export {
+  KaizenError,
+  LintRuleNotFoundError,
+  LintReportNotFoundError,
+  LintEngineError,
+} from "./kaizen.error";
