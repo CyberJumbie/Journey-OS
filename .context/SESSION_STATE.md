@@ -1,51 +1,65 @@
 # Session State — 2026-02-20
 
 ## Current Position
-- **Last completed story:** STORY-SA-3 (Application Review Queue)
+- **Last completed story:** STORY-SA-5 (Approval Workflow)
 - **Lane:** superadmin (P1)
 - **Phase:** DONE — implemented, validated (4-pass), compounded
 - **Branch:** main
-- **Uncommitted changes:** Yes — SA-3 implementation + briefs + framework seeders (from prior session)
+- **Uncommitted changes:** Yes — SA-5 implementation + SA-3 prior changes
 
 ## Narrative Handoff
 
-STORY-SA-3 (Application Review Queue) is fully complete: implemented, all 20 tests passing (258 total server), validated with 4-pass review, and compounded. The story adds a SuperAdmin-only paginated review queue for waitlist applications at `/admin/applications` with list + detail endpoints. It follows the exact same admin paginated list pattern as SA-2 (GlobalUserDirectory), now captured in `docs/solutions/admin-paginated-list-pattern.md`. One mistake was made during implementation — defined a duplicate `SortDirection` type that already existed in the user types barrel — caught by tsc build and fixed. Rule added to CLAUDE.md.
+STORY-SA-5 (Approval Workflow) is fully complete: implemented, all 17 tests passing (329 total server), validated with 4-pass review, and compounded. The story adds the critical approval flow: SuperAdmin approves a waitlist application → creates institution + invitation + email stub. This is the #2 most-blocked cross-lane story — it unblocks U-9, IA-1, IA-4, IA-5, SA-7, SA-8 (6 stories across 3 lanes).
 
-The spec pipeline is 100% complete: all 166 briefs generated. Implementation is at 13/166 stories (8%). Next unblocked stories by lane:
-- **SA lane:** SA-4 (User Reassignment) — blocked by SA-2 (done), ready to go
-- **SA lane:** SA-5 (Approval Workflow) — blocked by SA-3 (just done), now unblocked
-- **Universal:** U-9 (Invitation Acceptance) — blocked by SA-5
-- **IA lane:** Still blocked by SA-5 and U-12
+Key implementation details:
+- Multi-table sequential flow with manual rollback (no Supabase transactions)
+- Optimistic locking via `WHERE status = 'pending'` to prevent double-approval
+- Crypto-random 48-char URL-safe invitation tokens, 7-day expiry
+- Email service stubbed with interface for future Resend/SendGrid swap
+- Neo4j dual-write stubbed (best-effort, logs on failure)
+- One mistake: forgot to rebuild types composite project after adding new files
+
+New patterns captured: `docs/solutions/approval-workflow-pattern.md`
+
+The spec pipeline is 100% complete. Implementation is at 14/166 stories (8%). Next unblocked stories by lane:
+- **SA lane:** SA-4 (User Reassignment), SA-6 (Rejection Workflow), SA-7 (Institution List — now unblocked)
+- **Universal:** U-9 (Invitation Acceptance) — now unblocked by SA-5
+- **IA lane:** IA-1 (User List & Invitation), IA-4 (ILO Model), IA-5 (Admin Dashboard) — now unblocked by SA-5
 
 ## Files Modified This Session
 
-### SA-3 Implementation (new)
-- `packages/types/src/institution/review.types.ts` — review queue types
-- `packages/types/src/institution/index.ts` — barrel export update
-- `apps/server/src/errors/application.error.ts` — ApplicationNotFoundError
-- `apps/server/src/services/institution/application-review.service.ts` — service
-- `apps/server/src/controllers/institution/application-review.controller.ts` — controller
-- `apps/server/src/index.ts` — route wiring
-- `apps/web/src/app/(protected)/admin/applications/page.tsx` — page
-- `apps/web/src/components/admin/application-review-queue.tsx` — table organism
-- `apps/web/src/components/admin/application-detail-modal.tsx` — detail modal
-- `apps/server/src/services/institution/__tests__/application-review.service.test.ts` — 6 tests
-- `apps/server/src/controllers/institution/__tests__/application-review.controller.test.ts` — 14 tests
+### SA-5 Implementation (new)
+- `packages/types/src/institution/approval.types.ts` — approval types
+- `packages/types/src/institution/invitation.types.ts` — invitation types
+- `packages/types/src/institution/institution.types.ts` — added institution_type, accreditation_body
+- `packages/types/src/institution/index.ts` — barrel exports
+- `apps/server/src/errors/institution.error.ts` — DuplicateApprovalError, InstitutionCreationError, DuplicateDomainError
+- `apps/server/src/errors/index.ts` — barrel exports
+- `apps/server/src/services/institution/institution.service.ts` — InstitutionService.createFromApplication()
+- `apps/server/src/services/email/invitation-email.service.ts` — email stub
+- `apps/server/src/controllers/institution/approval.controller.ts` — ApprovalController
+- `apps/server/src/index.ts` — PATCH route wired
+- `apps/web/src/components/admin/approval-confirm-dialog.tsx` — approval dialog
+- `apps/web/src/components/admin/application-detail-modal.tsx` — approve button enabled
+- `apps/web/src/components/admin/application-review-queue.tsx` — onApproved refresh
+- `apps/server/src/services/institution/__tests__/institution.service.test.ts` — 8 tests
+- `apps/server/src/controllers/institution/__tests__/approval.controller.test.ts` — 9 tests
 
 ### Compound artifacts
-- `docs/solutions/admin-paginated-list-pattern.md` — new solution doc
-- `docs/plans/STORY-SA-3-plan.md` — implementation plan
-- `docs/error-log.yaml` — entry #17 (duplicate type)
-- `CLAUDE.md` — new "Things Claude Gets Wrong" entry
+- `docs/solutions/approval-workflow-pattern.md` — new solution doc
+- `docs/plans/STORY-SA-5-plan.md` — implementation plan
+- `docs/error-log.yaml` — entry #21 (types rebuild)
+- `CLAUDE.md` — new monorepo convention + "Things Claude Gets Wrong" entry
 
-### Supabase migration
-- `idx_waitlist_applications_created_at` index (applied via MCP)
+### Supabase migrations
+- `create_invitations_table` — invitations table with RLS + 3 indexes
+- `add_type_and_accreditation_to_institutions` — institution_type + accreditation_body columns
 
 ## Open Questions
 None.
 
 ## Context Files to Read on Resume
 - `.context/spec/backlog/BACKLOG-SUPERADMIN.md` — SA lane ordering
-- `.context/spec/backlog/CROSS-LANE-DEPENDENCIES.md` — cross-lane blockers
-- `docs/solutions/admin-paginated-list-pattern.md` — reusable pattern for next admin list
+- `.context/spec/backlog/CROSS-LANE-DEPENDENCIES.md` — cross-lane blockers (SA-5 is now done)
+- `docs/solutions/approval-workflow-pattern.md` — reusable pattern
 - The brief for whatever story is pulled next

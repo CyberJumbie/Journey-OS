@@ -296,6 +296,10 @@ export function ApplicationReviewQueue() {
         <ApplicationDetailModal
           application={selectedApp}
           onClose={() => setSelectedApp(null)}
+          onApproved={() => {
+            setSelectedApp(null);
+            fetchApplications();
+          }}
         />
       )}
     </div>

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { createServerClient } from "@web/lib/supabase";
+import { createServerClient } from "@web/lib/supabase-server";
 import { getDashboardPath } from "@web/lib/auth/dashboard-routes";
 
 /**

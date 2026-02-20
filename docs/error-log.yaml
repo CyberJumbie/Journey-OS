@@ -128,3 +128,24 @@ errors:
     rule: "Grep packages/types/src for existing type names before creating new ones. Reuse shared types from their original location."
     location: "Root CLAUDE.md → Things Claude Gets Wrong"
     recurrence: 0
+
+  - date: 2026-02-20
+    story: dev-environment-setup
+    error: "Mixed next/headers (server-only) import with client component code in same supabase.ts file"
+    rule: "Split Supabase clients: supabase.ts (browser) and supabase-server.ts (server). Never import next/headers in a file used by client components."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: dev-environment-setup
+    error: "Seeded auth.users via raw SQL with NULL token columns, causing GoTrue 500 on login"
+    rule: "Set all auth.users varchar token columns to empty strings, not NULL. See docs/solutions/supabase-auth-user-seeding.md"
+    location: "Root CLAUDE.md → Things Claude Gets Wrong + docs/solutions/supabase-auth-user-seeding.md"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-SA-5
+    error: "Added new type files to packages/types but server tsc --noEmit failed because composite project was stale. Types only visible after tsc -b rebuild."
+    rule: "After adding/editing files in packages/types, rebuild with `tsc -b packages/types/tsconfig.json` before type-checking downstream packages."
+    location: "Root CLAUDE.md → Monorepo Conventions"
+    recurrence: 0

@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import type { ApplicationDetail } from "@journey-os/types";
+import { ApprovalConfirmDialog } from "./approval-confirm-dialog";
 
 const STATUS_BADGES: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-800",
@@ -17,10 +19,13 @@ const TYPE_LABELS: Record<string, string> = {
 export function ApplicationDetailModal({
   application,
   onClose,
+  onApproved,
 }: {
   application: ApplicationDetail;
   onClose: () => void;
+  onApproved?: () => void;
 }) {
+  const [showApprovalDialog, setShowApprovalDialog] = useState(false);
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
@@ -114,9 +119,9 @@ export function ApplicationDetailModal({
         {/* Footer */}
         <div className="flex justify-end gap-2 border-t px-6 py-4">
           <button
-            disabled
-            title="Coming soon (SA-5)"
-            className="rounded bg-[#69a338] px-4 py-2 text-sm font-medium text-white opacity-50"
+            onClick={() => setShowApprovalDialog(true)}
+            disabled={application.status !== "pending"}
+            className="rounded bg-[#69a338] px-4 py-2 text-sm font-medium text-white hover:bg-[#5a8c2f] disabled:opacity-50"
           >
             Approve
           </button>
@@ -135,6 +140,19 @@ export function ApplicationDetailModal({
           </button>
         </div>
       </div>
+
+      {/* Approval Confirm Dialog */}
+      {showApprovalDialog && (
+        <ApprovalConfirmDialog
+          application={application}
+          onClose={() => setShowApprovalDialog(false)}
+          onApproved={() => {
+            setShowApprovalDialog(false);
+            onClose();
+            onApproved?.();
+          }}
+        />
+      )}
     </div>
   );
 }

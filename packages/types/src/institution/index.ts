@@ -17,3 +17,8 @@ export type {
   ApplicationDetail,
   ApplicationReviewResponse,
 } from "./review.types";
+export type {
+  ApplicationApprovalRequest,
+  InstitutionApprovalResult,
+} from "./approval.types";
+export type { Invitation, InvitationCreateParams } from "./invitation.types";

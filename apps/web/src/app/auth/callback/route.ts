@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { createServerClient } from "@web/lib/supabase";
+import { createServerClient } from "@web/lib/supabase-server";
 
 /**
  * Auth callback route handler.

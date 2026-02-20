@@ -60,6 +60,7 @@ Types → Model → Repository → Service → Controller → View → API Tests
 - Vitest `.toThrow(ErrorClass)` checks `instanceof`. `.toThrow("string")` checks the message text. Use the class form for custom errors.
 - Vitest `vi.mock()` hoists before variable declarations. Use `vi.hoisted()` to declare mock variables that `vi.mock()` closures reference.
 - Lazy/optional services (Neo4j, Redis) should validate env vars at class instantiation, not in the global zod env schema (zod validates at import time).
+- After adding/editing files in `packages/types`, rebuild with `tsc -b packages/types/tsconfig.json` before type-checking downstream packages. The composite project emits `.d.ts` files that server/web resolve — stale `.d.ts` = invisible types.
 
 ## Things Claude Gets Wrong
 (Updated by /compound — the error-to-rule pipeline)
@@ -79,3 +80,6 @@ Types → Model → Repository → Service → Controller → View → API Tests
 - Accessed `.mock.calls[0][0]` in vitest without non-null assertion. TypeScript strict mode requires `.mock.calls[0]![0]` since array index access returns `T | undefined`.
 - Supabase mock with `mockReturnThis()` across insert/select chains caused `single is not a function`. Create separate mock objects per chain stage. See `docs/solutions/supabase-mock-factory.md`.
 - Defined `SortDirection` type in a new file when it already existed in `user/global-user.types.ts`. Barrel re-exported both, causing TS2308 duplicate export. Always grep `packages/types/src` for existing type names before creating new ones.
+- Never mix `next/headers` (server-only) with client-component code in the same file. Split into `supabase.ts` (browser client) and `supabase-server.ts` (server client) to respect the App Router boundary.
+- When seeding auth.users via raw SQL, Supabase GoTrue expects empty strings (`''`) not NULL for varchar token columns (`confirmation_token`, `recovery_token`, `email_change_token_new`, `email_change`, `email_change_token_current`, `phone_change`, `phone_change_token`, `reauthentication_token`). NULL causes 500: "converting NULL to string is unsupported".
+- Added new type files to `packages/types` but forgot to rebuild the composite project. Server `tsc --noEmit` couldn't find the new exports. Always run `tsc -b packages/types/tsconfig.json` after modifying the types package.
