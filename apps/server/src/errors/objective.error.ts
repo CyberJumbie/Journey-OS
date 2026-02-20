@@ -7,9 +7,9 @@ export class ObjectiveError extends JourneyOSError {
 }
 
 export class DuplicateObjectiveCodeError extends JourneyOSError {
-  constructor(code: string, institutionId: string) {
+  constructor(code: string, scopeId: string) {
     super(
-      `Objective code "${code}" already exists for institution ${institutionId}`,
+      `Objective code "${code}" already exists in scope ${scopeId}`,
       "DUPLICATE_OBJECTIVE_CODE",
     );
   }

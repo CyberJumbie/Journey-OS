@@ -232,7 +232,7 @@ errors:
     error: "Ran npx tsc -b from monorepo root which has no typescript install — got 'this is not the tsc command you are looking for'"
     rule: "Already documented in CLAUDE.md — run tsc from within the workspace directory"
     location: "Root CLAUDE.md → Monorepo Conventions"
-    recurrence: 2
+    recurrence: 3
 
   - date: 2026-02-20
     story: STORY-F-2
@@ -246,4 +246,11 @@ errors:
     error: "No new errors — clean implementation. All 15 tests pass, no type errors in SA-7 files."
     rule: "No new rule needed."
     location: "n/a"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-IA-2
+    error: "Ran npx tsc -b from monorepo root again — recurrence of existing error (now at 3)"
+    rule: "Existing rule in CLAUDE.md. Recurrence bumped on STORY-IA-12 entry."
+    location: "Root CLAUDE.md → Monorepo Conventions"
     recurrence: 0

@@ -1,6 +1,7 @@
 export * from "./admin";
 export * from "./auth";
 export * from "./course";
+export * from "./import";
 export * from "./frameworks";
 export * from "./institution";
 export * from "./kaizen";
