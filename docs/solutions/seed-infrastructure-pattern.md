@@ -1,8 +1,8 @@
 ---
 name: seed-infrastructure-pattern
 tags: [neo4j, seeding, base-seeder, seed-runner, graph, framework]
-story: STORY-U-4, STORY-U-7
-date: 2026-02-19
+story: STORY-U-4, STORY-U-7, STORY-U-12
+date: 2026-02-20
 ---
 # Seed Infrastructure Pattern
 
@@ -145,8 +145,21 @@ Neo4j env vars (`NEO4J_URI`, `NEO4J_USERNAME`, `NEO4J_PASSWORD`) are **optional*
 2. **Seed parents before children** — relationship MATCH clauses fail silently if parent doesn't exist yet.
 3. **MERGE on `code`, not `id`** — the unique constraint is on `code`, so MERGE must key on it.
 
+## Completed Seeders (all 8 frameworks — U-12 done)
+| Seeder | Label(s) | Nodes | Relationships |
+|--------|----------|-------|---------------|
+| USMLESeeder | USMLE_System/Discipline/Task/Topic | 227 | HAS_TOPIC |
+| LCMESeeder | LCME_Standard/Element | 105 | HAS_ELEMENT |
+| ACGMESeeder | ACGME_Domain/Subdomain | 36 | HAS_SUBCOMPETENCY |
+| AAMCSeeder | AAMC_Domain/Competency | 55 | HAS_SUBDOMAIN |
+| UMESeeder | UME_Competency/Subcompetency | 55 | ALIGNS_WITH (cross-framework to ACGME) |
+| EPASeeder | EPA | 13 | — |
+| BloomSeeder | BloomLevel | 6 | — |
+| MillerSeeder | MillerLevel | 4 | — |
+
+**Total: ~498 nodes, 15 uniqueness constraints, 116 tests**
+
 ## When to Use
-- Every STORY-U-12 seeder subclass (remaining 7 frameworks)
 - Any new framework that needs graph seeding
 - Run with `pnpm kg:seed`
 
