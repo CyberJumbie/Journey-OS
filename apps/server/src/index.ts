@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { createServer } from "http";
 import express, { type Express } from "express";
 import cors from "cors";
 import { createAuthMiddleware } from "./middleware/auth.middleware";
@@ -83,6 +84,14 @@ import { CourseOversightController } from "./controllers/course/course-oversight
 import { InstitutionLifecycleService } from "./services/admin/institution-lifecycle.service";
 import { InstitutionLifecycleController } from "./controllers/admin/institution-lifecycle.controller";
 import { createInstitutionStatusMiddleware } from "./middleware/institution-status.middleware";
+import { AuthService } from "./services/auth/auth.service";
+import { createSocketServer } from "./config/socket.config";
+import { SocketManagerService } from "./services/notification/socket-manager.service";
+import { SocketNotificationService } from "./services/notification/socket-notification.service";
+import { UploadRepository } from "./repositories/upload.repository";
+import { UploadService } from "./services/upload/upload.service";
+import { UploadController } from "./controllers/upload.controller";
+import { uploadFiles } from "./middleware/upload.validation";
 
 const app: Express = express();
 const PORT = process.env.PORT || 3001;
@@ -230,6 +239,11 @@ app.get(
   "/api/v1/admin/institutions",
   rbac.require(AuthRole.SUPERADMIN),
   (req, res) => institutionMonitoringController.handleList(req, res),
+);
+app.get(
+  "/api/v1/admin/institutions/:id/detail",
+  rbac.require(AuthRole.SUPERADMIN),
+  (req, res) => institutionMonitoringController.handleGetDetail(req, res),
 );
 
 // Institution suspend/reactivate — SuperAdmin only
@@ -430,6 +444,17 @@ app.post(
   (req, res) => hierarchyController.handleCreateSession(req, res),
 );
 
+// File upload — Faculty only
+const uploadRepository = new UploadRepository(supabaseClient);
+const uploadService = new UploadService(uploadRepository, supabaseClient);
+const uploadController = new UploadController(uploadService);
+app.post(
+  "/api/v1/courses/:courseId/upload",
+  rbac.require(AuthRole.FACULTY),
+  uploadFiles,
+  (req, res) => uploadController.handleUpload(req, res),
+);
+
 // Notifications — any authenticated user (no RBAC role check)
 // Static routes BEFORE parameterized /:id/read to avoid param capture
 const notificationRepository = new NotificationRepository(supabaseClient);
@@ -505,8 +530,21 @@ app.delete("/api/v1/profile/avatar", (req, res) =>
   profileController.handleRemoveAvatar(req, res),
 );
 
-app.listen(PORT, () => {
+// Socket.io — real-time notifications and presence
+const httpServer = createServer(app);
+const io = createSocketServer(httpServer);
+const authService = new AuthService(supabaseClient);
+const socketManager = new SocketManagerService(io, authService);
+const socketNotificationService = new SocketNotificationService(
+  notificationService,
+  socketManager,
+);
+socketManager.setNotificationService(notificationService);
+socketManager.initialize();
+
+httpServer.listen(PORT, () => {
   console.log(`[server] listening on port ${PORT}`);
+  console.log(`[socket] Socket.io attached to HTTP server`);
 });
 
-export { app };
+export { app, httpServer, socketManager, socketNotificationService };

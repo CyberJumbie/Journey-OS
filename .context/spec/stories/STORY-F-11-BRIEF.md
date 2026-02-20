@@ -506,7 +506,7 @@ CourseCreationWizard (STORY-F-20)
 ### Story Dependencies
 | Story | Lane | Status | Why |
 |-------|------|--------|-----|
-| STORY-F-1 | faculty | Pending | Course model + `courses` table must exist (sections FK to courses) |
+| STORY-F-1 | faculty | **DONE** | Course model + `courses` table must exist (sections FK to courses) |
 | STORY-U-3 | universal | **DONE** | AuthMiddleware for protected routes |
 | STORY-U-6 | universal | **DONE** | RbacMiddleware for role enforcement |
 | STORY-U-4 | universal | **DONE** | Neo4j client config for DualWrite |

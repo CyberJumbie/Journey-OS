@@ -1,12 +1,14 @@
 import { Request, Response } from "express";
 import type {
   ApiResponse,
+  InstitutionDetail,
   InstitutionListResponse,
   InstitutionListSortField,
   InstitutionMonitoringStatus,
 } from "@journey-os/types";
 import { InstitutionMonitoringService } from "../../services/admin/institution-monitoring.service";
 import { ValidationError } from "../../errors/validation.error";
+import { InstitutionNotFoundError } from "../../errors/registration.error";
 
 const VALID_STATUSES = new Set<InstitutionMonitoringStatus>([
   "active",
@@ -72,6 +74,50 @@ export class InstitutionMonitoringController {
           error: { code: error.code, message: error.message },
         };
         res.status(400).json(body);
+        return;
+      }
+
+      const body: ApiResponse<null> = {
+        data: null,
+        error: {
+          code: "INTERNAL_ERROR",
+          message: "An unexpected error occurred. Please try again.",
+        },
+      };
+      res.status(500).json(body);
+    }
+  }
+
+  async handleGetDetail(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+
+      if (typeof id !== "string") {
+        const body: ApiResponse<null> = {
+          data: null,
+          error: {
+            code: "VALIDATION_ERROR",
+            message: "Institution ID must be a string",
+          },
+        };
+        res.status(400).json(body);
+        return;
+      }
+
+      const detail = await this.#service.getDetail(id);
+
+      const body: ApiResponse<InstitutionDetail> = {
+        data: detail,
+        error: null,
+      };
+      res.status(200).json(body);
+    } catch (error: unknown) {
+      if (error instanceof InstitutionNotFoundError) {
+        const body: ApiResponse<null> = {
+          data: null,
+          error: { code: error.code, message: error.message },
+        };
+        res.status(404).json(body);
         return;
       }
 
