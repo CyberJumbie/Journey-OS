@@ -53,8 +53,27 @@ return {
 };
 ```
 
+## Invitation Acceptance Variant (STORY-U-9)
+
+Token-based public endpoints that validate and consume a one-time invitation token. Same placement (before auth middleware) but no rate limiting needed — the token itself is the access control:
+
+```typescript
+// Invitation acceptance — public, no auth (user has no account yet)
+app.get("/api/v1/invitations/validate", (req, res) =>
+  invitationAcceptanceController.handleValidate(req, res),
+);
+app.post("/api/v1/invitations/accept", (req, res) =>
+  invitationAcceptanceController.handleAccept(req, res),
+);
+```
+
+Key differences from password reset:
+- **No rate limiter** — token is single-use with expiry (self-limiting)
+- **Two endpoints** — validate (GET, display-only) + accept (POST, creates account)
+- **Optimistic lock** — consume with `WHERE accepted_at IS NULL` to prevent races
+
 ## When to Use
-- Any unauthenticated API endpoint (forgot-password, login, register, email verification)
+- Any unauthenticated API endpoint (forgot-password, login, register, email verification, invitation acceptance)
 - Public endpoints that need abuse protection
 
 ## When Not to Use

@@ -191,3 +191,31 @@ errors:
     rule: "Multi-table writes that must be atomic must use supabase.rpc() with a Postgres function, never sequential client-side queries. See docs/solutions/supabase-transactional-rpc-pattern.md"
     location: "Root CLAUDE.md → Database Rules + docs/solutions/supabase-transactional-rpc-pattern.md"
     recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-IA-5
+    error: "Used `req as Record<string, unknown>` in Express 5 controller — TS2352 because Request lacks index signature. Also test mock with custom user shape failed cast to Partial<Request>."
+    rule: "Express 5 strict mode: double-cast through unknown — `(req as unknown as Record<string, unknown>).user`. Same for test mocks: `{...} as unknown as Partial<Request>`."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: reference-screen-integration
+    error: "Used setState inside useEffect (setMounted, setMobileNav, setActiveStep) — triggers react-hooks/set-state-in-effect lint error in React 19"
+    rule: "Use useSyncExternalStore for mounted state, key prop for state reset on prop change, derived values for responsive resets. See docs/solutions/react19-state-reset-patterns.md"
+    location: "Root CLAUDE.md → Things Claude Gets Wrong + docs/solutions/react19-state-reset-patterns.md"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: reference-screen-integration
+    error: "Used useRef + ref comparison during render to detect prop changes — React 19 strict mode forbids ref access during render"
+    rule: "Never access refs during render in React 19. Use key prop remounting to reset state on prop changes."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: reference-screen-integration
+    error: "Edit replace_all renamed setMobileNav → setMobileNavOpen, then a second replace_all of setMobileNav → setMobileNavOpen doubled it to setMobileNavOpenOpen"
+    rule: "Verify current file state before using replace_all. A prior rename may have already changed the target string."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0

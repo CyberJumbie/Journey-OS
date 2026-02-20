@@ -19,9 +19,9 @@ lanes:
   universal:
     priority: 0
     total: 14       # E-01: 4, E-02: 4, E-03: 2, E-16: 4
-    done: 10        # U-1..U-8, U-10 (Dashboard Routing), U-11 (Password Reset Page)
+    done: 11        # U-1..U-9, U-10 (Dashboard Routing), U-11 (Password Reset Page)
     ready: 0
-    blocked: 4
+    blocked: 3
   superadmin:
     priority: 1
     total: 9        # E-04: 4, E-05: 3, E-07: 2
@@ -31,8 +31,8 @@ lanes:
   institutional_admin:
     priority: 2
     total: 44       # E-06: 3, E-09: 3, E-14: 4, E-15: 4, E-17: 4, E-28: 5, E-29: 3, E-30: 3, E-31: 3, E-33: 4, E-36: 4, E-37: 4
-    done: 2         # IA-1 (User List & Invitation), IA-4 (ILO Model & Repository)
-    ready: 4        # IA-5 (Admin Dashboard), IA-17 (User Deactivation), IA-18 (Role Assignment), IA-23 (ILO Management UI)
+    done: 3         # IA-1 (User List & Invitation), IA-4 (ILO Model & Repository), IA-5 (Admin Dashboard)
+    ready: 3        # IA-17 (User Deactivation), IA-18 (Role Assignment), IA-23 (ILO Management UI)
     blocked: 38
   faculty:
     priority: 3
@@ -145,21 +145,33 @@ completed:
     completed: 2026-02-20
     api_tests: 21      # user-reassignment.service (12) + user-reassignment.controller (9)
     e2e_tests: 0
+  - id: STORY-IA-5
+    title: "Admin Dashboard Page"
+    lane: institutional_admin
+    completed: 2026-02-20
+    api_tests: 18      # admin-dashboard.service (12) + dashboard.controller (6)
+    e2e_tests: 0
+  - id: STORY-U-9
+    title: "Invitation Acceptance Flow"
+    lane: universal
+    completed: 2026-02-20
+    api_tests: 25      # invitation-acceptance.service (12) + invitation-acceptance.controller (13)
+    e2e_tests: 0
 
 # Error-to-rule pipeline
 error_pipeline:
-  total_errors_captured: 23
-  total_rules_created: 23
-  recurrence_rate: 4    # 1 recurrence out of 23 = ~4%
+  total_errors_captured: 24
+  total_rules_created: 24
+  recurrence_rate: 4    # 1 recurrence out of 24 = ~4%
 
 # Time allocation tracking
 metrics:
-  stories_completed: 15
+  stories_completed: 17
   stories_total: 166
   avg_story_time_minutes: 0    # not tracked yet
   planning_pct: 0    # target: 40%
   review_pct: 0      # target: 40%
   execution_pct: 0   # target: 10%
   learning_pct: 0    # target: 10%
-  api_tests_total: 350  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33, U-8: 15, U-10: 38, U-11: 16, SA-1: 28, SA-2: 22, SA-3: 20, SA-4: 21, SA-5: 17
+  api_tests_total: 393  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33, U-8: 15, U-9: 25, U-10: 38, U-11: 16, SA-1: 28, SA-2: 22, SA-3: 20, SA-4: 21, SA-5: 17, IA-5: 18
   e2e_tests_total: 0
