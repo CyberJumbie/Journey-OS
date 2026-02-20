@@ -737,3 +737,17 @@ errors:
     rule: "Existing rule: wrap async-state-setting functions in async IIFE inside useEffect. See docs/solutions/react19-state-reset-patterns.md"
     location: "Root CLAUDE.md → Things Claude Gets Wrong (existing rule)"
     recurrence: 2
+
+  - date: 2026-02-20
+    story: STORY-F-22
+    error: "Brief claimed inngest was 'already installed' but it was not in apps/server/package.json. Had to add pnpm --filter server add inngest as task 0."
+    rule: "Verify NPM packages exist in workspace package.json before importing. Brief dependency claims may be wrong."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-22
+    error: "vi.fn<() => T>().mock.calls typed as empty tuple in strict TS — calls[0]![0] fails TS2493. Required cast through unknown to Array<Array<T>>."
+    rule: "Cast vi.fn mock.calls through unknown for index access: (mock.mock.calls as unknown as Array<Array<T>>)[0]![0]!"
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0

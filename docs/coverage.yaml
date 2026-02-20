@@ -37,9 +37,9 @@ lanes:
   faculty:
     priority: 3
     total: 75       # E-08: 4, E-10: 3, E-11: 4, E-12: 4, E-13: 3, E-18: 4, E-19: 4, E-20: 4, E-21: 4, E-22: 3, E-23: 4, E-24: 4, E-25: 4, E-26: 4, E-27: 4, E-32: 4, E-34: 4, E-35: 3, E-38: 3, E-39: 4
-    done: 19        # F-1 (Course Model & Repository), F-2 (Notification Model & Repository), F-3 (Import Parser), F-4 (Template Model & CRUD), F-5 (Profile Page), F-6 (Activity Feed), F-7 (KPI Strip), F-8 (Help Pages), F-9 (Upload Dropzone), F-10 (Socket.io Notification), F-11 (Course Hierarchy), F-12 (Course Cards), F-13 (Course List & Detail Views), F-14 (Template Management Page), F-15 (Field Mapping UI), F-16 (Notification Preferences), F-17 (Generation Preferences), F-18 (Supabase Storage Integration), F-20 (Course Creation Wizard)
-    ready: 0
-    blocked: 56     # rest blocked by upstream dependencies
+    done: 20        # F-1 (Course Model & Repository), F-2 (Notification Model & Repository), F-3 (Import Parser), F-4 (Template Model & CRUD), F-5 (Profile Page), F-6 (Activity Feed), F-7 (KPI Strip), F-8 (Help Pages), F-9 (Upload Dropzone), F-10 (Socket.io Notification), F-11 (Course Hierarchy), F-12 (Course Cards), F-13 (Course List & Detail Views), F-14 (Template Management Page), F-15 (Field Mapping UI), F-16 (Notification Preferences), F-17 (Generation Preferences), F-18 (Supabase Storage Integration), F-20 (Course Creation Wizard), F-22 (Inngest Notification Triggers)
+    ready: 0        # Next unblocked: check backlog after IA-3 unblocks
+    blocked: 55     # rest blocked by upstream dependencies
   student:
     priority: 4
     total: 15       # E-40: 4, E-41: 4, E-42: 4, E-43: 3
@@ -331,6 +331,12 @@ completed:
     completed: 2026-02-20
     api_tests: 15      # course-wizard.controller (15): create(4) + checkCode(3) + sections/sessions(3) + CD-assignment(2) + validation(3)
     e2e_tests: 1       # course-creation.spec (1): basic wizard flow
+  - id: STORY-F-22
+    title: "Inngest Notification Triggers"
+    lane: faculty
+    completed: 2026-02-20
+    api_tests: 12      # triggers (12): batch(2) + review-request(2) + review-decision(2) + gap-scan(2) + kaizen(3) + resolver(1)
+    e2e_tests: 0       # backend-only, no UI
   - id: STORY-IA-8
     title: "Course Oversight Dashboard"
     lane: institutional_admin
