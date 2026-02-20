@@ -15,10 +15,12 @@
   "dependencies": {
     "@journey-os/types": "workspace:*",
     "@supabase/supabase-js": "^2.97.0",
+    "@types/multer": "^2.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "fast-xml-parser": "^5.3.7",
+    "multer": "^2.0.2",
     "neo4j-driver": "^5.28.3",
     "papaparse": "^5.5.3",
     "zod": "^4.3.6"
