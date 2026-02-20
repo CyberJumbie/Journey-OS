@@ -10,3 +10,5 @@ export * from "./notification";
 export * from "./objective";
 export * from "./template";
 export * from "./user";
+export * from "./dashboard";
+export * from "./help";

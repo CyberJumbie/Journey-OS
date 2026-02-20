@@ -81,6 +81,8 @@ import { ProfileService } from "./services/profile/profile.service";
 import { ProfileController } from "./controllers/profile/profile.controller";
 import { CourseOversightService } from "./services/course/course-oversight.service";
 import { CourseOversightController } from "./controllers/course/course-oversight.controller";
+import { ScheduleService } from "./services/course/schedule.service";
+import { ScheduleController } from "./controllers/course/schedule.controller";
 import { InstitutionLifecycleService } from "./services/admin/institution-lifecycle.service";
 import { InstitutionLifecycleController } from "./controllers/admin/institution-lifecycle.controller";
 import { createInstitutionStatusMiddleware } from "./middleware/institution-status.middleware";
@@ -92,6 +94,11 @@ import { UploadRepository } from "./repositories/upload.repository";
 import { UploadService } from "./services/upload/upload.service";
 import { UploadController } from "./controllers/upload.controller";
 import { uploadFiles } from "./middleware/upload.validation";
+import { ActivityFeedRepository } from "./repositories/activity.repository";
+import { ActivityFeedService } from "./services/activity/activity-feed.service";
+import { ActivityFeedController } from "./controllers/activity.controller";
+import { KpiService } from "./services/dashboard/kpi.service";
+import { KpiController } from "./controllers/dashboard/kpi.controller";
 
 const app: Express = express();
 const PORT = process.env.PORT || 3001;
@@ -453,6 +460,21 @@ app.post(
   rbac.require(AuthRole.FACULTY),
   uploadFiles,
   (req, res) => uploadController.handleUpload(req, res),
+);
+
+// Activity feed — Faculty and above
+const activityRepository = new ActivityFeedRepository(supabaseClient);
+const activityService = new ActivityFeedService(activityRepository);
+const activityController = new ActivityFeedController(activityService);
+app.get("/api/v1/activity", rbac.require(AuthRole.FACULTY), (req, res) =>
+  activityController.handleList(req, res),
+);
+
+// Dashboard KPIs — Faculty and above
+const kpiService = new KpiService(supabaseClient);
+const kpiController = new KpiController(kpiService);
+app.get("/api/v1/dashboard/kpis", rbac.require(AuthRole.FACULTY), (req, res) =>
+  kpiController.handleGetKpis(req, res),
 );
 
 // Notifications — any authenticated user (no RBAC role check)
