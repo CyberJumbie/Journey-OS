@@ -47,6 +47,9 @@ import { NotificationController } from "./controllers/notification/notification.
 import { CourseRepository } from "./repositories/course.repository";
 import { CourseService } from "./services/course/course.service";
 import { CourseController } from "./controllers/course/course.controller";
+import { TemplateRepository } from "./repositories/template.repository";
+import { TemplateService } from "./services/template/template.service";
+import { TemplateController } from "./controllers/template/template.controller";
 import { FrameworkService } from "./services/framework/framework.service";
 import { FrameworkController } from "./controllers/framework/framework.controller";
 import { Neo4jClientConfig } from "./config/neo4j.config";
@@ -359,6 +362,38 @@ app.get("/api/v1/notifications", (req, res) =>
 );
 app.patch("/api/v1/notifications/:id/read", (req, res) =>
   notificationController.handleMarkAsRead(req, res),
+);
+
+// Templates — Faculty only
+const templateRepository = new TemplateRepository(supabaseClient);
+const templateService = new TemplateService(templateRepository, null);
+const templateController = new TemplateController(templateService);
+app.post("/api/v1/templates", rbac.require(AuthRole.FACULTY), (req, res) =>
+  templateController.handleCreate(req, res),
+);
+app.get("/api/v1/templates", rbac.require(AuthRole.FACULTY), (req, res) =>
+  templateController.handleList(req, res),
+);
+app.get("/api/v1/templates/:id", rbac.require(AuthRole.FACULTY), (req, res) =>
+  templateController.handleGetById(req, res),
+);
+app.put("/api/v1/templates/:id", rbac.require(AuthRole.FACULTY), (req, res) =>
+  templateController.handleUpdate(req, res),
+);
+app.delete(
+  "/api/v1/templates/:id",
+  rbac.require(AuthRole.FACULTY),
+  (req, res) => templateController.handleDelete(req, res),
+);
+app.post(
+  "/api/v1/templates/:id/duplicate",
+  rbac.require(AuthRole.FACULTY),
+  (req, res) => templateController.handleDuplicate(req, res),
+);
+app.get(
+  "/api/v1/templates/:id/versions",
+  rbac.require(AuthRole.FACULTY),
+  (req, res) => templateController.handleGetVersions(req, res),
 );
 
 app.listen(PORT, () => {
