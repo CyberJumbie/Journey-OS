@@ -2,6 +2,8 @@
 name: "Dr. Kenji Takahashi"
 role: institutional_admin
 lane: institutional_admin
+priority: P2
+tier: "1"
 sources:
   - "PRODUCT_BRIEF §Personas (Dr. Kenji Takahashi)"
   - "ARCHITECTURE_v10 §4.1 (Role Hierarchy)"

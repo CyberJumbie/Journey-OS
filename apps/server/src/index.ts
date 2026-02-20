@@ -114,6 +114,21 @@ import { ImportUploadService } from "./services/import/import-upload.service"; /
 import { MappingPresetService } from "./services/import/mapping-preset.service"; // [STORY-F-15]
 import { ImportUploadController } from "./controllers/import/import-upload.controller"; // [STORY-F-15]
 import { importSingleFile } from "./middleware/import-upload.validation"; // [STORY-F-15]
+import { StorageService } from "./services/storage/storage.service"; // [STORY-F-18]
+import { MalwareScanStub } from "./services/storage/malware-scan.stub"; // [STORY-F-18]
+import { StorageController } from "./controllers/storage/storage.controller"; // [STORY-F-18]
+import { storageSingleFile } from "./middleware/storage-upload.validation"; // [STORY-F-18]
+import { serve } from "inngest/express"; // [STORY-F-22]
+import {
+  inngest,
+  createNotifyBatchComplete,
+  createNotifyReviewRequest,
+  createNotifyReviewDecision,
+  createNotifyGapScan,
+  createNotifyKaizenDrift,
+  createNotifyKaizenLint,
+} from "./inngest"; // [STORY-F-22]
+import { TriggerResolverService } from "./services/notification/trigger-resolver.service"; // [STORY-F-22]
 
 const app: Express = express();
 const PORT = process.env.PORT || 3001;
@@ -505,6 +520,30 @@ app.post(
   (req, res) => uploadController.handleUpload(req, res),
 );
 
+// Storage uploads — Faculty only [STORY-F-18]
+const malwareScanStub = new MalwareScanStub();
+const storageService = new StorageService(supabaseClient, malwareScanStub);
+const storageController = new StorageController(storageService);
+app.post(
+  "/api/v1/uploads",
+  rbac.require(AuthRole.FACULTY),
+  storageSingleFile,
+  (req, res) => storageController.handleUpload(req, res),
+);
+app.get("/api/v1/uploads", rbac.require(AuthRole.FACULTY), (req, res) =>
+  storageController.handleList(req, res),
+);
+app.get(
+  "/api/v1/uploads/:uploadId/url",
+  rbac.require(AuthRole.FACULTY),
+  (req, res) => storageController.handleGetPresignedUrl(req, res),
+);
+app.delete(
+  "/api/v1/uploads/:uploadId",
+  rbac.require(AuthRole.FACULTY),
+  (req, res) => storageController.handleSoftDelete(req, res),
+);
+
 // Activity feed — Faculty and above
 const activityRepository = new ActivityFeedRepository(supabaseClient);
 const activityService = new ActivityFeedService(activityRepository);
@@ -714,6 +753,28 @@ const socketNotificationService = new SocketNotificationService(
 );
 socketManager.setNotificationService(notificationService);
 socketManager.initialize();
+
+// Inngest — durable notification trigger functions [STORY-F-22]
+const triggerResolver = new TriggerResolverService(supabaseClient);
+const inngestDeps = {
+  notificationService,
+  notificationRepository,
+  triggerResolver,
+};
+app.use(
+  "/api/inngest",
+  serve({
+    client: inngest,
+    functions: [
+      createNotifyBatchComplete(inngestDeps),
+      createNotifyReviewRequest(inngestDeps),
+      createNotifyReviewDecision(inngestDeps),
+      createNotifyGapScan(inngestDeps),
+      createNotifyKaizenDrift(inngestDeps),
+      createNotifyKaizenLint(inngestDeps),
+    ],
+  }),
+);
 
 httpServer.listen(PORT, () => {
   console.log(`[server] listening on port ${PORT}`);

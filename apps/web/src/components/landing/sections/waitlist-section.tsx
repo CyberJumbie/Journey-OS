@@ -7,7 +7,11 @@ import { AscendingSquares } from "@web/components/brand/ascending-squares";
 import { Reveal } from "@web/components/landing/reveal";
 import { C, pillarColors } from "@web/components/landing/landing-data";
 
-function ThreadDivider({ color = C.warmGray }: { color?: string }) {
+function ThreadDivider({
+  color = "#d7d3c8" /* token: --warm-gray */,
+}: {
+  color?: string;
+}) {
   return (
     <div
       className="relative mx-auto overflow-hidden"
@@ -119,7 +123,7 @@ export function WaitlistSection() {
                 help shape a platform that works for your institution, your
                 faculty, your students.
               </p>
-              <ThreadDivider color={C.warmGray} />
+              <ThreadDivider color="#d7d3c8" /* token: --warm-gray */ />
               <p
                 className="mt-4 italic"
                 style={{
@@ -140,7 +144,8 @@ export function WaitlistSection() {
                 className="rounded-xl text-center"
                 style={{
                   background: C.parchment,
-                  border: `1px solid ${C.green}30`,
+                  border:
+                    "1px solid rgba(105,163,56,0.188)" /* token: --green @ 19% */,
                   padding: isMobile ? 24 : 32,
                 }}
               >
@@ -149,7 +154,8 @@ export function WaitlistSection() {
                   style={{
                     width: 44,
                     height: 44,
-                    background: `${C.green}15`,
+                    background:
+                      "rgba(105,163,56,0.082)" /* token: --green @ 8% */,
                     fontSize: 22,
                     color: C.green,
                   }}
@@ -250,7 +256,9 @@ export function WaitlistSection() {
                             fontWeight: 500,
                             padding: isMobile ? "10px 8px" : "8px 12px",
                             background:
-                              role === opt.value ? `${C.navyDeep}0A` : C.white,
+                              role === opt.value
+                                ? "rgba(0,44,118,0.039)" /* token: --navy-deep @ 4% */
+                                : C.white,
                             border: `1.5px solid ${role === opt.value ? C.navyDeep : C.border}`,
                             color:
                               role === opt.value ? C.navyDeep : C.textSecondary,

@@ -14,21 +14,6 @@ function useMounted() {
   );
 }
 
-const C = {
-  navyDeep: "#002c76",
-  blue: "#004ebc",
-  blueMid: "#2b71b9",
-  ink: "#1b232a",
-  warmGray: "#d7d3c8",
-  cream: "#f5f3ef",
-  parchment: "#faf9f6",
-  white: "#ffffff",
-  textMuted: "#718096",
-  border: "#e2dfd8",
-  borderLight: "#edeae4",
-  error: "#c9282d",
-};
-
 type FormState = "idle" | "loading" | "error";
 
 export function TeamLoginScreen() {
@@ -86,10 +71,7 @@ export function TeamLoginScreen() {
   });
 
   return (
-    <div
-      className="flex min-h-screen items-center justify-center font-sans"
-      style={{ background: C.cream }}
-    >
+    <div className="flex min-h-screen items-center justify-center bg-cream font-sans">
       <div
         style={{
           width: "100%",
@@ -103,17 +85,16 @@ export function TeamLoginScreen() {
             <JourneyLogo size="md" />
           </div>
           <h2
-            className="font-serif font-bold"
+            className="font-serif font-bold text-navy-deep"
             style={{
               fontSize: 28,
-              color: C.navyDeep,
               marginBottom: 8,
               letterSpacing: "-0.01em",
             }}
           >
             Team Sign In
           </h2>
-          <p className="text-sm" style={{ color: C.textMuted }}>
+          <p className="text-sm text-text-muted">
             Internal access for Journey OS team
           </p>
         </div>
@@ -126,11 +107,10 @@ export function TeamLoginScreen() {
           <div>
             <label
               htmlFor="team-email"
-              className="font-mono uppercase"
+              className="font-mono uppercase text-text-muted"
               style={{
                 fontSize: 10,
                 letterSpacing: "0.08em",
-                color: C.textMuted,
                 display: "block",
                 marginBottom: 6,
               }}
@@ -144,24 +124,24 @@ export function TeamLoginScreen() {
               onChange={(e) => setEmail(e.target.value)}
               disabled={formState === "loading"}
               placeholder="you@journey-os.com"
-              className="w-full font-sans"
+              className="w-full font-sans text-ink"
               style={{
                 boxSizing: "border-box",
                 padding: "13px 16px",
-                background: C.parchment,
-                border: `1px solid ${C.border}`,
+                background: "var(--parchment)",
+                border: "1px solid var(--border)",
                 borderRadius: 8,
                 fontSize: 15,
-                color: C.ink,
                 outline: "none",
                 transition: "border-color 0.2s, box-shadow 0.2s",
               }}
               onFocus={(e) => {
-                e.target.style.borderColor = C.blueMid;
-                e.target.style.boxShadow = `0 0 0 3px ${C.blueMid}15`;
+                e.target.style.borderColor = "var(--blue-mid)";
+                e.target.style.boxShadow =
+                  "0 0 0 3px rgba(43,113,185,0.082)" /* token: --blue-mid @ 8% */;
               }}
               onBlur={(e) => {
-                e.target.style.borderColor = C.border;
+                e.target.style.borderColor = "var(--border)";
                 e.target.style.boxShadow = "none";
               }}
               required
@@ -172,11 +152,10 @@ export function TeamLoginScreen() {
           <div>
             <label
               htmlFor="team-password"
-              className="font-mono uppercase"
+              className="font-mono uppercase text-text-muted"
               style={{
                 fontSize: 10,
                 letterSpacing: "0.08em",
-                color: C.textMuted,
                 display: "block",
                 marginBottom: 6,
               }}
@@ -191,24 +170,24 @@ export function TeamLoginScreen() {
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={formState === "loading"}
                 placeholder="••••••••"
-                className="w-full font-sans"
+                className="w-full font-sans text-ink"
                 style={{
                   boxSizing: "border-box",
                   padding: "13px 48px 13px 16px",
-                  background: C.parchment,
-                  border: `1px solid ${C.border}`,
+                  background: "var(--parchment)",
+                  border: "1px solid var(--border)",
                   borderRadius: 8,
                   fontSize: 15,
-                  color: C.ink,
                   outline: "none",
                   transition: "border-color 0.2s, box-shadow 0.2s",
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = C.blueMid;
-                  e.target.style.boxShadow = `0 0 0 3px ${C.blueMid}15`;
+                  e.target.style.borderColor = "var(--blue-mid)";
+                  e.target.style.boxShadow =
+                    "0 0 0 3px rgba(43,113,185,0.082)" /* token: --blue-mid @ 8% */;
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = C.border;
+                  e.target.style.borderColor = "var(--border)";
                   e.target.style.boxShadow = "none";
                 }}
                 required
@@ -216,13 +195,12 @@ export function TeamLoginScreen() {
               <button
                 onClick={() => setShowPassword(!showPassword)}
                 type="button"
-                className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center"
+                className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center text-text-muted"
                 style={{
                   background: "none",
                   border: "none",
                   cursor: "pointer",
                   padding: 4,
-                  color: C.textMuted,
                 }}
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
@@ -260,11 +238,7 @@ export function TeamLoginScreen() {
             </div>
           </div>
 
-          {errorMessage && (
-            <p className="text-sm" style={{ color: C.error }}>
-              {errorMessage}
-            </p>
-          )}
+          {errorMessage && <p className="text-sm text-error">{errorMessage}</p>}
 
           {/* Submit */}
           <button
@@ -279,17 +253,17 @@ export function TeamLoginScreen() {
               marginTop: 4,
               cursor:
                 !canSubmit || formState === "loading" ? "default" : "pointer",
-              background: !canSubmit ? C.warmGray : C.navyDeep,
-              color: !canSubmit ? C.textMuted : C.white,
+              background: !canSubmit ? "var(--warm-gray)" : "var(--navy-deep)",
+              color: !canSubmit ? "var(--text-muted)" : "var(--white)",
               transition: "all 0.2s",
             }}
             onMouseEnter={(e) => {
               if (canSubmit && formState !== "loading")
-                e.currentTarget.style.background = C.blue;
+                e.currentTarget.style.background = "var(--blue)";
             }}
             onMouseLeave={(e) => {
               if (canSubmit && formState !== "loading")
-                e.currentTarget.style.background = C.navyDeep;
+                e.currentTarget.style.background = "var(--navy-deep)";
             }}
           >
             {formState === "loading" ? (
@@ -316,7 +290,7 @@ export function TeamLoginScreen() {
               height="12"
               viewBox="0 0 16 16"
               fill="none"
-              stroke={C.textMuted}
+              stroke="#718096" /* token: --text-muted */
               strokeWidth="1.5"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -325,11 +299,10 @@ export function TeamLoginScreen() {
               <path d="M5 7V5a3 3 0 0 1 6 0v2" />
             </svg>
             <span
-              className="font-mono uppercase"
+              className="font-mono uppercase text-text-muted"
               style={{
                 fontSize: 9,
                 letterSpacing: "0.1em",
-                color: C.textMuted,
               }}
             >
               Journey OS Internal

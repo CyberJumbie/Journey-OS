@@ -158,7 +158,7 @@ export function CoverageChainSection() {
                         fontSize: 11,
                         color: step.color,
                         letterSpacing: "0.08em",
-                        background: `${step.color}0A`,
+                        background: `color-mix(in srgb, ${step.color} 4%, transparent)`,
                         padding: "3px 10px",
                       }}
                     >
@@ -179,7 +179,7 @@ export function CoverageChainSection() {
                       <svg width="20" height="12" viewBox="0 0 24 12">
                         <path
                           d="M0,6 Q6,2 12,6 T24,6"
-                          stroke={C.warmGray}
+                          stroke="#d7d3c8" /* token: --warm-gray */
                           strokeWidth="1.5"
                           fill="none"
                         />

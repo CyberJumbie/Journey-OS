@@ -2,6 +2,8 @@
 name: "Marcus Williams"
 role: student
 lane: student
+priority: P4
+tier: "2"
 sources:
   - "PRODUCT_BRIEF §Personas (Marcus Williams)"
   - "ARCHITECTURE_v10 §4.1 (Role Hierarchy), §14 (Student Routes)"

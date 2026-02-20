@@ -723,3 +723,17 @@ errors:
     rule: "Grep all consumers for alpha hex patterns BEFORE converting shared color objects from hex to var(). Replace with rgba() or color-mix() first."
     location: "Root CLAUDE.md → Things Claude Gets Wrong + docs/solutions/component-hex-to-token-migration-pattern.md"
     recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-20-validate
+    error: "Missing @journey-os/ui path alias in apps/web/tsconfig.json — StepIndicator import from @journey-os/ui failed tsc resolution. UI package was created but consuming tsconfig never updated."
+    rule: "When adding a new workspace package that other apps import (e.g., @journey-os/ui), add its path alias to ALL consuming tsconfig.json files. Check web, server tsconfigs."
+    location: "Root CLAUDE.md → Monorepo Conventions (new rule)"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-20-validate
+    error: "Three react-hooks/set-state-in-effect violations in CourseWizard.tsx and CourseWizardStep4.tsx — synchronous setState calls inside useEffect for draft restore, code availability reset, and search results clearing."
+    rule: "Existing rule: wrap async-state-setting functions in async IIFE inside useEffect. See docs/solutions/react19-state-reset-patterns.md"
+    location: "Root CLAUDE.md → Things Claude Gets Wrong (existing rule)"
+    recurrence: 2

@@ -44,7 +44,7 @@ export const mockCourses = [
     coverage: 91,
     items: 186,
     status: "active" as const,
-    color: "#002c76",
+    color: "var(--color-navy-deep)",
   },
   {
     name: "Clinical Pharmacology",
@@ -53,7 +53,7 @@ export const mockCourses = [
     coverage: 74,
     items: 98,
     status: "active" as const,
-    color: "#2b71b9",
+    color: "var(--color-blue-mid)",
   },
   {
     name: "Pharmacogenomics",
@@ -62,7 +62,7 @@ export const mockCourses = [
     coverage: 62,
     items: 58,
     status: "draft" as const,
-    color: "#69a338",
+    color: "var(--color-green)",
   },
 ];
 
@@ -152,8 +152,8 @@ export const navItems = [
 ];
 
 export const quickActions = [
-  { label: "Generate Items", icon: "◆", color: "#002c76" },
-  { label: "Create Exam", icon: "◇", color: "#2b71b9" },
-  { label: "Map Curriculum", icon: "◈", color: "#69a338" },
-  { label: "View Reports", icon: "▣", color: "#5d7203" },
+  { label: "Generate Items", icon: "◆", color: "var(--color-navy-deep)" },
+  { label: "Create Exam", icon: "◇", color: "var(--color-blue-mid)" },
+  { label: "Map Curriculum", icon: "◈", color: "var(--color-green)" },
+  { label: "View Reports", icon: "▣", color: "var(--color-green-dark)" },
 ];

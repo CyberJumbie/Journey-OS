@@ -25,3 +25,9 @@ export class InvalidNotificationTypeError extends JourneyOSError {
     super(`Invalid notification type: ${type}`, "INVALID_NOTIFICATION_TYPE");
   }
 }
+
+export class NotificationTriggerError extends JourneyOSError {
+  constructor(message: string) {
+    super(message, "NOTIFICATION_TRIGGER_ERROR");
+  }
+}

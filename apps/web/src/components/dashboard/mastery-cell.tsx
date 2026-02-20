@@ -1,14 +1,5 @@
 "use client";
 
-const C = {
-  green: "#69a338",
-  blueMid: "#2b71b9",
-  bluePale: "#a3d9ff",
-  borderLight: "#edeae4",
-  white: "#ffffff",
-  textMuted: "#718096",
-};
-
 interface MasteryCellProps {
   value: number;
   label: string;
@@ -18,13 +9,14 @@ export function MasteryCell({ value, label }: MasteryCellProps) {
   const intensity = Math.min(1, Math.max(0, value));
   const bg =
     intensity > 0.7
-      ? C.green
+      ? "var(--color-green)"
       : intensity > 0.4
-        ? C.blueMid
+        ? "var(--color-blue-mid)"
         : intensity > 0.15
-          ? C.bluePale
-          : C.borderLight;
-  const textColor = intensity > 0.4 ? C.white : C.textMuted;
+          ? "var(--color-blue-pale)"
+          : "var(--color-border-light)";
+  const textColor =
+    intensity > 0.4 ? "var(--color-white)" : "var(--color-text-muted)";
 
   return (
     <div

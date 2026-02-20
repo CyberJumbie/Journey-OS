@@ -20,3 +20,17 @@ export {
   type PresenceUpdate,
   type SocketAuthData,
 } from "./socket.types";
+
+export {
+  type NotificationTriggerEvent,
+  type BaseTriggerPayload,
+  type BatchCompletePayload,
+  type ReviewRequestPayload,
+  type ReviewDecisionPayload,
+  type GapScanCompletePayload,
+  type KaizenDriftPayload,
+  type KaizenLintPayload,
+  type TriggerPayload,
+  type ResolvedRecipients,
+  type TriggerDedupKey,
+} from "./trigger.types";

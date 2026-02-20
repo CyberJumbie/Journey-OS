@@ -50,18 +50,24 @@ export class CourseOversightService {
 
     const offset = (page - 1) * limit;
 
-    // Build base queries with institution scoping
+    // Build base queries with institution scoping through programs join
+    // courses has no institution_id — must join through programs.institution_id
     let dataQuery = this.#supabaseClient
       .from("courses")
       .select(
-        "id, code, name, course_director_id, academic_year, status, updated_at, program_id",
+        "id, code, name, course_director_id, academic_year, status, updated_at, program_id, " +
+          "program:programs!inner(name, institution_id), " +
+          "director:profiles!courses_course_director_id_fkey(full_name)",
       )
-      .eq("institution_id", institutionId);
+      .eq("programs.institution_id", institutionId);
 
     let countQuery = this.#supabaseClient
       .from("courses")
-      .select("id", { count: "exact", head: true })
-      .eq("institution_id", institutionId);
+      .select("id, program:programs!inner(institution_id)", {
+        count: "exact",
+        head: true,
+      })
+      .eq("programs.institution_id", institutionId);
 
     // Apply identical filters to BOTH queries before finalizing
     if (query.program_id) {
@@ -96,9 +102,11 @@ export class CourseOversightService {
     const total = countResult.count ?? 0;
     const totalPages = Math.ceil(total / limit) || 1;
 
-    const courses = (dataResult.data ?? []).map(
-      (row: Record<string, unknown>) => this.#toOverviewItem(row),
-    );
+    const rows = (dataResult.data ?? []) as unknown as Record<
+      string,
+      unknown
+    >[];
+    const courses = rows.map((row) => this.#toOverviewItem(row));
 
     return {
       courses,
@@ -112,6 +120,10 @@ export class CourseOversightService {
   }
 
   #toOverviewItem(row: Record<string, unknown>): CourseOverviewItem {
+    // Extract nested join objects
+    const program = row.program as { name?: string } | null;
+    const director = row.director as { full_name?: string } | null;
+
     // Compute processing status from available data
     const uploadCount = (row.upload_count as number) ?? 0;
     const processingCount = (row.processing_count as number) ?? 0;
@@ -124,12 +136,12 @@ export class CourseOversightService {
       id: row.id as string,
       code: row.code as string,
       name: row.name as string,
-      director_name: (row.director_name as string) ?? null,
+      director_name: director?.full_name ?? null,
       slo_count: (row.slo_count as number) ?? 0,
       fulfills_coverage_pct: (row.fulfills_coverage_pct as number) ?? 0,
       upload_count: uploadCount,
       processing_status: processingStatus,
-      program_name: (row.program_name as string) ?? null,
+      program_name: program?.name ?? null,
       academic_year: (row.academic_year as string) ?? null,
       status: (row.status as CourseOverviewItem["status"]) ?? "active",
       updated_at: row.updated_at as string,

@@ -67,6 +67,7 @@ export {
   NotificationNotFoundError,
   NotificationForbiddenError,
   InvalidNotificationTypeError,
+  NotificationTriggerError,
 } from "./notification.error";
 export {
   ImportError,
@@ -115,3 +116,11 @@ export {
   PresetNotFoundError,
   PresetOperationError,
 } from "./import-mapping.errors";
+export {
+  StorageError,
+  FileTooLargeError,
+  UnsupportedFileTypeError,
+  MalwareDetectedError,
+  ChecksumMismatchError,
+  StorageUploadNotFoundError,
+} from "./storage.error";

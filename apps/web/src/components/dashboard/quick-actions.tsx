@@ -1,13 +1,5 @@
 "use client";
 
-const C = {
-  parchment: "#faf9f6",
-  blueMid: "#2b71b9",
-  borderLight: "#edeae4",
-  textPrimary: "#1b232a",
-  textMuted: "#718096",
-};
-
 interface QuickAction {
   label: string;
   icon: string;
@@ -22,10 +14,7 @@ export function QuickActions({ actions }: QuickActionsProps) {
   return (
     <div className="rounded-xl border border-border-light bg-white p-4 md:p-5 md:px-6">
       <div className="mb-3.5 flex items-center gap-2">
-        <div
-          className="h-[5px] w-[5px] rounded-sm"
-          style={{ background: C.blueMid }}
-        />
+        <div className="h-[5px] w-[5px] rounded-sm bg-blue-mid" />
         <span
           className="font-mono uppercase text-text-muted"
           style={{ fontSize: 9, letterSpacing: "0.08em" }}
@@ -37,18 +26,17 @@ export function QuickActions({ actions }: QuickActionsProps) {
         {actions.map((a, i) => (
           <button
             key={i}
-            className="cursor-pointer rounded-lg text-left transition-all"
+            className="cursor-pointer rounded-lg bg-parchment text-left transition-all"
             style={{
-              background: C.parchment,
-              border: `1px solid ${C.borderLight}`,
+              border: "1px solid var(--border-light)",
               padding: "14px 12px",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = C.blueMid;
-              e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,44,118,0.04)";
+              e.currentTarget.style.borderColor = "var(--blue-mid)";
+              e.currentTarget.style.boxShadow = "var(--shadow-subtle)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = C.borderLight;
+              e.currentTarget.style.borderColor = "var(--border-light)";
               e.currentTarget.style.boxShadow = "none";
             }}
           >

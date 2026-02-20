@@ -30,7 +30,10 @@ export function LandingNav() {
     <nav
       className="fixed left-0 right-0 top-0 z-[100]"
       style={{
-        background: scrollY > 40 ? `${C.white}F0` : C.white,
+        background:
+          scrollY > 40
+            ? "rgba(255,255,255,0.941)" /* token: --white @ 94% */
+            : C.white,
         backdropFilter: scrollY > 40 ? "blur(12px)" : "none",
         borderBottom: `1px solid ${scrollY > 40 ? C.borderLight : "transparent"}`,
         transition: "all 0.3s ease",

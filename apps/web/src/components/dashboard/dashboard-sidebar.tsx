@@ -5,17 +5,6 @@ import { useBreakpoint } from "@web/hooks/use-breakpoint";
 import { JourneyLogo } from "@web/components/brand/journey-logo";
 import { navItems } from "@web/components/dashboard/mock-data";
 
-const C = {
-  navyDeep: "#002c76",
-  greenDark: "#5d7203",
-  white: "#ffffff",
-  parchment: "#faf9f6",
-  borderLight: "#edeae4",
-  textPrimary: "#1b232a",
-  textSecondary: "#4a5568",
-  textMuted: "#718096",
-};
-
 interface DashboardSidebarProps {
   open: boolean;
   onClose: () => void;
@@ -42,7 +31,7 @@ export function DashboardSidebar({
           onClick={onClose}
           className="fixed inset-0 z-40"
           style={{
-            background: "rgba(0,44,118,0.12)",
+            background: "rgba(0,44,118,0.12)" /* token: --navy-deep */,
             backdropFilter: "blur(2px)",
           }}
         />
@@ -57,8 +46,8 @@ export function DashboardSidebar({
           top: 0,
           left: 0,
           zIndex: 50,
-          background: C.white,
-          borderRight: `1px solid ${C.borderLight}`,
+          background: "var(--white)",
+          borderRight: "1px solid var(--border-light)",
           display: "flex",
           flexDirection: "column",
           padding: "24px 16px 20px",
@@ -67,8 +56,7 @@ export function DashboardSidebar({
               ? `translateX(-${sidebarWidth}px)`
               : "translateX(0)",
           transition: "transform 0.25s ease",
-          boxShadow:
-            !isDesktop && open ? "4px 0 24px rgba(0,44,118,0.06)" : "none",
+          boxShadow: !isDesktop && open ? "var(--shadow-sidebar)" : "none",
         }}
       >
         {/* Logo */}
@@ -102,8 +90,11 @@ export function DashboardSidebar({
                 borderRadius: 6,
                 border: "none",
                 background:
-                  activeNav === item.key ? C.parchment : "transparent",
-                color: activeNav === item.key ? C.navyDeep : C.textSecondary,
+                  activeNav === item.key ? "var(--parchment)" : "transparent",
+                color:
+                  activeNav === item.key
+                    ? "var(--navy-deep)"
+                    : "var(--text-secondary)",
                 fontSize: 14,
                 fontWeight: activeNav === item.key ? 600 : 400,
                 cursor: "pointer",
@@ -130,7 +121,7 @@ export function DashboardSidebar({
         {/* Bottom: Settings + user */}
         <div
           style={{
-            borderTop: `1px solid ${C.borderLight}`,
+            borderTop: "1px solid var(--border-light)",
             paddingTop: 16,
           }}
         >
@@ -155,11 +146,10 @@ export function DashboardSidebar({
 
           <div className="mt-2 flex items-center gap-2.5 px-3 pt-3">
             <div
-              className="flex items-center justify-center rounded-lg font-mono text-white"
+              className="flex items-center justify-center rounded-lg bg-navy-deep font-mono text-white"
               style={{
                 width: 34,
                 height: 34,
-                background: C.navyDeep,
                 fontSize: 11,
                 fontWeight: 500,
                 letterSpacing: "0.04em",

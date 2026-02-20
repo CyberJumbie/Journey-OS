@@ -180,7 +180,9 @@ export function HowItWorksSection({
                       width: 28,
                       height: 28,
                       background:
-                        activeStep === i ? `${C.navyDeep}10` : "transparent",
+                        activeStep === i
+                          ? "rgba(0,44,118,0.063)" /* token: --navy-deep @ 6% */
+                          : "transparent",
                       border: `1.5px solid ${activeStep === i ? C.navyDeep : C.border}`,
                       fontSize: 11,
                       color: activeStep === i ? C.navyDeep : C.textMuted,

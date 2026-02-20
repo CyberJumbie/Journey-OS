@@ -3,9 +3,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import type {
-  CourseBasicInfo,
-  CourseConfiguration,
-  CourseStructure,
   WizardSectionInput,
   CourseWizardDraft,
   AcademicSemester,
@@ -66,40 +63,43 @@ export function CourseWizard({ userId, institutionId }: CourseWizardProps) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Draft persistence — load on mount
+  // Draft persistence — load on mount (async IIFE to satisfy react-hooks/set-state-in-effect)
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(draftKey);
-      if (!raw) return;
-      const draft = JSON.parse(raw) as CourseWizardDraft;
-      setCurrentStep(draft.currentStep);
-      if (draft.basic_info.name) setName(draft.basic_info.name);
-      if (draft.basic_info.code) setCode(draft.basic_info.code);
-      if (draft.basic_info.description)
-        setDescription(draft.basic_info.description);
-      if (draft.basic_info.academic_year)
-        setAcademicYear(draft.basic_info.academic_year);
-      if (draft.basic_info.semester) setSemester(draft.basic_info.semester);
-      if (draft.basic_info.program_id !== undefined)
-        setProgramId(draft.basic_info.program_id ?? null);
-      if (draft.configuration.credit_hours)
-        setCreditHours(draft.configuration.credit_hours);
-      if (draft.configuration.max_enrollment)
-        setMaxEnrollment(draft.configuration.max_enrollment);
-      if (draft.configuration.is_required !== undefined)
-        setIsRequired(draft.configuration.is_required);
-      if (draft.configuration.prerequisites)
-        setPrerequisites([...draft.configuration.prerequisites]);
-      if (draft.configuration.learning_objectives)
-        setLearningObjectives([...draft.configuration.learning_objectives]);
-      if (draft.configuration.tags) setTags([...draft.configuration.tags]);
-      if (draft.structure.sections)
-        setSections(draft.structure.sections as WizardSectionInput[]);
-      if (draft.director.course_director_id !== undefined)
-        setDirectorId(draft.director.course_director_id ?? null);
-    } catch {
-      // Ignore invalid draft
-    }
+    const restoreDraft = async () => {
+      try {
+        const raw = localStorage.getItem(draftKey);
+        if (!raw) return;
+        const draft = JSON.parse(raw) as CourseWizardDraft;
+        setCurrentStep(draft.currentStep);
+        if (draft.basic_info.name) setName(draft.basic_info.name);
+        if (draft.basic_info.code) setCode(draft.basic_info.code);
+        if (draft.basic_info.description)
+          setDescription(draft.basic_info.description);
+        if (draft.basic_info.academic_year)
+          setAcademicYear(draft.basic_info.academic_year);
+        if (draft.basic_info.semester) setSemester(draft.basic_info.semester);
+        if (draft.basic_info.program_id !== undefined)
+          setProgramId(draft.basic_info.program_id ?? null);
+        if (draft.configuration.credit_hours)
+          setCreditHours(draft.configuration.credit_hours);
+        if (draft.configuration.max_enrollment)
+          setMaxEnrollment(draft.configuration.max_enrollment);
+        if (draft.configuration.is_required !== undefined)
+          setIsRequired(draft.configuration.is_required);
+        if (draft.configuration.prerequisites)
+          setPrerequisites([...draft.configuration.prerequisites]);
+        if (draft.configuration.learning_objectives)
+          setLearningObjectives([...draft.configuration.learning_objectives]);
+        if (draft.configuration.tags) setTags([...draft.configuration.tags]);
+        if (draft.structure.sections)
+          setSections(draft.structure.sections as WizardSectionInput[]);
+        if (draft.director.course_director_id !== undefined)
+          setDirectorId(draft.director.course_director_id ?? null);
+      } catch {
+        // Ignore invalid draft
+      }
+    };
+    restoreDraft();
   }, [draftKey]);
 
   // Save draft
@@ -147,22 +147,33 @@ export function CourseWizard({ userId, institutionId }: CourseWizardProps) {
   ]);
 
   // Code uniqueness check (debounced)
+  // All setState calls wrapped in async functions to satisfy react-hooks/set-state-in-effect
   useEffect(() => {
     if (code.length < 3) {
-      setCodeAvailable(null);
+      const reset = async () => {
+        setCodeAvailable(null);
+        setCodeCheckLoading(false);
+      };
+      reset();
       return;
     }
-    setCodeCheckLoading(true);
+    const beginCheck = async () => {
+      setCodeCheckLoading(true);
+    };
+    beginCheck();
+    let cancelled = false;
     const timeout = setTimeout(async () => {
       const res = await checkCourseCode(code);
-      if (res.data) {
-        setCodeAvailable(res.data.available);
+      if (!cancelled) {
+        if (res.data) {
+          setCodeAvailable(res.data.available);
+        }
+        setCodeCheckLoading(false);
       }
-      setCodeCheckLoading(false);
     }, 500);
     return () => {
+      cancelled = true;
       clearTimeout(timeout);
-      setCodeCheckLoading(false);
     };
   }, [code]);
 

@@ -17,25 +17,6 @@ import { WovenField } from "@web/components/brand/woven-field";
 import { AscendingSquares } from "@web/components/brand/ascending-squares";
 import { JourneyLogo } from "@web/components/brand/journey-logo";
 
-const C = {
-  navyDeep: "#002c76",
-  blue: "#004ebc",
-  blueMid: "#2b71b9",
-  greenDark: "#5d7203",
-  green: "#69a338",
-  ink: "#1b232a",
-  warmGray: "#d7d3c8",
-  cream: "#f5f3ef",
-  parchment: "#faf9f6",
-  white: "#ffffff",
-  textPrimary: "#1b232a",
-  textSecondary: "#4a5568",
-  textMuted: "#718096",
-  border: "#e2dfd8",
-  borderLight: "#edeae4",
-  error: "#c9282d",
-};
-
 type FormState = "idle" | "loading" | "error";
 
 const roles = [
@@ -46,10 +27,10 @@ const roles = [
 ];
 
 const pillars = [
-  { label: "Curriculum", sub: "Knowledge Graph", bg: C.navyDeep },
-  { label: "Assessment", sub: "AI-Generated", bg: C.blue },
-  { label: "Measurement", sub: "Student Mastery", bg: C.green },
-  { label: "Compliance", sub: "Accreditation", bg: C.blueMid },
+  { label: "Curriculum", sub: "Knowledge Graph", bg: "var(--navy-deep)" },
+  { label: "Assessment", sub: "AI-Generated", bg: "var(--blue)" },
+  { label: "Measurement", sub: "Student Mastery", bg: "var(--green)" },
+  { label: "Compliance", sub: "Accreditation", bg: "var(--blue-mid)" },
 ];
 
 export function LoginScreen() {
@@ -114,10 +95,9 @@ export function LoginScreen() {
 
   return (
     <div
-      className="flex min-h-screen font-sans"
+      className="flex min-h-screen bg-cream font-sans"
       style={{
         flexDirection: isMobile ? "column" : "row",
-        background: C.cream,
       }}
     >
       {/* ═══ LEFT: BRAND PANEL ═══ */}
@@ -126,9 +106,9 @@ export function LoginScreen() {
           flex: isMobile ? "none" : isTablet ? "0 0 340px" : "0 0 480px",
           position: "relative",
           overflow: "hidden",
-          background: C.white,
-          borderRight: isMobile ? "none" : `1px solid ${C.borderLight}`,
-          borderBottom: isMobile ? `1px solid ${C.borderLight}` : "none",
+          background: "var(--white)",
+          borderRight: isMobile ? "none" : "1px solid var(--border-light)",
+          borderBottom: isMobile ? "1px solid var(--border-light)" : "none",
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
@@ -140,7 +120,11 @@ export function LoginScreen() {
               : "48px 44px",
         }}
       >
-        <WovenField color={C.navyDeep} opacity={0.02} density={14} />
+        <WovenField
+          color="#002c76" /* token: --navy-deep */
+          opacity={0.02}
+          density={14}
+        />
 
         {/* Top: Logo + tagline */}
         <div style={{ position: "relative", zIndex: 1 }}>
@@ -150,7 +134,12 @@ export function LoginScreen() {
 
           <div style={fadeIn(0.18)}>
             <AscendingSquares
-              colors={[C.navyDeep, C.blue, C.blueMid, C.green]}
+              colors={[
+                "var(--navy-deep)",
+                "var(--blue)",
+                "var(--blue-mid)",
+                "var(--green)",
+              ]}
               size={isMobile ? 10 : 14}
               gap={4}
               className="mb-4 md:mb-6"
@@ -223,7 +212,7 @@ export function LoginScreen() {
                     className="font-mono"
                     style={{
                       fontSize: 8,
-                      color: "rgba(255,255,255,0.5)",
+                      color: "rgba(255,255,255,0.5)" /* token: --white @ 50% */,
                       letterSpacing: "0.08em",
                       textTransform: "uppercase",
                       display: "block",
@@ -254,7 +243,7 @@ export function LoginScreen() {
             >
               <path
                 d="M0,4 Q20,1 40,4 T80,4 T120,4 T160,4"
-                stroke={C.warmGray}
+                stroke="#d7d3c8" /* token: --warm-gray */
                 strokeWidth="1.2"
                 fill="none"
               />
@@ -287,7 +276,12 @@ export function LoginScreen() {
             style={{ position: "absolute", top: 32, right: 32, opacity: 0.06 }}
           >
             <AscendingSquares
-              colors={[C.borderLight, C.warmGray, C.border, C.borderLight]}
+              colors={[
+                "var(--border-light)",
+                "var(--warm-gray)",
+                "var(--border)",
+                "var(--border-light)",
+              ]}
               size={10}
               gap={3}
             />
@@ -331,14 +325,14 @@ export function LoginScreen() {
 
           {/* Role tabs */}
           <div
+            className="bg-parchment"
             style={{
               display: "flex",
               gap: 2,
               marginBottom: 28,
-              background: C.parchment,
               borderRadius: 8,
               padding: 3,
-              border: `1px solid ${C.borderLight}`,
+              border: "1px solid var(--border-light)",
             }}
           >
             {roles.map((r) => (
@@ -351,17 +345,19 @@ export function LoginScreen() {
                   flex: 1,
                   fontSize: 13,
                   fontWeight: activeRole === r.key ? 700 : 500,
-                  color: activeRole === r.key ? C.navyDeep : C.textMuted,
-                  background: activeRole === r.key ? C.white : "transparent",
+                  color:
+                    activeRole === r.key
+                      ? "var(--navy-deep)"
+                      : "var(--text-muted)",
+                  background:
+                    activeRole === r.key ? "var(--white)" : "transparent",
                   border: "none",
                   borderRadius: 6,
                   padding: "9px 0",
                   cursor: "pointer",
                   transition: "all 0.2s",
                   boxShadow:
-                    activeRole === r.key
-                      ? "0 1px 3px rgba(0,0,0,0.04)"
-                      : "none",
+                    activeRole === r.key ? "var(--shadow-subtle)" : "none",
                 }}
               >
                 {r.label}
@@ -399,19 +395,20 @@ export function LoginScreen() {
                 style={{
                   boxSizing: "border-box",
                   padding: "13px 16px",
-                  background: C.parchment,
-                  border: `1px solid ${C.border}`,
+                  background: "var(--parchment)",
+                  border: "1px solid var(--border)",
                   borderRadius: 8,
                   fontSize: 15,
                   outline: "none",
                   transition: "border-color 0.2s, box-shadow 0.2s",
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = C.blueMid;
-                  e.target.style.boxShadow = `0 0 0 3px ${C.blueMid}15`;
+                  e.target.style.borderColor = "var(--blue-mid)";
+                  e.target.style.boxShadow =
+                    "0 0 0 3px rgba(43,113,185,0.082)" /* token: --blue-mid @ 8% */;
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = C.border;
+                  e.target.style.borderColor = "var(--border)";
                   e.target.style.boxShadow = "none";
                 }}
                 required
@@ -444,19 +441,20 @@ export function LoginScreen() {
                   style={{
                     boxSizing: "border-box",
                     padding: "13px 48px 13px 16px",
-                    background: C.parchment,
-                    border: `1px solid ${C.border}`,
+                    background: "var(--parchment)",
+                    border: "1px solid var(--border)",
                     borderRadius: 8,
                     fontSize: 15,
                     outline: "none",
                     transition: "border-color 0.2s, box-shadow 0.2s",
                   }}
                   onFocus={(e) => {
-                    e.target.style.borderColor = C.blueMid;
-                    e.target.style.boxShadow = `0 0 0 3px ${C.blueMid}15`;
+                    e.target.style.borderColor = "var(--blue-mid)";
+                    e.target.style.boxShadow =
+                      "0 0 0 3px rgba(43,113,185,0.082)" /* token: --blue-mid @ 8% */;
                   }}
                   onBlur={(e) => {
-                    e.target.style.borderColor = C.border;
+                    e.target.style.borderColor = "var(--border)";
                     e.target.style.boxShadow = "none";
                   }}
                   required
@@ -523,8 +521,8 @@ export function LoginScreen() {
                     width: 18,
                     height: 18,
                     borderRadius: 4,
-                    border: `1.5px solid ${remember ? C.navyDeep : C.border}`,
-                    background: remember ? C.navyDeep : C.white,
+                    border: `1.5px solid ${remember ? "var(--navy-deep)" : "var(--border)"}`,
+                    background: remember ? "var(--navy-deep)" : "var(--white)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -581,17 +579,19 @@ export function LoginScreen() {
                 letterSpacing: "0.01em",
                 cursor:
                   !canSubmit || formState === "loading" ? "default" : "pointer",
-                background: !canSubmit ? C.warmGray : C.navyDeep,
-                color: !canSubmit ? C.textMuted : C.white,
+                background: !canSubmit
+                  ? "var(--warm-gray)"
+                  : "var(--navy-deep)",
+                color: !canSubmit ? "var(--text-muted)" : "var(--white)",
                 transition: "all 0.2s",
               }}
               onMouseEnter={(e) => {
                 if (canSubmit && formState !== "loading")
-                  e.currentTarget.style.background = C.blue;
+                  e.currentTarget.style.background = "var(--blue)";
               }}
               onMouseLeave={(e) => {
                 if (canSubmit && formState !== "loading")
-                  e.currentTarget.style.background = C.navyDeep;
+                  e.currentTarget.style.background = "var(--navy-deep)";
               }}
             >
               {formState === "loading" ? (
@@ -629,23 +629,22 @@ export function LoginScreen() {
             <button
               type="button"
               onClick={handleGoogleSignIn}
-              className="flex w-full items-center justify-center gap-2.5 font-sans font-semibold text-text-primary"
+              className="flex w-full items-center justify-center gap-2.5 bg-white font-sans font-semibold text-text-primary"
               style={{
                 padding: "13px 0",
                 borderRadius: 8,
-                border: `1.5px solid ${C.border}`,
-                background: C.white,
+                border: "1.5px solid var(--border)",
                 fontSize: 14,
                 cursor: "pointer",
                 transition: "all 0.2s",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = C.blueMid;
+                e.currentTarget.style.borderColor = "var(--blue-mid)";
                 e.currentTarget.style.boxShadow =
-                  "0 2px 8px rgba(0,44,118,0.06)";
+                  "0 2px 8px rgba(0,44,118,0.06)" /* token: --navy-deep @ 6% */;
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = C.border;
+                e.currentTarget.style.borderColor = "var(--border)";
                 e.currentTarget.style.boxShadow = "none";
               }}
             >
@@ -679,7 +678,7 @@ export function LoginScreen() {
                 height="12"
                 viewBox="0 0 16 16"
                 fill="none"
-                stroke={C.textMuted}
+                stroke="#718096" /* token: --text-muted */
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"

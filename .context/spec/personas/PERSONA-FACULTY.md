@@ -2,6 +2,8 @@
 name: "Dr. Amara Osei"
 role: faculty
 lane: faculty
+priority: P3
+tier: "0"
 sources:
   - "PRODUCT_BRIEF §Personas (Dr. Amara Osei)"
   - "ARCHITECTURE_v10 §4.1 (Role Hierarchy, Course Director flag)"

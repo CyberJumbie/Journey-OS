@@ -2,6 +2,8 @@
 name: "Fatima Al-Rashid"
 role: advisor
 lane: advisor
+priority: P5
+tier: "2"
 sources:
   - "PRODUCT_BRIEF §Personas (Fatima Al-Rashid)"
   - "ARCHITECTURE_v10 §4.1 (Role Hierarchy)"

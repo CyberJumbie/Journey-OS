@@ -6,10 +6,6 @@ import { DashboardSidebar } from "@web/components/dashboard/dashboard-sidebar";
 import { DashboardTopbar } from "@web/components/dashboard/dashboard-topbar";
 import { mockUser } from "@web/components/dashboard/mock-data";
 
-const C = {
-  cream: "#f5f3ef",
-};
-
 interface DashboardShellProps {
   children: React.ReactNode;
 }
@@ -24,7 +20,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
   const sidebarWidth = isDesktop ? 240 : isTablet ? 220 : 260;
 
   return (
-    <div className="min-h-screen font-sans" style={{ background: C.cream }}>
+    <div className="min-h-screen bg-cream font-sans">
       <DashboardSidebar
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}

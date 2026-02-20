@@ -5,15 +5,6 @@ import { WovenField } from "@web/components/brand/woven-field";
 import { AscendingSquares } from "@web/components/brand/ascending-squares";
 import { Sparkline } from "@web/components/dashboard/sparkline";
 
-const C = {
-  navyDeep: "#002c76",
-  blueMid: "#2b71b9",
-  blueLight: "#00a8e1",
-  bluePale: "#a3d9ff",
-  green: "#69a338",
-  white: "#ffffff",
-};
-
 interface KpiData {
   label: string;
   value: string;
@@ -35,14 +26,17 @@ export function KpiStrip({ kpis, userName }: KpiStripProps) {
 
   return (
     <div
-      className="relative overflow-hidden rounded-xl"
+      className="relative overflow-hidden rounded-xl bg-navy-deep"
       style={{
-        background: C.navyDeep,
         padding: isMobile ? "20px 18px" : "24px 28px",
         marginBottom: isMobile ? 20 : 24,
       }}
     >
-      <WovenField color={C.white} opacity={0.015} density={10} />
+      <WovenField
+        color="#ffffff" /* token: --white */
+        opacity={0.015}
+        density={10}
+      />
       <div style={{ position: "relative", zIndex: 1 }}>
         {/* Greeting row */}
         <div
@@ -52,15 +46,19 @@ export function KpiStrip({ kpis, userName }: KpiStripProps) {
           <div>
             <div className="mb-1.5 flex items-center gap-2.5">
               <AscendingSquares
-                colors={[C.bluePale, C.blueLight, C.blueMid, C.green]}
+                colors={[
+                  "var(--color-blue-pale)",
+                  "var(--color-blue-light)",
+                  "var(--color-blue-mid)",
+                  "var(--color-green)",
+                ]}
                 size={8}
                 gap={3}
               />
               <span
-                className="font-mono uppercase"
+                className="font-mono uppercase text-blue-pale"
                 style={{
                   fontSize: 9,
-                  color: C.bluePale,
                   letterSpacing: "0.1em",
                   opacity: 0.7,
                 }}
@@ -78,10 +76,9 @@ export function KpiStrip({ kpis, userName }: KpiStripProps) {
               Good afternoon, {lastName}
             </h2>
             <p
-              className="font-sans"
+              className="font-sans text-blue-pale"
               style={{
                 fontSize: 14,
-                color: C.bluePale,
                 opacity: 0.8,
                 marginTop: 4,
               }}
@@ -94,8 +91,8 @@ export function KpiStrip({ kpis, userName }: KpiStripProps) {
               className="font-sans font-semibold text-white"
               style={{
                 fontSize: 13,
-                background: "rgba(255,255,255,0.12)",
-                border: "1px solid rgba(255,255,255,0.15)",
+                background: "rgba(255,255,255,0.12)" /* token: --white */,
+                border: "1px solid rgba(255,255,255,0.15)" /* token: --white */,
                 borderRadius: 6,
                 padding: "9px 18px",
                 cursor: "pointer",
@@ -120,18 +117,17 @@ export function KpiStrip({ kpis, userName }: KpiStripProps) {
             <div
               key={i}
               style={{
-                background: "rgba(255,255,255,0.06)",
-                border: "1px solid rgba(255,255,255,0.08)",
+                background: "rgba(255,255,255,0.06)" /* token: --white */,
+                border: "1px solid rgba(255,255,255,0.08)" /* token: --white */,
                 borderRadius: 8,
                 padding: isMobile ? "14px 12px" : "16px 18px",
                 backdropFilter: "blur(4px)",
               }}
             >
               <div
-                className="font-mono uppercase"
+                className="font-mono uppercase text-blue-pale"
                 style={{
                   fontSize: 9,
-                  color: C.bluePale,
                   opacity: 0.6,
                   letterSpacing: "0.08em",
                   marginBottom: 8,
@@ -151,10 +147,9 @@ export function KpiStrip({ kpis, userName }: KpiStripProps) {
                     {k.value}
                   </div>
                   <div
-                    className="font-sans"
+                    className="font-sans text-blue-pale"
                     style={{
                       fontSize: 11,
-                      color: C.bluePale,
                       opacity: 0.65,
                       marginTop: 4,
                     }}
@@ -165,7 +160,7 @@ export function KpiStrip({ kpis, userName }: KpiStripProps) {
                 {!isMobile && (
                   <Sparkline
                     data={k.spark}
-                    color={C.bluePale}
+                    color="#a3d9ff" /* token: --blue-pale */
                     width={60}
                     height={24}
                   />

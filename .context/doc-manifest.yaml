@@ -1,7 +1,7 @@
 # Journey OS — Document Manifest
-# Generated: 2026-02-19 | Updated: 2026-02-19
-# Total documents: 32
-# Total size: 647 KB
+# Generated: 2026-02-19 | Updated: 2026-02-20
+# Total documents: 33 (17 docs + 11 seed files + 3 screen refs + 1 prototype group + 1 orientation)
+# Total size: 2,883 KB (647 KB docs + 2,172 KB Figma Make prototype + 64 KB seed data)
 # Review this manifest before proceeding to /personas
 
 documents:
@@ -342,6 +342,33 @@ documents:
     defines_api_endpoints: false
     defines_database_schema: false
     defines_visual_design: true
+
+  # ── Tier 05: Reference — Figma Make Prototype ──────────────
+  - path: .context/source/05-reference/app/
+    role: reference
+    summary: "Figma Make prototype — 165 TSX files. Review for layout patterns, data shapes (mock data reveals expected schemas), and design application. Dashboards should match the canonical reference dashboard JSX. Not pixel-perfect — use as a guide, not a spec."
+    size_kb: 2172
+    file_count: 165
+    usage:
+      layout_review: "Study screen layouts, component hierarchy, and page structure to understand intended UX flow."
+      data_schema_hints: "Mock data in pages reveals expected data shapes — cross-reference against SUPABASE_DDL_v1 and NODE_REGISTRY_v1 to validate schemas."
+      design_matching: "All dashboards should visually match the canonical reference dashboard (screens/journey-os-dashboard.jsx). Use prototype screens to understand what data each view expects."
+    key_entities:
+      - App.tsx (React Router entry — production uses Next.js App Router)
+      - 7 layout components (AdminLayout, DashboardLayout, TopNavigation, Sidebar)
+      - 8 shared components (stat-card, progress-ring, woven-field, section-marker)
+      - 42 shadcn/ui primitives (accordion through tooltip)
+      - 80+ page components across 17 domains (admin, auth, courses, dashboard, faculty, generation, student, etc.)
+    structure:
+      layouts: .context/source/05-reference/app/app/components/layout/
+      shared: .context/source/05-reference/app/app/components/shared/
+      ui_primitives: .context/source/05-reference/app/app/components/ui/
+      pages: .context/source/05-reference/app/app/pages/
+    defines_personas: false
+    defines_api_endpoints: false
+    defines_database_schema: false
+    defines_visual_design: true
+    note: "Prototype only. /brief inlines relevant screens as context for frontend stories. /adapt refactors into production Next.js with Atomic Design layering."
 
   # ── Tier 05: Reference — Seed Data ─────────────────────────
   - path: .context/source/05-reference/seed/usmle-systems.json

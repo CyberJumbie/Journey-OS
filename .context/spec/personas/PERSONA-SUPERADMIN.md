@@ -1,7 +1,9 @@
 ---
 name: "(Journey OS Team)"
 role: superadmin
-lane: universal
+lane: superadmin
+priority: P1
+tier: "0"
 sources:
   - "ARCHITECTURE_v10 §4.1 (Role Hierarchy)"
   - "API_CONTRACT_v1 §Institutions & Waitlist"

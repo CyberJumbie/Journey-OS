@@ -12,3 +12,4 @@ export * from "./template";
 export * from "./user";
 export * from "./dashboard";
 export * from "./help";
+export * from "./storage";

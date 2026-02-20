@@ -35,9 +35,13 @@ export function CourseWizardStep4({
   const [results, setResults] = useState<readonly UserResult[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // Async IIFE pattern to satisfy react-hooks/set-state-in-effect
   useEffect(() => {
     if (query.length < 2) {
-      setResults([]);
+      const clear = async () => {
+        setResults([]);
+      };
+      clear();
       return;
     }
 

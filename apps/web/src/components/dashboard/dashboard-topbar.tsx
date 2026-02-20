@@ -2,17 +2,6 @@
 
 import { useBreakpoint } from "@web/hooks/use-breakpoint";
 
-const C = {
-  navyDeep: "#002c76",
-  white: "#ffffff",
-  parchment: "#faf9f6",
-  borderLight: "#edeae4",
-  textPrimary: "#1b232a",
-  textSecondary: "#4a5568",
-  textMuted: "#718096",
-  error: "#c9282d",
-};
-
 interface DashboardTopbarProps {
   sidebarOpen: boolean;
   onToggleSidebar: () => void;
@@ -33,9 +22,9 @@ export function DashboardTopbar({
     <header
       className="sticky top-0 z-30 flex items-center justify-between"
       style={{
-        background: `${C.white}F2`,
+        background: "rgba(255,255,255,0.949)" /* token: --white */,
         backdropFilter: "blur(12px)",
-        borderBottom: `1px solid ${C.borderLight}`,
+        borderBottom: "1px solid var(--border-light)",
         padding: isMobile ? "12px 16px" : "14px 28px",
       }}
     >
@@ -107,11 +96,9 @@ export function DashboardTopbar({
         {/* Search */}
         {!isMobile && (
           <div
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 rounded-lg bg-parchment"
             style={{
-              background: C.parchment,
-              border: `1px solid ${C.borderLight}`,
-              borderRadius: 8,
+              border: "1px solid var(--border-light)",
               padding: "8px 14px",
               width: isTablet ? 180 : 220,
             }}
@@ -121,7 +108,7 @@ export function DashboardTopbar({
               height="14"
               viewBox="0 0 16 16"
               fill="none"
-              stroke={C.textMuted}
+              stroke="#718096" /* token: --text-muted */
               strokeWidth="1.5"
             >
               <circle cx="6.5" cy="6.5" r="5.5" />
@@ -144,21 +131,20 @@ export function DashboardTopbar({
             height="18"
             viewBox="0 0 20 20"
             fill="none"
-            stroke={C.textSecondary}
+            stroke="#4a5568" /* token: --text-secondary */
             strokeWidth="1.5"
             strokeLinecap="round"
           >
             <path d="M10 18c1.1 0 2-.9 2-2H8c0 1.1.9 2 2 2zM16 13V9c0-3.07-1.63-5.64-4.5-6.32V2c0-.83-.67-1.5-1.5-1.5S8.5 1.17 8.5 2v.68C5.64 3.36 4 5.92 4 9v4l-1.5 1.5V16h15v-1.5L16 13z" />
           </svg>
           <div
-            className="absolute rounded-full"
+            className="absolute rounded-full bg-error"
             style={{
               top: 4,
               right: 4,
               width: 7,
               height: 7,
-              background: C.error,
-              border: `1.5px solid ${C.white}`,
+              border: "1.5px solid var(--white)",
             }}
           />
         </button>
@@ -166,11 +152,10 @@ export function DashboardTopbar({
         {/* Avatar (mobile only) */}
         {isMobile && (
           <div
-            className="flex items-center justify-center rounded-lg font-mono text-white"
+            className="flex items-center justify-center rounded-lg bg-navy-deep font-mono text-white"
             style={{
               width: 32,
               height: 32,
-              background: C.navyDeep,
               fontSize: 10,
               fontWeight: 500,
             }}

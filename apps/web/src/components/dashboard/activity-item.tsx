@@ -1,15 +1,5 @@
 "use client";
 
-const C = {
-  navyDeep: "#002c76",
-  blueMid: "#2b71b9",
-  greenDark: "#5d7203",
-  warning: "#fa9d33",
-  borderLight: "#edeae4",
-  textSecondary: "#4a5568",
-  textMuted: "#718096",
-};
-
 interface Activity {
   type: "generated" | "review" | "alert" | "student";
   text: string;
@@ -26,10 +16,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
     <div className="rounded-xl border border-border-light bg-white p-4 md:p-5 md:px-6">
       <div className="mb-3.5 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div
-            className="h-[5px] w-[5px] rounded-sm"
-            style={{ background: C.greenDark }}
-          />
+          <div className="h-[5px] w-[5px] rounded-sm bg-green-dark" />
           <span
             className="font-mono uppercase text-text-muted"
             style={{ fontSize: 9, letterSpacing: "0.08em" }}
@@ -49,7 +36,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
             className="flex gap-2.5"
             style={{
               padding: "10px 0",
-              borderTop: i > 0 ? `1px solid ${C.borderLight}` : "none",
+              borderTop: i > 0 ? "1px solid var(--border-light)" : "none",
             }}
           >
             <div
@@ -60,16 +47,16 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                 fontSize: 12,
                 background:
                   a.type === "alert"
-                    ? `${C.warning}10`
+                    ? "rgba(250,157,51,0.063)" /* token: --warning */
                     : a.type === "student"
-                      ? `${C.blueMid}10`
-                      : `${C.navyDeep}08`,
+                      ? "rgba(43,113,185,0.063)" /* token: --blue-mid */
+                      : "rgba(0,44,118,0.031)" /* token: --navy-deep */,
                 color:
                   a.type === "alert"
-                    ? C.warning
+                    ? "var(--warning)"
                     : a.type === "student"
-                      ? C.blueMid
-                      : C.navyDeep,
+                      ? "var(--color-blue-mid)"
+                      : "var(--color-navy-deep)",
               }}
             >
               {a.icon}

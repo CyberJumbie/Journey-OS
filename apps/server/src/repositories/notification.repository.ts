@@ -206,6 +206,25 @@ export class NotificationRepository {
       : null;
   }
 
+  async existsByEventId(
+    eventId: string,
+    triggerType: string,
+  ): Promise<boolean> {
+    const { count, error } = await this.#supabaseClient
+      .from(TABLE)
+      .select("id", { count: "exact", head: true })
+      .eq("metadata->>event_id", eventId)
+      .eq("metadata->>trigger_type", triggerType);
+
+    if (error) {
+      throw new NotificationNotFoundError(
+        `Failed to check dedup: ${error.message}`,
+      );
+    }
+
+    return (count ?? 0) > 0;
+  }
+
   async deleteOld(): Promise<number> {
     const { data, error } = await this.#supabaseClient.rpc(
       "cleanup_old_notifications",

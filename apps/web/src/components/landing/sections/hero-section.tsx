@@ -270,14 +270,14 @@ export function HeroSection() {
                 >
                   <path
                     d="M0,190 Q95,170 190,190 T380,190"
-                    stroke={C.warmGray}
+                    stroke="#d7d3c8" /* token: --warm-gray */
                     strokeWidth="1"
                     fill="none"
                     opacity="0.4"
                   />
                   <path
                     d="M190,0 Q170,95 190,190 T190,380"
-                    stroke={C.warmGray}
+                    stroke="#d7d3c8" /* token: --warm-gray */
                     strokeWidth="1"
                     fill="none"
                     opacity="0.3"

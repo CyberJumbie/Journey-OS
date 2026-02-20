@@ -21,7 +21,8 @@
     "paths": {
       "@web/*": ["./src/*"],
       "@journey-os/types": ["../../packages/types/src"],
-      "@journey-os/types/*": ["../../packages/types/src/*"]
+      "@journey-os/types/*": ["../../packages/types/src/*"],
+      "@journey-os/ui": ["../../packages/ui/src"]
     }
   },
   "include": [

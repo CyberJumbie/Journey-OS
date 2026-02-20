@@ -17,12 +17,12 @@ const MOCK_COURSE_ROW = {
   status: "active",
   updated_at: "2026-02-15T10:30:00Z",
   program_id: "prog-1",
-  director_name: "Dr. Sarah Chen",
+  program: { name: "MD Program", institution_id: "inst-uuid-1" },
+  director: { full_name: "Dr. Sarah Chen" },
   slo_count: 24,
   fulfills_coverage_pct: 87.5,
   upload_count: 12,
   processing_count: 0,
-  program_name: "MD Program",
 };
 
 const MOCK_COURSE_ROW_2 = {
@@ -34,12 +34,12 @@ const MOCK_COURSE_ROW_2 = {
   status: "active",
   updated_at: "2026-02-10T14:00:00Z",
   program_id: "prog-1",
-  director_name: "Dr. James Okoro",
+  program: { name: "MD Program", institution_id: "inst-uuid-1" },
+  director: { full_name: "Dr. James Okoro" },
   slo_count: 18,
   fulfills_coverage_pct: 55.0,
   upload_count: 6,
   processing_count: 2,
-  program_name: "MD Program",
 };
 
 function createMockSupabase(data: unknown[] = [], total = 0): SupabaseClient {
@@ -217,16 +217,42 @@ describe("CourseOversightService", () => {
       expect(result.meta.total_pages).toBe(1);
     });
 
-    it("scopes query to the authenticated user's institution_id", async () => {
+    it("scopes query to the authenticated user's institution via programs join", async () => {
       await service.getOverview({}, INSTITUTION_ID);
 
       const fromCalls = (mockSupabase.from as ReturnType<typeof vi.fn>).mock
         .results;
       const dataChain = fromCalls[0]!.value;
       expect(dataChain.eq).toHaveBeenCalledWith(
-        "institution_id",
+        "programs.institution_id",
         INSTITUTION_ID,
       );
+    });
+
+    it("extracts director_name from joined profiles relation", async () => {
+      const result = await service.getOverview({}, INSTITUTION_ID);
+
+      expect(result.courses[0]!.director_name).toBe("Dr. Sarah Chen");
+      expect(result.courses[1]!.director_name).toBe("Dr. James Okoro");
+    });
+
+    it("extracts program_name from joined programs relation", async () => {
+      const result = await service.getOverview({}, INSTITUTION_ID);
+
+      expect(result.courses[0]!.program_name).toBe("MD Program");
+    });
+
+    it("handles null director gracefully", async () => {
+      const rowWithNullDirector = {
+        ...MOCK_COURSE_ROW,
+        id: "course-aaaa-bbbb-cccc-000000000099",
+        director: null,
+      };
+      mockSupabase = createMockSupabase([rowWithNullDirector], 1);
+      service = new CourseOversightService(mockSupabase);
+
+      const result = await service.getOverview({}, INSTITUTION_ID);
+      expect(result.courses[0]!.director_name).toBeNull();
     });
 
     it("throws CourseOverviewValidationError for invalid sort_by", async () => {

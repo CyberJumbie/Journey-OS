@@ -1,17 +1,5 @@
 "use client";
 
-const C = {
-  navyDeep: "#002c76",
-  blueMid: "#2b71b9",
-  parchment: "#faf9f6",
-  border: "#e2dfd8",
-  borderLight: "#edeae4",
-  textPrimary: "#1b232a",
-  textMuted: "#718096",
-  error: "#c9282d",
-  warning: "#fa9d33",
-};
-
 interface Task {
   title: string;
   due: string;
@@ -45,18 +33,17 @@ export function TaskList({ tasks }: TaskListProps) {
         {tasks.map((t, i) => (
           <div
             key={i}
-            className="cursor-pointer rounded-lg transition-colors"
+            className="cursor-pointer rounded-lg bg-parchment transition-colors"
             style={{
               padding: "10px 12px",
-              background: C.parchment,
-              border: `1px solid ${i === 0 ? C.border : "transparent"}`,
+              border: `1px solid ${i === 0 ? "var(--border)" : "transparent"}`,
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = C.blueMid;
+              e.currentTarget.style.borderColor = "var(--blue-mid)";
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.borderColor =
-                i === 0 ? C.border : "transparent";
+                i === 0 ? "var(--border)" : "transparent";
             }}
           >
             <div className="flex items-start justify-between gap-2">
@@ -75,10 +62,10 @@ export function TaskList({ tasks }: TaskListProps) {
                   marginTop: 6,
                   background:
                     t.priority === "high"
-                      ? C.error
+                      ? "var(--danger)"
                       : t.priority === "medium"
-                        ? C.warning
-                        : C.borderLight,
+                        ? "var(--warning)"
+                        : "var(--border-light)",
                 }}
               />
             </div>
@@ -93,7 +80,8 @@ export function TaskList({ tasks }: TaskListProps) {
                 className="font-sans"
                 style={{
                   fontSize: 11,
-                  color: t.due === "Today" ? C.error : C.textMuted,
+                  color:
+                    t.due === "Today" ? "var(--danger)" : "var(--text-muted)",
                   fontWeight: t.due === "Today" ? 600 : 400,
                 }}
               >
