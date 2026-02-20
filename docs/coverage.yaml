@@ -25,9 +25,9 @@ lanes:
   superadmin:
     priority: 1
     total: 9        # E-04: 4, E-05: 3, E-07: 2
-    done: 6         # SA-1 (Waitlist Application), SA-2 (Global User Directory), SA-3 (Application Review Queue), SA-4 (User Reassignment), SA-5 (Approval Workflow), SA-6 (Rejection Workflow)
-    ready: 1        # SA-7 (Institution List — unblocked by SA-5)
-    blocked: 2      # SA-8 (blocked by SA-7), SA-9 (blocked by SA-7)
+    done: 7         # SA-1 (Waitlist Application), SA-2 (Global User Directory), SA-3 (Application Review Queue), SA-4 (User Reassignment), SA-5 (Approval Workflow), SA-6 (Rejection Workflow), SA-7 (Institution List Dashboard)
+    ready: 2        # SA-8 (Institution Detail), SA-9 (Institution Settings) — unblocked by SA-7
+    blocked: 0
   institutional_admin:
     priority: 2
     total: 44       # E-06: 3, E-09: 3, E-14: 4, E-15: 4, E-17: 4, E-28: 5, E-29: 3, E-30: 3, E-31: 3, E-33: 4, E-36: 4, E-37: 4
@@ -37,9 +37,9 @@ lanes:
   faculty:
     priority: 3
     total: 75       # E-08: 4, E-10: 3, E-11: 4, E-12: 4, E-13: 3, E-18: 4, E-19: 4, E-20: 4, E-21: 4, E-22: 3, E-23: 4, E-24: 4, E-25: 4, E-26: 4, E-27: 4, E-32: 4, E-34: 4, E-35: 3, E-38: 3, E-39: 4
-    done: 1         # F-1 (Course Model & Repository)
-    ready: 7        # F-2 (Notification Model), F-3 (Import Parser), F-4 (Template Model), F-5 (Profile Page), F-8 (Help Pages), F-9 (Upload Dropzone), F-11 (Course Hierarchy), F-12 (Course Cards), F-13 (Course List)
-    blocked: 67     # rest blocked by upstream dependencies
+    done: 2         # F-1 (Course Model & Repository), F-2 (Notification Model & Repository)
+    ready: 8        # F-3 (Import Parser), F-4 (Template Model), F-5 (Profile Page), F-8 (Help Pages), F-9 (Upload Dropzone), F-11 (Course Hierarchy), F-12 (Course Cards), F-13 (Course List)
+    blocked: 65     # rest blocked by upstream dependencies
   student:
     priority: 4
     total: 15       # E-40: 4, E-41: 4, E-42: 4, E-43: 3
@@ -193,11 +193,23 @@ completed:
     completed: 2026-02-20
     api_tests: 26      # course.model (5) + course.repository (8) + course.service (15) + course.controller (6) — note: some counted as service tests overlap
     e2e_tests: 0
+  - id: STORY-F-2
+    title: "Notification Model & Repository"
+    lane: faculty
+    completed: 2026-02-20
+    api_tests: 35      # notification.service (23) + notification.controller (12)
+    e2e_tests: 0
   - id: STORY-IA-6
     title: "Framework List Page"
     lane: institutional_admin
     completed: 2026-02-20
     api_tests: 15      # framework.service (10) + framework.controller (5)
+    e2e_tests: 0
+  - id: STORY-SA-7
+    title: "Institution List Dashboard"
+    lane: superadmin
+    completed: 2026-02-20
+    api_tests: 15      # institution-monitoring.service (9) + institution-monitoring.controller (6)
     e2e_tests: 0
 
 # Error-to-rule pipeline
@@ -208,12 +220,12 @@ error_pipeline:
 
 # Time allocation tracking
 metrics:
-  stories_completed: 24
+  stories_completed: 26
   stories_total: 166
   avg_story_time_minutes: 0    # not tracked yet
   planning_pct: 0    # target: 40%
   review_pct: 0      # target: 40%
   execution_pct: 0   # target: 10%
   learning_pct: 0    # target: 10%
-  api_tests_total: 579  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33, U-8: 15, U-9: 25, U-10: 38, U-11: 16, U-12: 72, U-13: 20, U-14: 14, SA-1: 28, SA-2: 22, SA-3: 20, SA-4: 21, SA-5: 17, SA-6: 16, IA-5: 18, IA-6: 15, IA-12: 23, F-1: 26
+  api_tests_total: 629  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33, U-8: 15, U-9: 25, U-10: 38, U-11: 16, U-12: 72, U-13: 20, U-14: 14, SA-1: 28, SA-2: 22, SA-3: 20, SA-4: 21, SA-5: 17, SA-6: 16, SA-7: 15, IA-5: 18, IA-6: 15, IA-12: 23, F-1: 26, F-2: 35
   e2e_tests_total: 0

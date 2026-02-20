@@ -240,3 +240,10 @@ errors:
     rule: "Existing rule in CLAUDE.md. No new rule needed."
     location: "n/a"
     recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-SA-7
+    error: "No new errors — clean implementation. All 15 tests pass, no type errors in SA-7 files."
+    rule: "No new rule needed."
+    location: "n/a"
+    recurrence: 0
