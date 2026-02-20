@@ -197,7 +197,9 @@ export class SLORepository {
       .from(TABLE)
       .update(updateFields)
       .eq("id", id)
-      .eq("scope", SCOPE);
+      .eq("scope", SCOPE)
+      .select("id")
+      .single();
   }
 
   async existsByCode(code: string, courseId: string): Promise<boolean> {
