@@ -268,9 +268,9 @@ completed:
 
 # Error-to-rule pipeline
 error_pipeline:
-  total_errors_captured: 45
-  total_rules_created: 40
-  recurrence_rate: 5    # tsc-from-root at 10, hardcoded-hex at 1, .select().single() at 1, table-name-verify at 1, no-dom-in-types at 1
+  total_errors_captured: 46
+  total_rules_created: 41
+  recurrence_rate: 5    # tsc-from-root at 10, hardcoded-hex at 2, .select().single() at 1, table-name-verify at 1, no-dom-in-types at 1
 
 # Time allocation tracking
 metrics:

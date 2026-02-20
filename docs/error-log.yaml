@@ -403,6 +403,13 @@ errors:
     recurrence: 0
 
   - date: 2026-02-20
+    story: STORY-SA-9
+    error: "Recharts SVG attributes use hardcoded hex (#69a338, #002c76) because SVG stroke/fill props cannot consume CSS custom properties or Tailwind classes"
+    rule: "Charting library SVG props (Recharts stroke, fill) are an allowed exception to the no-hardcoded-hex rule. Document the token-equivalent color name in a comment."
+    location: "Root CLAUDE.md → Architecture Rules (exception noted below)"
+    recurrence: 1
+
+  - date: 2026-02-20
     story: STORY-F-9
     error: "Used browser File type in packages/types UploadFileState interface — TS2304 because types package has no DOM lib"
     rule: "No DOM or Node-specific types (File, Blob, Buffer, FormData) in packages/types. Keep browser-only interfaces in apps/web."
