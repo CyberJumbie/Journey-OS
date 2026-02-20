@@ -74,3 +74,4 @@ Types → Model → Repository → Service → Controller → View → API Tests
 - Made Neo4j env vars required in global zod schema, but zod runs at import time. Use optional in zod, validate at `Neo4jClientConfig` instantiation.
 - `vi.mock()` closures can't reference variables declared after the mock. Use `vi.hoisted()` to hoist mock declarations.
 - Don't use `SeedResult["errors"]` as a mutable accumulator type — it resolves to `readonly SeedNodeError[]`. Import `SeedNodeError` directly and type as `SeedNodeError[]`.
+- When modifying shared infrastructure (middleware, utils, config), read existing tests for that file BEFORE changing behavior — string assertions and mock expectations will break silently.

@@ -61,7 +61,7 @@ export class RbacMiddleware {
       }
 
       const resourceInstitutionId = req.params.institutionId;
-      if (resourceInstitutionId) {
+      if (typeof resourceInstitutionId === "string") {
         const scopeResult = this.#rbacService.checkInstitutionScope(
           req.user,
           resourceInstitutionId,

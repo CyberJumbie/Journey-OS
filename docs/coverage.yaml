@@ -19,8 +19,8 @@ lanes:
   universal:
     priority: 0
     total: 14       # E-01: 4, E-02: 4, E-03: 2, E-16: 4
-    done: 7         # U-1 (Auth Setup), U-2 (Framework Models), U-3 (Auth Middleware), U-4 (Seed Infra), U-5 (Forgot Password), U-6 (RBAC), U-7 (USMLE Seed)
-    ready: 2        # U-8 (Registration Wizard), U-10 (Dashboard Routing)
+    done: 8         # U-1 (Auth Setup), U-2 (Framework Models), U-3 (Auth Middleware), U-4 (Seed Infra), U-5 (Forgot Password), U-6 (RBAC), U-7 (USMLE Seed), U-8 (Registration Wizard)
+    ready: 1        # U-10 (Dashboard Routing)
     blocked: 5
   superadmin:
     priority: 1
@@ -97,21 +97,27 @@ completed:
     completed: 2026-02-19
     api_tests: 33      # usmle-seeder (33): construction(3) + seed(8) + queries(3) + verify(6) + idempotency(2) + data-integrity(7) + errors(3) + registered in CLI
     e2e_tests: 0
+  - id: STORY-U-8
+    title: "Registration Wizard"
+    lane: universal
+    completed: 2026-02-19
+    api_tests: 15      # registration.service (10) + registration.controller (5)
+    e2e_tests: 0
 
 # Error-to-rule pipeline
 error_pipeline:
-  total_errors_captured: 11
-  total_rules_created: 11
+  total_errors_captured: 12
+  total_rules_created: 12
   recurrence_rate: 0
 
 # Time allocation tracking
 metrics:
-  stories_completed: 7
+  stories_completed: 8
   stories_total: 166
   avg_story_time_minutes: 0    # not tracked yet
   planning_pct: 0    # target: 40%
   review_pct: 0      # target: 40%
   execution_pct: 0   # target: 10%
   learning_pct: 0    # target: 10%
-  api_tests_total: 173  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33
+  api_tests_total: 188  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33, U-8: 15
   e2e_tests_total: 0

@@ -23,3 +23,18 @@ export type {
   RequireRoleOptions,
 } from "./rbac.types";
 export type { PermissionMatrix } from "./permissions.types";
+export type {
+  ForgotPasswordRequest,
+  ForgotPasswordResponse,
+  RateLimitConfig,
+} from "./password-reset.types";
+export type {
+  RegistrationStep,
+  SelfRegisterableRole,
+  RoleSelectionData,
+  ProfileData,
+  InstitutionData,
+  FerpaConsentData,
+  RegistrationRequest,
+  RegistrationResponse,
+} from "./registration.types";

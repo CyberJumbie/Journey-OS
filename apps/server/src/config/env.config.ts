@@ -15,6 +15,8 @@ const envSchema = z.object({
     .default("development"),
   PORT: z.coerce.number().default(3001),
 
+  SITE_URL: z.string().url().optional(),
+
   // Neo4j — optional to avoid breaking Express server and existing tests
   NEO4J_URI: z.string().min(1, "NEO4J_URI is required").optional(),
   NEO4J_USERNAME: z.string().min(1, "NEO4J_USERNAME is required").optional(),

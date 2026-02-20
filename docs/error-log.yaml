@@ -93,3 +93,10 @@ errors:
     rule: "Import SeedNodeError directly and type as SeedNodeError[] for mutable accumulators"
     location: "Root CLAUDE.md → Things Claude Gets Wrong"
     recurrence: 0
+
+  - date: 2026-02-19
+    story: STORY-U-8
+    error: "Changed rate limiter error message string without reading existing test that asserted on exact message"
+    rule: "When modifying shared infrastructure files, read existing tests for that file BEFORE making changes"
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0
