@@ -169,7 +169,7 @@ errors:
     error: "PostToolUse eslint hook stripped newly-added barrel exports from index.ts, causing runtime 'is not a constructor' errors"
     rule: "After editing barrel export files (index.ts), re-read the file to verify the hook didn't strip new exports. Re-add if stripped."
     location: "Root CLAUDE.md → Things Claude Gets Wrong"
-    recurrence: 2
+    recurrence: 3
 
   - date: 2026-02-20
     story: STORY-SA-4
@@ -470,7 +470,7 @@ errors:
     error: "Used inline style={{ fontSize: '22px', width: 240 }} in 8 places across help page, FAQ accordion, and sidebar instead of Tailwind classes."
     rule: "Never use inline style={{}} for static values. Use Tailwind arbitrary values (text-[0.9375rem], w-60). Design tokens rule applies to style props too."
     location: "Root CLAUDE.md → Things Claude Gets Wrong"
-    recurrence: 1
+    recurrence: 2
 
   - date: 2026-02-20
     story: STORY-F-14
@@ -555,3 +555,66 @@ errors:
     rule: "Existing rule in CLAUDE.md Monorepo Conventions. New working command: pnpm --filter <workspace> exec tsc."
     location: "Root CLAUDE.md → Monorepo Conventions"
     recurrence: 10
+
+  - date: 2026-02-20
+    story: STORY-F-12
+    error: "Vitest alias for @journey-os/ui resolved to barrel source, pulling lucide-react via trend-indicator.tsx — jsdom can't resolve native deps"
+    rule: "Mock @journey-os/ui in component tests with vi.mock() stub components. The barrel pulls all transitive deps."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-12
+    error: "Used getByText('Active') in card grid test — React StrictMode double-render produced 6 elements, getByText threw on duplicates"
+    rule: "In jsdom tests with repeated UI (grids, lists), use getAllBy* + array assertions instead of getByText."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-12
+    error: "Used deprecated vi.fn<[], ReturnType>() two-arg generic form — TS2558 in vitest 4.x"
+    rule: "Use vi.fn<() => T>() single function-type arg. Two-arg form deprecated in vitest 4.x."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-16
+    error: "PostToolUse eslint hook injected phantom imports for non-existent files (GenerationPreferenceService, FacultyCourseService, CourseViewService, CourseWizardController, etc.) into index.ts after editing notification preference routes. Required 6+ cleanup rounds."
+    rule: "Existing CRITICAL rule: add imports AND their usage in a single Edit call. Re-read barrel files after editing."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong (existing rule)"
+    recurrence: 4
+
+  - date: 2026-02-20
+    story: STORY-F-16
+    error: "Used inline style={{ color: 'var(--color-error)' }} in 18+ places in notification preferences panel instead of Tailwind arbitrary values like text-[var(--color-error,#dc2626)]"
+    rule: "Existing rule: never use inline style={{}} for static values. Use Tailwind classes or arbitrary values."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong (existing rule)"
+    recurrence: 2
+
+  - date: 2026-02-20
+    story: STORY-F-20
+    error: "Wizard routes (POST /api/v1/courses/wizard, GET /api/v1/courses/check-code) and CourseWizardController import were lost from index.ts — likely stripped by PostToolUse eslint hook during implementation session. Not caught until /validate Pass 4a security review."
+    rule: "After registering new routes in index.ts, grep for the endpoint path string to verify registration survived the PostToolUse hook. Existing CRITICAL barrel-stripping rule applies."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong (existing rule, recurrence bumped)"
+    recurrence: 5
+
+  - date: 2026-02-20
+    story: STORY-F-20
+    error: "Used result.error.errors[0] for ZodError but correct API is result.error.issues[0]"
+    rule: "ZodError uses .issues (not .errors). Always use result.error.issues[0]?.message for validation error messages."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong (new rule)"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-20
+    error: "Referenced profileRepository variable in wizard route registration before const declaration appeared later in file. Moved declaration earlier to fix."
+    rule: "When adding new routes that depend on existing service instances, verify the variable is declared ABOVE the route registration in index.ts. JavaScript const has no hoisting."
+    location: "docs/error-log.yaml (tracking only — one-off, fixed during implementation)"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-15
+    error: "No new errors — clean implementation following established patterns (multer limits, Uint8Array, custom error classes, Levenshtein auto-mapping). Route wiring and DB migration deferred."
+    rule: "No new rule needed."
+    location: "n/a"
+    recurrence: 0

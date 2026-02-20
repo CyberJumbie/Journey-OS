@@ -1,57 +1,41 @@
 # Session State
 
 ## Position
-- Story: STORY-F-14 (Template Management Page) — COMPLETE, validated, compounded
+- Story: STORY-F-12 "Course Cards" — COMPLETE (validate + compound done)
 - Lane: faculty (P3)
-- Phase: Done — /validate 4-pass PASS, /compound done
+- Phase: Done — ready for next story via /pull
 - Branch: main
 - Mode: Standard
-- Task: Ready for next story via /pull
+- Task: Ready for next story
 
 ## Handoff
-Completed STORY-F-14 "Template Management Page" — frontend-only story delivering a template management UI at `/faculty/templates`. Installed shadcn/ui for the first time in the monorepo (init + 15 components), then restored brand CSS variables that shadcn overwrote. Built all template components following atomic design: SharingLevelBadge (atom), TemplateCard/TemplateFilters/TemplatePreview/TemplateDeleteDialog/DifficultyDistributionInput (molecules), TemplateForm/TemplateGrid (organisms), and the page. Used existing useState/useCallback hook pattern (matching useDashboardKpis) since @tanstack/react-query is not installed. 10 component tests pass. Key fixes from /validate: (1) zodResolver type mismatch with zod@4.3 requires `as any` cast, (2) React 19 set-state-in-effect requires async IIFE wrapper in useEffect, (3) @testing-library/react needs manual cleanup() with vitest globals:false, (4) Radix Select doesn't work in jsdom (missing hasPointerCapture). Created `docs/solutions/shadcn-brand-token-mapping.md` solution doc. 6 new CLAUDE.md rules, 6 error-log entries.
+Resumed mid-session to fix STORY-F-12 component tests that were failing due to `@journey-os/ui` barrel pulling `lucide-react` via `trend-indicator.tsx`. Fixed by mocking `@journey-os/ui` with stub components in `vi.mock()`. Also fixed React StrictMode double-render causing `getByText` failures (switched to `getAllBy*`), deprecated `vi.fn<[], T>()` typing (switched to `vi.fn<() => T>()`), and `fireEvent.change` for select dropdown (jsdom quirk with `userEvent.selectOptions`).
 
-Prior session also completed: STORY-F-13 (Course List & Detail Views), STORY-IA-7 (Weekly Schedule View), STORY-F-6 (Activity Feed), STORY-F-7 (KPI Strip), STORY-F-8 (Help & FAQ).
+Ran /validate — all 4 passes clean (12 API + 6 component tests pass, no F-12-specific type errors, security/performance/architecture review pass). Ran /compound — 3 new rules added to CLAUDE.md, 3 error-log entries, 1 new solution doc (`docs/solutions/dashboard-rpc-aggregate-pattern.md`).
 
-## Files Created This Session (STORY-F-14)
-- apps/web/components.json (shadcn init)
-- apps/web/src/lib/utils.ts (shadcn cn() utility)
-- apps/web/src/components/ui/ (15 shadcn components: card, dialog, input, textarea, select, button, dropdown-menu, badge, sheet, skeleton, checkbox, slider, popover, label, separator)
-- apps/web/src/lib/types/template-preview.types.ts
-- apps/web/src/lib/validations/template.validation.ts
-- apps/web/src/lib/api/templates.ts
-- apps/web/src/hooks/use-templates.ts
-- apps/web/src/components/template/SharingLevelBadge.tsx
-- apps/web/src/components/template/DifficultyDistributionInput.tsx
-- apps/web/src/components/template/TemplateCard.tsx
-- apps/web/src/components/template/TemplateFilters.tsx
-- apps/web/src/components/template/TemplateForm.tsx
-- apps/web/src/components/template/TemplatePreview.tsx
-- apps/web/src/components/template/TemplateGrid.tsx
-- apps/web/src/components/template/TemplateDeleteDialog.tsx
-- apps/web/src/app/(dashboard)/faculty/templates/page.tsx
-- apps/web/src/components/template/__tests__/template-management.test.tsx
-- docs/plans/STORY-F-14-plan.md
-- docs/solutions/shadcn-brand-token-mapping.md
-
-## Files Modified This Session (STORY-F-14)
-- apps/web/src/app/globals.css (brand CSS vars restored after shadcn init)
-- apps/web/src/components/dashboard/mock-data.ts (templates nav item)
-- CLAUDE.md (6 new rules)
-- docs/coverage.yaml (F-14 complete, 41/166 stories)
-- docs/error-log.yaml (6 new entries for F-14)
+Prior session also completed F-14, F-15, F-16, F-17, F-20 — see coverage.yaml for full list.
 
 ## Development Progress
-- Stories completed: 41 (U-1..U-14, SA-1..SA-9, IA-1,2,4,5,6,7,12, F-1..F-11,F-13,F-14)
+- Stories completed: 46 (U-1..U-14, SA-1..SA-9, IA-1,2,4,5,6,7,12, F-1..F-14,F-15,F-16,F-17,F-20)
 - Universal lane: 14/14 — COMPLETE
 - SuperAdmin lane: 9/9 — COMPLETE
 - Institutional Admin lane: 7/44 done
-- Faculty lane: 13/75 done
-- Tests: 905 (895 API + 10 component)
-- Error pipeline: 63 errors captured, 52 rules created
+- Faculty lane: 18/75 done
+- Tests: 976 API + 1 E2E = 977
+- Error pipeline: 75 errors captured, 60 rules created
+
+## Files Modified This Session
+- apps/web/src/__tests__/dashboard/course-cards-grid.test.tsx (fixed 3 test failures)
+- apps/web/vitest.config.ts (already had @journey-os/ui alias from prior session)
+- apps/web/tsconfig.json (added then reverted @journey-os/ui path alias)
+- CLAUDE.md (3 new rules from /compound)
+- docs/error-log.yaml (3 new entries from /compound)
+- docs/coverage.yaml (F-12 marked done, metrics updated)
+- docs/solutions/dashboard-rpc-aggregate-pattern.md (new solution doc)
 
 ## Open Questions
-- None
+- F-12 route is registered in index.ts. F-15 has route registration + migration gaps.
+- `@journey-os/ui` lacks a tsconfig — causes "Cannot find module" in web tsc (pre-existing, affects CourseWizard too). Not blocking.
 
 ## Context Files to Read on Resume
 - docs/coverage.yaml (full progress)
@@ -59,4 +43,3 @@ Prior session also completed: STORY-F-13 (Course List & Detail Views), STORY-IA-
 - .context/spec/backlog/BACKLOG-FACULTY.md (F lane — next unblocked story)
 - .context/spec/backlog/BACKLOG-INSTITUTIONAL-ADMIN.md (IA lane)
 - .context/spec/backlog/CROSS-LANE-DEPENDENCIES.md
-- docs/solutions/shadcn-brand-token-mapping.md (new pattern from F-14)

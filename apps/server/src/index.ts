@@ -105,6 +105,13 @@ import { NotificationPreferenceService } from "./services/user/notification-pref
 import { NotificationPreferenceController } from "./controllers/user/notification-preference.controller";
 import { GenerationPreferenceService } from "./services/user/generation-preference.service"; // [STORY-F-17]
 import { GenerationPreferenceController } from "./controllers/user/generation-preference.controller"; // [STORY-F-17]
+import { CourseWizardController } from "./controllers/course/course-wizard.controller"; // [STORY-F-20]
+import { validateCourseCreate } from "./middleware/course.validation"; // [STORY-F-20]
+import { ParserFactory } from "./services/import/parser-factory.service"; // [STORY-F-15]
+import { ImportUploadService } from "./services/import/import-upload.service"; // [STORY-F-15]
+import { MappingPresetService } from "./services/import/mapping-preset.service"; // [STORY-F-15]
+import { ImportUploadController } from "./controllers/import/import-upload.controller"; // [STORY-F-15]
+import { importSingleFile } from "./middleware/import-upload.validation"; // [STORY-F-15]
 
 const app: Express = express();
 const PORT = process.env.PORT || 3001;
@@ -586,6 +593,24 @@ app.delete("/api/v1/profile/avatar", (req, res) =>
   profileController.handleRemoveAvatar(req, res),
 );
 
+// Course Wizard — multi-step course creation [STORY-F-20]
+const courseWizardController = new CourseWizardController(
+  courseService,
+  hierarchyService,
+  profileRepository,
+);
+app.post(
+  "/api/v1/courses/wizard",
+  rbac.require(AuthRole.FACULTY),
+  validateCourseCreate,
+  (req, res) => courseWizardController.handleCreate(req, res),
+);
+app.get(
+  "/api/v1/courses/check-code",
+  rbac.require(AuthRole.FACULTY),
+  (req, res) => courseWizardController.handleCheckCode(req, res),
+);
+
 // Settings — notification preferences (faculty+)
 const notificationPreferenceService = new NotificationPreferenceService(
   supabaseClient,
@@ -625,6 +650,44 @@ app.put(
   "/api/v1/settings/generation",
   rbac.require(AuthRole.FACULTY),
   (req, res) => generationPreferenceController.handleUpdate(req, res),
+);
+
+// Import wizard — file upload, preview, mapping, presets [STORY-F-15]
+const parserFactory = new ParserFactory();
+const importUploadService = new ImportUploadService(
+  supabaseClient,
+  parserFactory,
+);
+const mappingPresetService = new MappingPresetService(supabaseClient);
+const importUploadController = new ImportUploadController(
+  importUploadService,
+  mappingPresetService,
+);
+app.post(
+  "/api/v1/import/upload",
+  rbac.require(AuthRole.FACULTY),
+  importSingleFile,
+  (req, res) => importUploadController.handleUpload(req, res),
+);
+app.post("/api/v1/import/preview", rbac.require(AuthRole.FACULTY), (req, res) =>
+  importUploadController.handlePreview(req, res),
+);
+app.get("/api/v1/import/presets", rbac.require(AuthRole.FACULTY), (req, res) =>
+  importUploadController.handleListPresets(req, res),
+);
+app.post("/api/v1/import/presets", rbac.require(AuthRole.FACULTY), (req, res) =>
+  importUploadController.handleCreatePreset(req, res),
+);
+app.delete(
+  "/api/v1/import/presets/:id",
+  rbac.require(AuthRole.FACULTY),
+  (req, res) => importUploadController.handleDeletePreset(req, res),
+);
+app.post("/api/v1/import/confirm", rbac.require(AuthRole.FACULTY), (req, res) =>
+  importUploadController.handleConfirm(req, res),
+);
+app.post("/api/v1/import/execute", rbac.require(AuthRole.FACULTY), (req, res) =>
+  importUploadController.handleExecute(req, res),
 );
 
 // Socket.io — real-time notifications and presence
