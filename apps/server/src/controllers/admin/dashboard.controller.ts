@@ -16,7 +16,7 @@ export class DashboardController {
 
   async getDashboard(req: Request, res: Response): Promise<void> {
     try {
-      const user = (req as Record<string, unknown>).user as
+      const user = (req as unknown as Record<string, unknown>).user as
         | { institution_id?: string }
         | undefined;
 
