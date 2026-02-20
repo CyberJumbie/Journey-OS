@@ -614,7 +614,42 @@ errors:
 
   - date: 2026-02-20
     story: STORY-F-15
-    error: "No new errors — clean implementation following established patterns (multer limits, Uint8Array, custom error classes, Levenshtein auto-mapping). Route wiring and DB migration deferred."
-    rule: "No new rule needed."
-    location: "n/a"
+    error: "Used non-RFC-4122 UUIDs in test fixtures — Zod uuid() validated version+variant bits and rejected hex-only UUIDs"
+    rule: "Test fixture UUIDs must use valid v4 format: 3rd group starts with 4, 4th starts with 8/9/a/b"
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-15
+    error: "handleExecute omitted userId extraction — only handler in controller without ownership check"
+    rule: "Every controller handler doing user-scoped work must extract and pass userId consistently"
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-15
+    error: "Import routes never registered in index.ts — linter stripped unused imports before route usage edit"
+    rule: "Add imports AND their usage in the SAME Edit call. Existing CRITICAL barrel rule."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong (existing rule)"
+    recurrence: 6
+
+  - date: 2026-02-20
+    story: STORY-F-15
+    error: "Used raw throw new Error() in MappingPresetService list() and create() methods"
+    rule: "Custom error classes only. No raw throw new Error(). Existing Architecture rule."
+    location: "Root CLAUDE.md → Architecture Rules (existing rule)"
+    recurrence: 2
+
+  - date: 2026-02-20
+    story: ui-style-audit
+    error: "50+ files used hardcoded Tailwind gray-* classes (bg-gray-200, text-gray-700) and hex values (#2b71b9, #002c76) instead of MSM brand design tokens. Accumulated over multiple story implementations."
+    rule: "Reference docs/solutions/tailwind-design-token-mapping.md for all gray→token replacements. Never use bg-gray-*, text-gray-*, border-gray-* — use warm-toned tokens (bg-warm-gray, text-text-primary, border-border)."
+    location: "Root CLAUDE.md → Architecture Rules (solution doc reference added) + docs/solutions/tailwind-design-token-mapping.md"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: ui-style-audit
+    error: "PostToolUse linter hook converted inline style={{ border: '1px solid var(--color-cream)' }} to border-cream class — incorrect token. Should have been border-border-light."
+    rule: "After bulk Write operations that trigger PostToolUse linter, re-read the file to verify linter didn't introduce incorrect token mappings."
+    location: "docs/error-log.yaml (tracking only — one-off linter auto-fix issue)"
     recurrence: 0

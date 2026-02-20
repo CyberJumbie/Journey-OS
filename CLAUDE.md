@@ -26,7 +26,7 @@ packages/types, packages/ui (shadcn/ui), packages/python-api (Tier 2+).
 - Atomic Design: Atoms → Molecules → Organisms → Templates → Pages.
 - Named exports only. No default exports. EXCEPTION: Next.js App Router requires `export default` for page.tsx, layout.tsx, loading.tsx, error.tsx, not-found.tsx, and middleware.ts.
 - Custom error classes only. No raw throw new Error().
-- Design tokens only. No hardcoded hex/font/spacing values. EXCEPTION: Charting library SVG props (Recharts `stroke`, `fill`) cannot use CSS custom properties — use hex with a `/* token: --color-name */` comment.
+- Design tokens only. No hardcoded hex/font/spacing values. See `docs/solutions/tailwind-design-token-mapping.md` for the full gray→token replacement map. EXCEPTION: Charting library SVG props (Recharts `stroke`, `fill`) cannot use CSS custom properties — use hex with a `/* token: --color-name */` comment.
 - TypeScript strict. No `any` without JSDoc justification.
 - SCREAMING_SNAKE_CASE for Neo4j labels with acronym prefix (USMLE_System).
 - PascalCase for all other Neo4j labels (SubConcept, ProficiencyVariable).
