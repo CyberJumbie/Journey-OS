@@ -429,3 +429,24 @@ errors:
     rule: "Always use ESM import statements in vitest tests for @journey-os/types. Never require()."
     location: "Root CLAUDE.md → Things Claude Gets Wrong (new rule)"
     recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-6
+    error: "No new Claude errors — clean implementation following existing patterns (double-cast, query chain ordering, vi.hoisted). Missing AbortController in fetch hooks is an MVP trade-off, not a mistake."
+    rule: "No new rule needed."
+    location: "n/a"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-7
+    error: "Hardcoded empty auth token in use-dashboard-kpis hook (TODO comment). Same pattern as SA-9 use-institution-detail hook."
+    rule: "Hooks that call authenticated APIs must get JWT from Supabase session context, not hardcode empty strings. This is a known MVP deferral — track as tech debt, not a Claude rule."
+    location: "n/a (MVP trade-off, not a rule)"
+    recurrence: 1
+
+  - date: 2026-02-20
+    story: STORY-F-8
+    error: "FAQ API endpoint (/api/help/faq) fully implemented and tested but never called by the FAQ page — page does client-side filtering only."
+    rule: "If building a server API endpoint, wire it into the UI that needs it. Unused endpoints are dead code."
+    location: "docs/error-log.yaml (tracking only — F-8 is static content, acceptable for MVP)"
+    recurrence: 0
