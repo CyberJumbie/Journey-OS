@@ -59,6 +59,7 @@ Types → Model → Repository → Service → Controller → View → API Tests
 - Vitest cross-workspace imports need aliases in `vitest.config.ts`, not relative `../../../../` paths.
 - Express app variable needs explicit `Express` type annotation to avoid TS2742.
 - Web app path alias is `@web/*` (not `@/*`). Use `@web/components/...`, `@web/lib/...` for imports in `apps/web`.
+- When adding a new workspace package that other apps import (e.g., `@journey-os/ui`), add its path alias to ALL consuming `tsconfig.json` files (`apps/web/tsconfig.json`, `apps/server/tsconfig.json`). Missing aliases cause silent tsc failures.
 - Express `req.params` values are `string | string[]` in strict mode. Narrow with `typeof x === "string"` before passing to functions expecting `string`. Express `req.query` values are `string | ParsedQs | ...` — cast to specific union types (e.g., `as TemplateDTO["sharing_level"] | undefined`) rather than `as string | undefined` when strict union types are expected.
 - Vitest `.toThrow(ErrorClass)` checks `instanceof`. `.toThrow("string")` checks the message text. Use the class form for custom errors.
 - Vitest `vi.mock()` hoists before variable declarations. Use `vi.hoisted()` to declare mock variables that `vi.mock()` closures reference.
