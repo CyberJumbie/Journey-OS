@@ -40,6 +40,9 @@ export function GlobalUserDirectory() {
   const [statusFilter, setStatusFilter] = useState("");
   const [status, setStatus] = useState<Status>("loading");
   const [errorMsg, setErrorMsg] = useState("");
+  const [reassignUser, setReassignUser] = useState<GlobalUserListItem | null>(
+    null,
+  );
 
   const fetchUsers = useCallback(async () => {
     setStatus("loading");
@@ -330,6 +333,36 @@ export function GlobalUserDirectory() {
           }}
         />
       )}
+    </div>
+  );
+}
+
+function ReassignmentConfirmModal({
+  user,
+  onClose,
+  onReassigned,
+}: {
+  user: GlobalUserListItem;
+  onClose: () => void;
+  onReassigned: () => void;
+}) {
+  // TODO: Implement institution reassignment modal
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="rounded-lg bg-white p-6 shadow-lg">
+        <h3 className="text-lg font-medium">Reassign {user.full_name}</h3>
+        <p className="mt-2 text-sm text-gray-500">
+          Institution reassignment is not yet implemented.
+        </p>
+        <div className="mt-4 flex justify-end gap-2">
+          <button
+            onClick={onClose}
+            className="rounded border px-3 py-1 text-sm text-gray-700 hover:bg-gray-50"
+          >
+            Close
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

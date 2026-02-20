@@ -11,3 +11,19 @@ export type {
   InstitutionListItem,
   InstitutionListResponse,
 } from "./institution-monitoring.types";
+
+export type {
+  InstitutionSuspendRequest,
+  InstitutionReactivateRequest,
+  InstitutionStatusChangeResult,
+  InstitutionStatusChange,
+} from "./institution-lifecycle.types";
+
+export type {
+  InstitutionDetail,
+  InstitutionMetrics,
+  UserBreakdownEntry,
+  ActivityTimelineEntry,
+  MonthlyTrend,
+  StorageUsage,
+} from "./institution-detail.types";

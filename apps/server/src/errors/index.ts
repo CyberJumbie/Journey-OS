@@ -93,5 +93,7 @@ export {
   InstitutionAlreadySuspendedError,
   InstitutionNotSuspendedError,
   SuspendReasonRequiredError,
+  InstitutionLifecycleOperationError,
   InstitutionSuspendedError,
 } from "./institution-lifecycle.error";
+export { SocketNotificationError, SocketAuthError } from "./socket.errors";

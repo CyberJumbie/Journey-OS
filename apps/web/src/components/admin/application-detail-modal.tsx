@@ -21,6 +21,7 @@ export function ApplicationDetailModal({
   application,
   onClose,
   onApproved,
+  onRejected,
 }: {
   application: ApplicationDetail;
   onClose: () => void;
