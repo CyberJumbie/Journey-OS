@@ -149,3 +149,24 @@ errors:
     rule: "After adding/editing files in packages/types, rebuild with `tsc -b packages/types/tsconfig.json` before type-checking downstream packages."
     location: "Root CLAUDE.md → Monorepo Conventions"
     recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-IA-4
+    error: "Used `as unknown as UpdateILORequest` to pass sync_status/graph_node_id through repo.update(), bypassing type safety"
+    rule: "When a repository needs to update fields not in the domain UpdateRequest type, add a dedicated method (e.g., updateSyncStatus) instead of casting."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong + docs/solutions/repository-pattern.md"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-IA-4
+    error: "Repository archive() used .update() without .select().single(), so Supabase silently succeeds when 0 rows match"
+    rule: "Use .select().single() on all Supabase write operations (insert, update, archive) to verify exactly 1 row was affected."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong + docs/solutions/repository-pattern.md"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-IA-4
+    error: "PostToolUse eslint hook stripped newly-added barrel exports from index.ts, causing runtime 'is not a constructor' errors"
+    rule: "After editing barrel export files (index.ts), re-read the file to verify the hook didn't strip new exports. Re-add if stripped."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0

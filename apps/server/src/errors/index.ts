@@ -29,3 +29,15 @@ export {
   InvitationExpiredError,
   InvitationLimitError,
 } from "./invitation.error";
+export {
+  ObjectiveError,
+  DuplicateObjectiveCodeError,
+  ObjectiveNotFoundError,
+  InvalidBloomLevelError,
+} from "./objective.error";
+export {
+  SameInstitutionError,
+  UserReassignmentError,
+  UserNotFoundError,
+  ConcurrentModificationError,
+} from "./reassignment.error";
