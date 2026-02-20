@@ -4,6 +4,7 @@ import { ValidationError } from "../../../errors/validation.error";
 import { DuplicateInvitationError } from "../../../errors/invitation.error";
 import { UserInvitationEmailService } from "../../email/user-invitation-email.service";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { AuthRole } from "@journey-os/types";
 
 const INST_ID = "inst-1";
 
@@ -12,7 +13,7 @@ const MOCK_PROFILES = [
     id: "user-1",
     email: "faculty@school.edu",
     full_name: "Dr. Faculty",
-    role: "faculty",
+    role: AuthRole.FACULTY,
     is_course_director: true,
     is_active: true,
     last_login_at: "2026-02-18T10:00:00Z",
@@ -22,7 +23,7 @@ const MOCK_PROFILES = [
     id: "user-2",
     email: "student@school.edu",
     full_name: "Student One",
-    role: "student",
+    role: AuthRole.STUDENT,
     is_course_director: false,
     is_active: true,
     last_login_at: null,
@@ -121,7 +122,7 @@ function createInviteMockSupabase(overrides?: {
       data: {
         id: "inv-new",
         email: "new@school.edu",
-        role: "faculty",
+        role: AuthRole.FACULTY,
         expires_at: "2026-03-06T00:00:00Z",
       },
       error: null,
@@ -308,7 +309,7 @@ describe("InstitutionUserService", () => {
 
       const result = await service.invite(INST_ID, inviter, {
         email: "new@school.edu",
-        role: "faculty",
+        role: AuthRole.FACULTY,
       });
 
       expect(result.invitation_id).toBe("inv-new");
@@ -331,7 +332,7 @@ describe("InstitutionUserService", () => {
       await expect(
         service.invite(INST_ID, inviter, {
           email: "existing@school.edu",
-          role: "faculty",
+          role: AuthRole.FACULTY,
         }),
       ).rejects.toThrow(DuplicateInvitationError);
     });
@@ -345,7 +346,7 @@ describe("InstitutionUserService", () => {
       await expect(
         service.invite(INST_ID, inviter, {
           email: "existing@school.edu",
-          role: "student",
+          role: AuthRole.STUDENT,
         }),
       ).rejects.toThrow(ValidationError);
     });
@@ -357,7 +358,7 @@ describe("InstitutionUserService", () => {
       await expect(
         service.invite(INST_ID, inviter, {
           email: "new@school.edu",
-          role: "student",
+          role: AuthRole.STUDENT,
           is_course_director: true,
         }),
       ).rejects.toThrow(ValidationError);

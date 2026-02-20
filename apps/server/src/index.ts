@@ -101,6 +101,8 @@ import { ActivityFeedService } from "./services/activity/activity-feed.service";
 import { ActivityFeedController } from "./controllers/activity.controller";
 import { KpiService } from "./services/dashboard/kpi.service";
 import { KpiController } from "./controllers/dashboard/kpi.controller";
+import { FacultyCourseService } from "./services/dashboard/faculty-course.service"; // [STORY-F-12]
+import { FacultyCourseController } from "./controllers/dashboard/faculty-course.controller"; // [STORY-F-12]
 import { NotificationPreferenceService } from "./services/user/notification-preference.service";
 import { NotificationPreferenceController } from "./controllers/user/notification-preference.controller";
 import { GenerationPreferenceService } from "./services/user/generation-preference.service"; // [STORY-F-17]
@@ -516,6 +518,17 @@ const kpiService = new KpiService(supabaseClient);
 const kpiController = new KpiController(kpiService);
 app.get("/api/v1/dashboard/kpis", rbac.require(AuthRole.FACULTY), (req, res) =>
   kpiController.handleGetKpis(req, res),
+);
+
+// Faculty course cards — Faculty and above [STORY-F-12]
+const facultyCourseService = new FacultyCourseService(supabaseClient);
+const facultyCourseController = new FacultyCourseController(
+  facultyCourseService,
+);
+app.get(
+  "/api/v1/dashboard/faculty/courses",
+  rbac.require(AuthRole.FACULTY),
+  (req, res) => facultyCourseController.handleList(req, res),
 );
 
 // Notifications — any authenticated user (no RBAC role check)

@@ -30,7 +30,7 @@ export class InstitutionUserController {
 
   async handleList(req: Request, res: Response): Promise<void> {
     try {
-      const user = (req as Record<string, unknown>).user as
+      const user = (req as unknown as Record<string, unknown>).user as
         | {
             institution_id?: string;
             id?: string;
@@ -110,7 +110,7 @@ export class InstitutionUserController {
 
   async handleInvite(req: Request, res: Response): Promise<void> {
     try {
-      const user = (req as Record<string, unknown>).user as
+      const user = (req as unknown as Record<string, unknown>).user as
         | {
             id?: string;
             institution_id?: string;

@@ -43,7 +43,17 @@ export class CourseWizardController {
   async handleCreate(req: Request, res: Response): Promise<void> {
     try {
       const input = req.body as CourseCreateInput;
-      const userId = req.user!.sub;
+      const user = (req as unknown as Record<string, unknown>).user as
+        | { sub: string }
+        | undefined;
+      if (!user?.sub) {
+        res.status(401).json({
+          data: null,
+          error: { code: "UNAUTHORIZED", message: "Authentication required" },
+        });
+        return;
+      }
+      const userId = user.sub;
 
       // 1. Validate Course Director exists (if provided)
       if (input.director.course_director_id) {

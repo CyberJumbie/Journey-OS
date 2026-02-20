@@ -1,4 +1,5 @@
 import multer from "multer";
+import type { RequestHandler } from "express";
 import {
   ACCEPTED_MIME_TYPES,
   UPLOAD_MAX_FILE_SIZE_BYTES,
@@ -30,7 +31,7 @@ export const uploadMiddleware = multer({
   fileFilter,
 });
 
-export const uploadFiles = uploadMiddleware.array(
+export const uploadFiles: RequestHandler = uploadMiddleware.array(
   "files",
   UPLOAD_MAX_FILES_PER_BATCH,
 );

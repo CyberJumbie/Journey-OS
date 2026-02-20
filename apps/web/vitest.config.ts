@@ -7,6 +7,7 @@ export default defineConfig({
     environment: "node",
   },
   resolve: {
+    dedupe: ["react", "react-dom"],
     alias: {
       "@journey-os/types": path.resolve(__dirname, "../../packages/types/src"),
       "@journey-os/ui": path.resolve(__dirname, "../../packages/ui/src"),

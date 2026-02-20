@@ -36,7 +36,8 @@ export function ProfileForm({
     watch,
     formState: { errors, isDirty },
   } = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileFormSchema),
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any -- zod@4.3 / @hookform/resolvers@5.2 type mismatch; runtime detection works correctly */
+    resolver: zodResolver(profileFormSchema as any),
     defaultValues: {
       display_name: initialProfile.display_name ?? "",
       bio: initialProfile.bio ?? "",

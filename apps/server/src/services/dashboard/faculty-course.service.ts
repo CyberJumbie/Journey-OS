@@ -8,6 +8,7 @@ import type {
   CourseCardData,
   FacultyCourseListResponse,
 } from "@journey-os/types";
+import { CourseNotFoundError } from "../../errors/course.error";
 
 export class FacultyCourseService {
   readonly #supabase: SupabaseClient;
@@ -30,7 +31,9 @@ export class FacultyCourseService {
     });
 
     if (error) {
-      throw new Error(`Failed to fetch faculty courses: ${error.message}`);
+      throw new CourseNotFoundError(
+        `Failed to fetch faculty courses: ${error.message}`,
+      );
     }
 
     const courses: CourseCardData[] = (data ?? []).map(

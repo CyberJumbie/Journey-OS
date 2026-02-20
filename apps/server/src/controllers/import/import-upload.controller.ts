@@ -53,11 +53,24 @@ export class ImportUploadController {
     this.#presetService = presetService;
   }
 
+  #extractUser(req: Request, res: Response): { id: string } | null {
+    const user = (req as unknown as Record<string, unknown>).user as
+      | { id: string }
+      | undefined;
+    if (!user?.id) {
+      res.status(401).json({
+        data: null,
+        error: { code: "UNAUTHORIZED", message: "Authentication required" },
+      });
+      return null;
+    }
+    return user;
+  }
+
   async handleUpload(req: Request, res: Response): Promise<void> {
     try {
-      const user = (req as unknown as Record<string, unknown>).user as {
-        id: string;
-      };
+      const user = this.#extractUser(req, res);
+      if (!user) return;
       const file = req.file;
       if (!file) {
         res.status(400).json({
@@ -76,9 +89,8 @@ export class ImportUploadController {
 
   async handlePreview(req: Request, res: Response): Promise<void> {
     try {
-      const user = (req as unknown as Record<string, unknown>).user as {
-        id: string;
-      };
+      const user = this.#extractUser(req, res);
+      if (!user) return;
       const parsed = PreviewRequestSchema.parse(req.body);
       const result = await this.#uploadService.preview(
         user.id,
@@ -93,9 +105,8 @@ export class ImportUploadController {
 
   async handleListPresets(req: Request, res: Response): Promise<void> {
     try {
-      const user = (req as unknown as Record<string, unknown>).user as {
-        id: string;
-      };
+      const user = this.#extractUser(req, res);
+      if (!user) return;
       const presets = await this.#presetService.list(user.id);
       res.status(200).json({ data: presets, error: null });
     } catch (err) {
@@ -105,9 +116,8 @@ export class ImportUploadController {
 
   async handleCreatePreset(req: Request, res: Response): Promise<void> {
     try {
-      const user = (req as unknown as Record<string, unknown>).user as {
-        id: string;
-      };
+      const user = this.#extractUser(req, res);
+      if (!user) return;
       const parsed = PresetCreateSchema.parse(req.body);
       const preset = await this.#presetService.create(
         user.id,
@@ -121,9 +131,8 @@ export class ImportUploadController {
 
   async handleDeletePreset(req: Request, res: Response): Promise<void> {
     try {
-      const user = (req as unknown as Record<string, unknown>).user as {
-        id: string;
-      };
+      const user = this.#extractUser(req, res);
+      if (!user) return;
       const presetId = z.string().uuid().parse(req.params.id);
       await this.#presetService.delete(user.id, presetId);
       res.status(204).send();
@@ -134,9 +143,8 @@ export class ImportUploadController {
 
   async handleConfirm(req: Request, res: Response): Promise<void> {
     try {
-      const user = (req as unknown as Record<string, unknown>).user as {
-        id: string;
-      };
+      const user = this.#extractUser(req, res);
+      if (!user) return;
       const parsed = ConfirmRequestSchema.parse(req.body);
       const result = await this.#uploadService.confirm(
         user.id,
@@ -151,9 +159,8 @@ export class ImportUploadController {
 
   async handleExecute(req: Request, res: Response): Promise<void> {
     try {
-      const user = (req as unknown as Record<string, unknown>).user as {
-        id: string;
-      };
+      const user = this.#extractUser(req, res);
+      if (!user) return;
       const parsed = ExecuteRequestSchema.parse(req.body);
       // totalRows not known here; pass 0 — STORY-F-57 will look it up
       const result = await this.#uploadService.execute(

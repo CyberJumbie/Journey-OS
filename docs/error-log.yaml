@@ -653,3 +653,38 @@ errors:
     rule: "After bulk Write operations that trigger PostToolUse linter, re-read the file to verify linter didn't introduce incorrect token mappings."
     location: "docs/error-log.yaml (tracking only — one-off linter auto-fix issue)"
     recurrence: 0
+
+  - date: 2026-02-20
+    story: batch-validate-F12-F14-F15-F16-F17-F20
+    error: "F-12 FacultyCourseController was implemented but never registered in index.ts. Only caught during /validate Pass 4 domain review, not during implementation."
+    rule: "After implementing any controller, immediately grep index.ts for the endpoint path to verify route registration. Never mark a story complete without route verification."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong (new rule)"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: batch-validate-F12-F14-F15-F16-F17-F20
+    error: "Radix UI components in pnpm monorepo resolve to different React instance in jsdom, causing 'Invalid hook call'. Required mocking ALL shadcn/ui components."
+    rule: "Mock all shadcn/ui components with HTML stubs in jsdom tests. See docs/solutions/shadcn-jsdom-mock-pattern.md"
+    location: "Root CLAUDE.md → Things Claude Gets Wrong + docs/solutions/shadcn-jsdom-mock-pattern.md"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: batch-validate-F12-F14-F15-F16-F17-F20
+    error: "multer middleware exports caused TS2742 — inferred return type references pnpm internal package path. Fixed with explicit RequestHandler type annotation."
+    rule: "Middleware wrapping multer (or similar) must export with explicit RequestHandler type annotation to prevent TS2742 non-portable inferred types."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong (new rule)"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: batch-validate-F12-F14-F15-F16-F17-F20
+    error: "FacultyCourseService used raw throw new Error() instead of custom CourseNotFoundError"
+    rule: "Custom error classes only. No raw throw new Error(). Existing Architecture rule."
+    location: "Root CLAUDE.md → Architecture Rules (existing rule)"
+    recurrence: 3
+
+  - date: 2026-02-20
+    story: batch-validate-F12-F14-F15-F16-F17-F20
+    error: "NotificationPreferenceService checked `if (data)` but data could be truthy with null notification_preferences field. Should be `if (data?.notification_preferences)`."
+    rule: "When reading JSONB columns via Supabase .maybeSingle(), always null-check both the row AND the specific JSONB field."
+    location: "docs/error-log.yaml (tracking only — Supabase JSONB null check)"
+    recurrence: 0

@@ -347,5 +347,5 @@ metrics:
   review_pct: 0      # target: 40%
   execution_pct: 0   # target: 10%
   learning_pct: 0    # target: 10%
-  api_tests_total: 976  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33, U-8: 15, U-9: 25, U-10: 38, U-11: 16, U-12: 72, U-13: 20, U-14: 14, SA-1: 28, SA-2: 22, SA-3: 20, SA-4: 21, SA-5: 17, SA-6: 16, SA-7: 15, SA-8: 24, SA-9: 16, IA-2: 21, IA-5: 18, IA-6: 15, IA-7: 20, IA-12: 23, F-1: 26, F-2: 35, F-3: 14, F-4: 18, F-5: 40, F-6: 18, F-7: 16, F-8: 8, F-9: 23, F-10: 20, F-11: 20, F-12: 18, F-13: 8, F-14: 10, F-15: 12, F-16: 13, F-17: 13, F-20: 15
+  api_tests_total: 989  # 88 test files, 989 tests — server full suite verified 2026-02-20
   e2e_tests_total: 1

@@ -41,7 +41,7 @@ export class NotificationPreferenceService {
       throw error;
     }
 
-    if (data) {
+    if (data?.notification_preferences) {
       return data.notification_preferences as NotificationPreferenceMatrix;
     }
 
