@@ -55,7 +55,11 @@ Types → Model → Repository → Service → Controller → View → API Tests
 - Server imports types via `@journey-os/types` path alias + TypeScript project references (`composite: true` in types tsconfig).
 - Vitest cross-workspace imports need aliases in `vitest.config.ts`, not relative `../../../../` paths.
 - Express app variable needs explicit `Express` type annotation to avoid TS2742.
+- Web app path alias is `@web/*` (not `@/*`). Use `@web/components/...`, `@web/lib/...` for imports in `apps/web`.
+- Express `req.params` values are `string | string[]` in strict mode. Narrow with `typeof x === "string"` before passing to functions expecting `string`.
 - Vitest `.toThrow(ErrorClass)` checks `instanceof`. `.toThrow("string")` checks the message text. Use the class form for custom errors.
+- Vitest `vi.mock()` hoists before variable declarations. Use `vi.hoisted()` to declare mock variables that `vi.mock()` closures reference.
+- Lazy/optional services (Neo4j, Redis) should validate env vars at class instantiation, not in the global zod env schema (zod validates at import time).
 
 ## Things Claude Gets Wrong
 (Updated by /compound — the error-to-rule pipeline)
@@ -65,3 +69,8 @@ Types → Model → Repository → Service → Controller → View → API Tests
 - Used `.toThrow("ErrorClassName")` in vitest which matches error message, not class name. Use `.toThrow(ErrorClass)` instead.
 - Used relative `../../../../` paths for cross-workspace imports in vitest. Use vitest aliases instead.
 - Server `rootDir: "src"` breaks when path aliases resolve to files outside src. Use TypeScript project references with `composite: true`.
+- Used `@/` path alias in web app imports when the actual alias is `@web/*`. Always check tsconfig paths before importing.
+- Express `req.params` values are `string | string[]`. Always narrow with `typeof === "string"` before passing to typed functions.
+- Made Neo4j env vars required in global zod schema, but zod runs at import time. Use optional in zod, validate at `Neo4jClientConfig` instantiation.
+- `vi.mock()` closures can't reference variables declared after the mock. Use `vi.hoisted()` to hoist mock declarations.
+- Don't use `SeedResult["errors"]` as a mutable accumulator type — it resolves to `readonly SeedNodeError[]`. Import `SeedNodeError` directly and type as `SeedNodeError[]`.

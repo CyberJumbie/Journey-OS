@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { Neo4jClientConfig } from "../src/config/neo4j.config";
 import { SeedRunner } from "../src/services/seed/seed-runner.service";
+import { USMLESeeder } from "../src/services/seed/usmle-seeder.service";
 
 async function main(): Promise<void> {
   const neo4j = Neo4jClientConfig.getInstance();
@@ -11,8 +12,8 @@ async function main(): Promise<void> {
 
     const runner = new SeedRunner(neo4j.driver);
 
-    // Future stories (U-7, U-12) will register seeders here:
-    // runner.registerSeeder(new USMLESeeder(neo4j.driver));
+    runner.registerSeeder(new USMLESeeder(neo4j.driver));
+    // Future stories (U-12) will register additional seeders here:
     // runner.registerSeeder(new LCMESeeder(neo4j.driver));
     // ...
 

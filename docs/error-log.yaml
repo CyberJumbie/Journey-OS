@@ -58,3 +58,38 @@ errors:
     rule: "Always annotate Express app with explicit Express type: const app: Express = express()"
     location: "Root CLAUDE.md → Monorepo Conventions"
     recurrence: 0
+
+  - date: 2026-02-19
+    story: STORY-U-3
+    error: "vi.mock() hoisting caused neo4j driver mock variable to be undefined at mock time"
+    rule: "Use vi.hoisted() to declare mock variables that vi.mock() closures reference"
+    location: "Auto Memory → Implementation Status + Root CLAUDE.md → Monorepo Conventions"
+    recurrence: 0
+
+  - date: 2026-02-19
+    story: STORY-U-4
+    error: "Made Neo4j env vars required in global zod schema, but zod validates at import time before Neo4j is needed"
+    rule: "Lazy/optional services (Neo4j, Redis) validate env at class instantiation, not in global zod schema"
+    location: "Auto Memory → Implementation Status + docs/solutions/seed-infrastructure-pattern.md"
+    recurrence: 0
+
+  - date: 2026-02-19
+    story: STORY-U-5
+    error: "Used @/ path alias in web app import when actual alias is @web/*"
+    rule: "Web app path alias is @web/* (not @/*). Always check tsconfig paths."
+    location: "Root CLAUDE.md → Monorepo Conventions + Things Claude Gets Wrong"
+    recurrence: 0
+
+  - date: 2026-02-19
+    story: STORY-U-5
+    error: "Passed req.params.institutionId (string|string[]) to function expecting string without narrowing"
+    rule: "Express req.params values are string|string[]. Narrow with typeof === 'string' before use."
+    location: "Root CLAUDE.md → Monorepo Conventions + Things Claude Gets Wrong"
+    recurrence: 0
+
+  - date: 2026-02-19
+    story: STORY-U-7
+    error: "Used SeedResult['errors'] (readonly SeedNodeError[]) as mutable accumulator, push() failed at tsc"
+    rule: "Import SeedNodeError directly and type as SeedNodeError[] for mutable accumulators"
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0

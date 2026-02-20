@@ -36,6 +36,10 @@ export abstract class BaseSeeder implements Seeder {
     return this.#batchSize;
   }
 
+  protected get driver(): Driver {
+    return this.#driver;
+  }
+
   /**
    * Execute MERGE queries in transaction batches.
    * Batches items into groups of batchSize and runs each group
