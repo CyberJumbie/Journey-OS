@@ -31,15 +31,15 @@ lanes:
   institutional_admin:
     priority: 2
     total: 44       # E-06: 3, E-09: 3, E-14: 4, E-15: 4, E-17: 4, E-28: 5, E-29: 3, E-30: 3, E-31: 3, E-33: 4, E-36: 4, E-37: 4
-    done: 7         # IA-1 (User List & Invitation), IA-2 (SLO Model & Repository), IA-4 (ILO Model & Repository), IA-5 (Admin Dashboard), IA-6 (Framework List Page), IA-7 (Weekly Schedule View), IA-12 (KaizenML Lint Rule Engine)
-    ready: 5        # IA-8 (Course Oversight), IA-14 (SLO Management UI), IA-17 (User Deactivation), IA-18 (Role Assignment), IA-22 (SLO-to-ILO Linking)
-    blocked: 32     # IA-23 moved to ready since IA-4 done, but IA-7 completed so net same
+    done: 8         # IA-1 (User List & Invitation), IA-2 (SLO Model & Repository), IA-4 (ILO Model & Repository), IA-5 (Admin Dashboard), IA-6 (Framework List Page), IA-7 (Weekly Schedule View), IA-8 (Course Oversight Dashboard), IA-12 (KaizenML Lint Rule Engine)
+    ready: 4        # IA-14 (SLO Management UI), IA-17 (User Deactivation), IA-18 (Role Assignment), IA-22 (SLO-to-ILO Linking)
+    blocked: 32     # IA-3 blocked by F-34; rest blocked by IA-3 or other upstream
   faculty:
     priority: 3
     total: 75       # E-08: 4, E-10: 3, E-11: 4, E-12: 4, E-13: 3, E-18: 4, E-19: 4, E-20: 4, E-21: 4, E-22: 3, E-23: 4, E-24: 4, E-25: 4, E-26: 4, E-27: 4, E-32: 4, E-34: 4, E-35: 3, E-38: 3, E-39: 4
-    done: 18        # F-1 (Course Model & Repository), F-2 (Notification Model & Repository), F-3 (Import Parser), F-4 (Template Model & CRUD), F-5 (Profile Page), F-6 (Activity Feed), F-7 (KPI Strip), F-8 (Help Pages), F-9 (Upload Dropzone), F-10 (Socket.io Notification), F-11 (Course Hierarchy), F-12 (Course Cards), F-13 (Course List & Detail Views), F-14 (Template Management Page), F-15 (Field Mapping UI), F-16 (Notification Preferences), F-17 (Generation Preferences), F-20 (Course Creation Wizard)
+    done: 19        # F-1 (Course Model & Repository), F-2 (Notification Model & Repository), F-3 (Import Parser), F-4 (Template Model & CRUD), F-5 (Profile Page), F-6 (Activity Feed), F-7 (KPI Strip), F-8 (Help Pages), F-9 (Upload Dropzone), F-10 (Socket.io Notification), F-11 (Course Hierarchy), F-12 (Course Cards), F-13 (Course List & Detail Views), F-14 (Template Management Page), F-15 (Field Mapping UI), F-16 (Notification Preferences), F-17 (Generation Preferences), F-18 (Supabase Storage Integration), F-20 (Course Creation Wizard)
     ready: 0
-    blocked: 59     # rest blocked by upstream dependencies
+    blocked: 56     # rest blocked by upstream dependencies
   student:
     priority: 4
     total: 15       # E-40: 4, E-41: 4, E-42: 4, E-43: 3
@@ -331,21 +331,33 @@ completed:
     completed: 2026-02-20
     api_tests: 15      # course-wizard.controller (15): create(4) + checkCode(3) + sections/sessions(3) + CD-assignment(2) + validation(3)
     e2e_tests: 1       # course-creation.spec (1): basic wizard flow
+  - id: STORY-IA-8
+    title: "Course Oversight Dashboard"
+    lane: institutional_admin
+    completed: 2026-02-20
+    api_tests: 28      # course-oversight.service (17) + course-oversight.controller (11)
+    e2e_tests: 0
+  - id: STORY-F-18
+    title: "Supabase Storage Integration"
+    lane: faculty
+    completed: 2026-02-20
+    api_tests: 28      # storage.service (9): buildStorageKey(2) + computeChecksum(2) + validateFile(3) + upload(2) | storage.controller (19): handleUpload(10) + handleGetPresignedUrl(4) + handleSoftDelete(3) + handleList(2)
+    e2e_tests: 0
 
 # Error-to-rule pipeline
 error_pipeline:
-  total_errors_captured: 75
-  total_rules_created: 60
-  recurrence_rate: 5    # tsc-from-root at 10, hardcoded-hex at 2, .select().single() at 1, table-name-verify at 1, no-dom-in-types at 1, inline-style at 2, barrel-strip at 5, promise-all at 1, duplicate-type at 1
+  total_errors_captured: 78
+  total_rules_created: 63
+  recurrence_rate: 5    # tsc-from-root at 10, hardcoded-hex at 2, .select().single() at 1, table-name-verify at 2, no-dom-in-types at 1, inline-style at 2, barrel-strip at 5, promise-all at 1, duplicate-type at 1
 
 # Time allocation tracking
 metrics:
-  stories_completed: 46
+  stories_completed: 48
   stories_total: 166
   avg_story_time_minutes: 0    # not tracked yet
   planning_pct: 0    # target: 40%
   review_pct: 0      # target: 40%
   execution_pct: 0   # target: 10%
   learning_pct: 0    # target: 10%
-  api_tests_total: 1001  # 89 test files, 1001 tests — server full suite verified 2026-02-20
+  api_tests_total: 1032  # 91 test files, 1032 tests (+28 F-18: storage.service 9 + storage.controller 19)
   e2e_tests_total: 1

@@ -695,3 +695,31 @@ errors:
     rule: "No new rule needed."
     location: "n/a"
     recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-IA-8
+    error: "Service queried .eq('institution_id', institutionId) on courses table, but courses has no institution_id column. Must join through programs.institution_id. Tests passed because Supabase was fully mocked."
+    rule: "When a brief provides a query filtering by institution_id on any table, verify via MCP that the column exists. courses→programs is a known false FK. See supabase-inner-join-filter-pattern.md"
+    location: "Root CLAUDE.md → Things Claude Gets Wrong (new rule)"
+    recurrence: 1
+
+  - date: 2026-02-20
+    story: STORY-F-18
+    error: "Destructured primitives (statusCode, body) from createMockRes() factory — captured initial values (0/null), not mutated state. 17/19 controller tests failed."
+    rule: "Return a mutable state object from mock factories. Access via dot notation (mock.statusCode), never destructure primitives."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong + docs/solutions/express-mock-res-pattern.md"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-18
+    error: "z.enum(DOCUMENT_TYPES) with [string, ...string[]] tuple inferred output as string, not StorageDocumentType. TS2345 when passing to typed function."
+    rule: "Cast z.enum() parsed output with `as YourUnionType` when the enum source is a generic string tuple."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: ui-style-audit
+    error: "Alpha hex patterns (${C.xxx}HH) silently produce broken CSS when shared color const values change from hex to var(--color-*). E.g., ${C.green}30 becomes 'var(--color-green)30'."
+    rule: "Grep all consumers for alpha hex patterns BEFORE converting shared color objects from hex to var(). Replace with rgba() or color-mix() first."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong + docs/solutions/component-hex-to-token-migration-pattern.md"
+    recurrence: 0

@@ -1,23 +1,25 @@
 # Session State — 2026-02-20
 
 ## Current Position
-- **Active story:** STORY-IA-7 (Weekly Schedule View) — COMPLETE (validate + compound done)
-- **Lane:** institutional_admin (P2)
-- **Phase:** DONE — ready for /next
+- **Active story:** None — spec pipeline session (briefs generation)
+- **Lane:** ALL lanes
+- **Phase:** Spec pipeline complete — ready for /next or /pull
 - **Branch:** main
-- **Previous story:** STORY-F-6, F-7, F-8 (batch) — done
+- **Previous story (implementation):** STORY-IA-7 (Weekly Schedule View) — COMPLETE
 
 ## Narrative Handoff
 
-Implemented STORY-IA-7 (Weekly Schedule View) — a read-only leaf story providing a `GET /api/v1/courses/:id/schedule?week=N` endpoint and frontend weekly calendar components. The critical deviation from the brief was that `sessions` has no direct `course_id` column — the FK path is `sessions.section_id` → `sections.course_id` → `courses.id`, requiring Supabase `!inner` join syntax. This pattern was captured in `docs/solutions/supabase-inner-join-filter-pattern.md`.
+This session completed the full upfront spec pipeline. The user ran /epic ALL (already done — 21 features → 45 epics), /decompose-all (already done — 45 epics → 166 stories), /prioritize (already done — 6 lanes ordered with 41 cross-lane deps), then /brief ALL which was the main work of this session.
 
-All 7 backend files created (types, service, controller, route registration, 2 test files). All 3 frontend components created (WeekSelector, SessionCard, WeeklySchedule). 20/20 tests pass. `/validate` passed all 4 passes. `/compound` added 2 CLAUDE.md rules (fetch json typing, inner-join pattern), 1 solution doc, 1 error log entry. Material status is stubbed (`"empty"`, count 0) until `session_materials` table is created.
+Generated **166 self-contained story briefs** across all 6 persona lanes using 10 parallel subagents. Each brief with UI screens includes a **Reference Screens** table mapping the correct Figma Make prototype files (from `.context/source/05-reference/app/app/`) to production Next.js App Router targets with specific refactor notes. 123 briefs have prototype screen mappings; 59 are backend-only. A comprehensive **SCREEN-STORY-MAP.md** was created mapping all 80+ prototype pages to their corresponding stories.
 
-Overall progress: 39/166 stories (23%), 887 API tests.
-- **Universal lane:** 14/14 COMPLETE
-- **SuperAdmin lane:** 9/9 COMPLETE
+The briefs are enriched from the original story files with: acceptance criteria, implementation layers with exact file paths, database schema (Supabase DDL + Neo4j), API endpoints, dependency chains, testing requirements, and implementation notes incorporating CLAUDE.md gotchas.
+
+Overall progress: 39/166 stories implemented (23%), 887 API tests. All 166 stories now have briefs ready for /plan and /adapt.
+- **Universal lane:** 14/14 COMPLETE (implemented)
+- **SuperAdmin lane:** 9/9 COMPLETE (implemented)
 - **IA lane:** 7/44 done — IA-1, IA-2, IA-4, IA-5, IA-6, IA-7, IA-12
-- **Faculty lane:** 11/75 done — F-1, F-2, F-3, F-4, F-5, F-6, F-7, F-8, F-9, F-10, F-11
+- **Faculty lane:** 11/75 done — F-1 through F-11
 - **Student lane:** 0/15
 - **Advisor lane:** 0/9
 
@@ -26,29 +28,23 @@ Next unblocked faculty stories: F-12 (Course Cards), F-13 (Course List), F-14 (T
 
 ## Files Modified This Session
 
-### STORY-IA-7 (NEW files)
-- `packages/types/src/course/schedule.types.ts` — MaterialStatus, ScheduleSession, WeeklySchedule types
-- `apps/server/src/services/course/schedule.service.ts` — ScheduleService with 3-step Supabase query
-- `apps/server/src/controllers/course/schedule.controller.ts` — ScheduleController with UUID + week validation
-- `apps/server/src/services/course/__tests__/schedule.service.test.ts` — 11 service tests
-- `apps/server/src/controllers/course/__tests__/schedule.controller.test.ts` — 9 controller tests
-- `apps/web/src/components/course/week-selector.tsx` — Prev/Next week navigation
-- `apps/web/src/components/course/session-card.tsx` — Session card with material status dot
-- `apps/web/src/components/course/weekly-schedule.tsx` — Main weekly calendar grid (loading/error/empty/data states)
-- `docs/solutions/supabase-inner-join-filter-pattern.md` — NEW solution doc
+### NEW files (166 briefs)
+- `.context/spec/briefs/STORY-U-1.md` through `STORY-U-14.md` (14 files)
+- `.context/spec/briefs/STORY-SA-1.md` through `STORY-SA-9.md` (9 files)
+- `.context/spec/briefs/STORY-IA-1.md` through `STORY-IA-44.md` (44 files)
+- `.context/spec/briefs/STORY-F-1.md` through `STORY-F-75.md` (75 files)
+- `.context/spec/briefs/STORY-ST-1.md` through `STORY-ST-15.md` (15 files)
+- `.context/spec/briefs/STORY-AD-1.md` through `STORY-AD-9.md` (9 files)
 
-### STORY-IA-7 (MODIFIED files)
-- `packages/types/src/course/index.ts` — added schedule.types barrel export
-- `apps/server/src/index.ts` — added ScheduleService/Controller imports + route registration
-- `CLAUDE.md` — 2 new rules in "Things Claude Gets Wrong"
-- `docs/error-log.yaml` — 1 new entry
+### NEW mapping file
+- `.context/spec/maps/SCREEN-STORY-MAP.md` — complete prototype-to-story mapping
 
 ## Open Questions
 None.
 
 ## Context Files to Read on Resume
-- `.context/spec/backlog/BACKLOG-IA.md` — IA lane ordering
+- `.context/spec/backlog/BACKLOG-INSTITUTIONAL-ADMIN.md` — IA lane ordering
 - `.context/spec/backlog/BACKLOG-FACULTY.md` — faculty lane ordering
 - `.context/spec/backlog/CROSS-LANE-DEPENDENCIES.md` — cross-lane blockers
-- `docs/solutions/supabase-inner-join-filter-pattern.md` — new pattern from this session
-- The brief for whatever story is pulled next
+- `.context/spec/maps/SCREEN-STORY-MAP.md` — prototype screen mapping
+- The brief for whatever story is pulled next via `/pull` or `/next`
