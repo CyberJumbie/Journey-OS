@@ -19,9 +19,9 @@ lanes:
   universal:
     priority: 0
     total: 14       # E-01: 4, E-02: 4, E-03: 2, E-16: 4
-    done: 8         # U-1 (Auth Setup), U-2 (Framework Models), U-3 (Auth Middleware), U-4 (Seed Infra), U-5 (Forgot Password), U-6 (RBAC), U-7 (USMLE Seed), U-8 (Registration Wizard)
-    ready: 1        # U-10 (Dashboard Routing)
-    blocked: 5
+    done: 10        # U-1..U-8, U-10 (Dashboard Routing), U-11 (Password Reset Page)
+    ready: 0
+    blocked: 4
   superadmin:
     priority: 1
     total: 9        # E-04: 4, E-05: 3, E-07: 2
@@ -115,6 +115,18 @@ completed:
     completed: 2026-02-19
     api_tests: 22      # global-user.service (7) + global-user.controller (15)
     e2e_tests: 0
+  - id: STORY-U-10
+    title: "Dashboard Routing"
+    lane: universal
+    completed: 2026-02-19
+    api_tests: 38      # dashboard-routes (38)
+    e2e_tests: 0
+  - id: STORY-U-11
+    title: "Password Reset Page"
+    lane: universal
+    completed: 2026-02-19
+    api_tests: 16      # password-validation (16)
+    e2e_tests: 0
 
 # Error-to-rule pipeline
 error_pipeline:
@@ -124,12 +136,12 @@ error_pipeline:
 
 # Time allocation tracking
 metrics:
-  stories_completed: 10
+  stories_completed: 12
   stories_total: 166
   avg_story_time_minutes: 0    # not tracked yet
   planning_pct: 0    # target: 40%
   review_pct: 0      # target: 40%
   execution_pct: 0   # target: 10%
   learning_pct: 0    # target: 10%
-  api_tests_total: 238  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33, U-8: 15, SA-1: 28, SA-2: 22
+  api_tests_total: 292  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33, U-8: 15, U-10: 38, U-11: 16, SA-1: 28, SA-2: 22
   e2e_tests_total: 0

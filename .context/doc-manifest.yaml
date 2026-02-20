@@ -383,16 +383,16 @@ documents:
 
   - path: .context/source/05-reference/seed/lcme-standards.json
     role: reference
-    summary: LCME accreditation standards skeleton — 2 of ~12 standards with 1 element. INCOMPLETE — needs full extraction.
-    size_kb: 2
+    summary: Complete LCME accreditation standards — 12 standards + 93 elements (105 nodes). Source: LCME.org effective July 2024.
+    size_kb: 30
     key_entities:
-      - LCME standards
-      - LCME elements
+      - 12 LCME standards
+      - 93 LCME elements
     defines_personas: false
     defines_api_endpoints: false
     defines_database_schema: true
     defines_visual_design: false
-    status: incomplete
+    status: complete
 
   - path: .context/source/05-reference/seed/acgme-competencies.json
     role: reference
@@ -421,16 +421,17 @@ documents:
 
   - path: .context/source/05-reference/seed/epa-ume-competencies.json
     role: reference
-    summary: Core EPAs for UME — 8 domains + 13 EPAs. Subcompetencies marked TODO. Seed data for EPA and UME_Domain nodes.
-    size_kb: 3
+    summary: Core EPAs for Entering Residency — 8 domains + 13 EPAs + 63 subcompetencies (84 nodes). Seed data for EPA, UME_Domain, and EPA_Subcompetency nodes.
+    size_kb: 12
     key_entities:
       - 13 EPAs
       - 8 UME domains
+      - 63 EPA subcompetencies
     defines_personas: false
     defines_api_endpoints: false
     defines_database_schema: true
     defines_visual_design: false
-    status: partial
+    status: complete
 
   - path: .context/source/05-reference/seed/Ume.json
     role: reference
@@ -585,11 +586,9 @@ conflicts:
 
   - id: C-004
     type: seed_data_completeness
-    description: "Seed JSON files have varying completeness. lcme-standards.json has only 2 of ~12 standards. epa-ume-competencies.json has subcompetencies marked TODO. No usmle-topics.json file exists (~200 topics needed)."
-    resolution: "Use complete files as-is. For incomplete files, fill from authoritative sources during implementation. USMLE topics must be authored during STORY-U-7."
-    affected_docs:
-      - .context/source/05-reference/seed/lcme-standards.json
-      - .context/source/05-reference/seed/epa-ume-competencies.json
+    description: "lcme-standards.json and epa-ume-competencies.json are now complete. Only remaining gap: no usmle-topics.json file exists (~200 topics needed)."
+    resolution: "LCME (105 nodes) and EPA-UME (84 nodes) resolved 2026-02-19. USMLE topics must be authored during STORY-U-7."
+    affected_docs: []
 
   - id: C-003
     type: node_types

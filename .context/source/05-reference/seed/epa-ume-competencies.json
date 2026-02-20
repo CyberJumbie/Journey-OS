@@ -1,11 +1,5 @@
 {
-  "_comment": "Core EPAs for Entering Residency — ~80 nodes. Source: AAMC Core Entrustable Professional Activities (Core EPAs) for Entering Residency.",
-  "_populate_instructions": [
-    "Source: AAMC 'Core Entrustable Professional Activities for Entering Residency' (2014, updated drafts)",
-    "13 Core EPAs, each with key functions (subcompetencies)",
-    "Use Gemini to extract: gemini -p 'Extract EPA domains, competencies, and subcompetencies...'",
-    "Expected count: ~8 domains + ~13 competencies (EPAs) + ~60 subcompetencies = ~80 nodes"
-  ],
+  "_comment": "Core EPAs for Entering Residency — 81 nodes (8 domains + 13 EPAs + 60 subcompetencies). Source: AAMC Core Entrustable Professional Activities for Entering Residency (2014), AAMC Toolkit (2017), WMed/Penn State competency mappings.",
 
   "domains": [
     { "id": "ume-dom-1", "name": "Patient Care" },
@@ -19,22 +13,96 @@
   ],
 
   "competencies": [
-    { "id": "epa-1", "name": "Gather a history and perform a physical examination", "domain_ids": ["ume-dom-1", "ume-dom-4"] },
-    { "id": "epa-2", "name": "Prioritize a differential diagnosis following a clinical encounter", "domain_ids": ["ume-dom-1", "ume-dom-2"] },
-    { "id": "epa-3", "name": "Recommend and interpret common diagnostic and screening tests", "domain_ids": ["ume-dom-1", "ume-dom-2"] },
-    { "id": "epa-4", "name": "Enter and discuss orders and prescriptions", "domain_ids": ["ume-dom-1", "ume-dom-6"] },
-    { "id": "epa-5", "name": "Document a clinical encounter in the patient record", "domain_ids": ["ume-dom-1", "ume-dom-4"] },
-    { "id": "epa-6", "name": "Provide an oral presentation of a clinical encounter", "domain_ids": ["ume-dom-4"] },
-    { "id": "epa-7", "name": "Form clinical questions and retrieve evidence to advance patient care", "domain_ids": ["ume-dom-2", "ume-dom-3"] },
-    { "id": "epa-8", "name": "Give or receive a patient handover to transition care responsibility", "domain_ids": ["ume-dom-4", "ume-dom-6"] },
-    { "id": "epa-9", "name": "Collaborate as a member of an interprofessional team", "domain_ids": ["ume-dom-7"] },
-    { "id": "epa-10", "name": "Recognize a patient requiring urgent or emergent care and initiate evaluation and management", "domain_ids": ["ume-dom-1"] },
-    { "id": "epa-11", "name": "Obtain informed consent for tests and/or procedures", "domain_ids": ["ume-dom-4", "ume-dom-5"] },
-    { "id": "epa-12", "name": "Perform general procedures of a physician", "domain_ids": ["ume-dom-1"] },
-    { "id": "epa-13", "name": "Identify system failures and contribute to a culture of safety and improvement", "domain_ids": ["ume-dom-6", "ume-dom-3"] }
+    { "id": "epa-1", "name": "Gather a history and perform a physical examination", "domain_ids": ["ume-dom-1", "ume-dom-2", "ume-dom-4", "ume-dom-5"] },
+    { "id": "epa-2", "name": "Prioritize a differential diagnosis following a clinical encounter", "domain_ids": ["ume-dom-1", "ume-dom-2", "ume-dom-3", "ume-dom-4", "ume-dom-8"] },
+    { "id": "epa-3", "name": "Recommend and interpret common diagnostic and screening tests", "domain_ids": ["ume-dom-1", "ume-dom-2", "ume-dom-3", "ume-dom-6"] },
+    { "id": "epa-4", "name": "Enter and discuss orders and prescriptions", "domain_ids": ["ume-dom-1", "ume-dom-2", "ume-dom-3", "ume-dom-4", "ume-dom-6"] },
+    { "id": "epa-5", "name": "Document a clinical encounter in the patient record", "domain_ids": ["ume-dom-1", "ume-dom-4", "ume-dom-5", "ume-dom-6"] },
+    { "id": "epa-6", "name": "Provide an oral presentation of a clinical encounter", "domain_ids": ["ume-dom-1", "ume-dom-2", "ume-dom-4", "ume-dom-8"] },
+    { "id": "epa-7", "name": "Form clinical questions and retrieve evidence to advance patient care", "domain_ids": ["ume-dom-2", "ume-dom-3", "ume-dom-4"] },
+    { "id": "epa-8", "name": "Give or receive a patient handover to transition care responsibility", "domain_ids": ["ume-dom-1", "ume-dom-3", "ume-dom-4", "ume-dom-5"] },
+    { "id": "epa-9", "name": "Collaborate as a member of an interprofessional team", "domain_ids": ["ume-dom-4", "ume-dom-5", "ume-dom-6", "ume-dom-7"] },
+    { "id": "epa-10", "name": "Recognize a patient requiring urgent or emergent care and initiate evaluation and management", "domain_ids": ["ume-dom-1", "ume-dom-2", "ume-dom-4", "ume-dom-8"] },
+    { "id": "epa-11", "name": "Obtain informed consent for tests and/or procedures", "domain_ids": ["ume-dom-1", "ume-dom-4", "ume-dom-5", "ume-dom-6", "ume-dom-8"] },
+    { "id": "epa-12", "name": "Perform general procedures of a physician", "domain_ids": ["ume-dom-1", "ume-dom-4", "ume-dom-5", "ume-dom-6", "ume-dom-8"] },
+    { "id": "epa-13", "name": "Identify system failures and contribute to a culture of safety and improvement", "domain_ids": ["ume-dom-2", "ume-dom-3", "ume-dom-4", "ume-dom-5", "ume-dom-6"] }
   ],
 
   "subcompetencies": [
-    { "_note": "TODO: Populate ~60 subcompetencies from the full AAMC EPA framework. Each EPA has 3-6 key functions that become UME_Subcompetency nodes." }
+    { "id": "epa-1-fn-1", "competency_id": "epa-1", "name": "Perform an accurate complete or focused history in a prioritized and organized manner" },
+    { "id": "epa-1-fn-2", "competency_id": "epa-1", "name": "Perform an accurate complete or focused physical examination in a prioritized and organized manner" },
+    { "id": "epa-1-fn-3", "competency_id": "epa-1", "name": "Tailor the history and physical examination to the clinical situation and patient context" },
+    { "id": "epa-1-fn-4", "competency_id": "epa-1", "name": "Integrate scientific foundations of medicine with clinical reasoning to guide information gathering" },
+    { "id": "epa-1-fn-5", "competency_id": "epa-1", "name": "Demonstrate respect, compassion, and responsiveness to patient needs during the encounter" },
+
+    { "id": "epa-2-fn-1", "competency_id": "epa-2", "name": "Integrate and synthesize patient data from history, physical exam, and ancillary studies to formulate an assessment" },
+    { "id": "epa-2-fn-2", "competency_id": "epa-2", "name": "Develop a prioritized list of potential diagnoses (differential diagnosis)" },
+    { "id": "epa-2-fn-3", "competency_id": "epa-2", "name": "Select a working diagnosis based on available evidence" },
+    { "id": "epa-2-fn-4", "competency_id": "epa-2", "name": "Continuously adapt the differential to avoid common errors of clinical reasoning such as premature closure" },
+    { "id": "epa-2-fn-5", "competency_id": "epa-2", "name": "Recognize limitations in one's own clinical reasoning and seek additional information when needed" },
+
+    { "id": "epa-3-fn-1", "competency_id": "epa-3", "name": "Select appropriate diagnostic tests based on the pre-test probability of disease" },
+    { "id": "epa-3-fn-2", "competency_id": "epa-3", "name": "Interpret results of common diagnostic and screening tests" },
+    { "id": "epa-3-fn-3", "competency_id": "epa-3", "name": "Apply evidence-based and cost-effective principles to test selection" },
+    { "id": "epa-3-fn-4", "competency_id": "epa-3", "name": "Recommend age-appropriate and risk-factor-appropriate screening tests" },
+    { "id": "epa-3-fn-5", "competency_id": "epa-3", "name": "Communicate results and their implications to patients and colleagues" },
+
+    { "id": "epa-4-fn-1", "competency_id": "epa-4", "name": "Write safe, indicated, and legible orders in inpatient and ambulatory settings" },
+    { "id": "epa-4-fn-2", "competency_id": "epa-4", "name": "Write safe and appropriate prescriptions considering drug interactions, allergies, and renal/hepatic function" },
+    { "id": "epa-4-fn-3", "competency_id": "epa-4", "name": "Discuss the rationale for orders with patients and members of the health care team" },
+    { "id": "epa-4-fn-4", "competency_id": "epa-4", "name": "Recognize one's own limitations and seek review for unfamiliar orders or prescriptions" },
+    { "id": "epa-4-fn-5", "competency_id": "epa-4", "name": "Utilize electronic ordering systems and clinical decision support tools appropriately" },
+
+    { "id": "epa-5-fn-1", "competency_id": "epa-5", "name": "Provide accurate and focused documentation of a clinical encounter in written or electronic format" },
+    { "id": "epa-5-fn-2", "competency_id": "epa-5", "name": "Document the evolution of the patient's problems, diagnostic work-up, and therapeutic interventions" },
+    { "id": "epa-5-fn-3", "competency_id": "epa-5", "name": "Incorporate social and cultural determinants of health into clinical documentation" },
+    { "id": "epa-5-fn-4", "competency_id": "epa-5", "name": "Incorporate the patient's preferences and shared decision-making into documentation" },
+    { "id": "epa-5-fn-5", "competency_id": "epa-5", "name": "Produce context-specific documentation appropriate to the setting (e.g., admission note, progress note, discharge summary)" },
+
+    { "id": "epa-6-fn-1", "competency_id": "epa-6", "name": "Concisely present a summary of a clinical encounter to members of the health care team" },
+    { "id": "epa-6-fn-2", "competency_id": "epa-6", "name": "Synthesize information gathered into an accurate assessment of the patient's current condition" },
+    { "id": "epa-6-fn-3", "competency_id": "epa-6", "name": "Tailor the oral presentation to the audience and clinical context" },
+    { "id": "epa-6-fn-4", "competency_id": "epa-6", "name": "Clearly articulate a reasoned assessment and plan" },
+
+    { "id": "epa-7-fn-1", "competency_id": "epa-7", "name": "Identify key clinical questions arising from patient care" },
+    { "id": "epa-7-fn-2", "competency_id": "epa-7", "name": "Identify and use appropriate information resources to address clinical questions" },
+    { "id": "epa-7-fn-3", "competency_id": "epa-7", "name": "Retrieve evidence relevant to clinical questions" },
+    { "id": "epa-7-fn-4", "competency_id": "epa-7", "name": "Critically appraise the quality and applicability of retrieved evidence" },
+    { "id": "epa-7-fn-5", "competency_id": "epa-7", "name": "Apply evidence to clinical decision-making and patient care" },
+
+    { "id": "epa-8-fn-1", "competency_id": "epa-8", "name": "Use a structured communication framework (e.g., I-PASS, SBAR) for handover" },
+    { "id": "epa-8-fn-2", "competency_id": "epa-8", "name": "Communicate essential patient information including active and anticipated problems, tasks, and contingency plans" },
+    { "id": "epa-8-fn-3", "competency_id": "epa-8", "name": "Verify understanding through interactive questioning and closed-loop communication" },
+    { "id": "epa-8-fn-4", "competency_id": "epa-8", "name": "Ensure continuity of care across transitions between settings, teams, or providers" },
+    { "id": "epa-8-fn-5", "competency_id": "epa-8", "name": "Demonstrate responsibility and professionalism during transitions of care" },
+
+    { "id": "epa-9-fn-1", "competency_id": "epa-9", "name": "Identify the roles, responsibilities, and contributions of interprofessional team members" },
+    { "id": "epa-9-fn-2", "competency_id": "epa-9", "name": "Communicate effectively with all members of the health care team" },
+    { "id": "epa-9-fn-3", "competency_id": "epa-9", "name": "Establish and maintain a climate of mutual respect, dignity, and trust with team members" },
+    { "id": "epa-9-fn-4", "competency_id": "epa-9", "name": "Participate in shared decision-making and collaborative care planning" },
+    { "id": "epa-9-fn-5", "competency_id": "epa-9", "name": "Reflect on one's own role within the team and how it contributes to patient outcomes" },
+
+    { "id": "epa-10-fn-1", "competency_id": "epa-10", "name": "Promptly recognize a patient who requires urgent or emergent care" },
+    { "id": "epa-10-fn-2", "competency_id": "epa-10", "name": "Initiate evaluation of acutely ill or deteriorating patients" },
+    { "id": "epa-10-fn-3", "competency_id": "epa-10", "name": "Initiate basic stabilization and management (e.g., ABCs, IV access, oxygen)" },
+    { "id": "epa-10-fn-4", "competency_id": "epa-10", "name": "Seek help and escalate care appropriately by communicating clinical urgency" },
+    { "id": "epa-10-fn-5", "competency_id": "epa-10", "name": "Recognize common urgent/emergent conditions (e.g., chest pain, mental status changes, shortness of breath, hypotension, arrhythmias, electrolyte abnormalities)" },
+
+    { "id": "epa-11-fn-1", "competency_id": "epa-11", "name": "Explain indications, risks, benefits, and alternatives for proposed tests or procedures in patient-understandable language" },
+    { "id": "epa-11-fn-2", "competency_id": "epa-11", "name": "Assess the patient's understanding and capacity for decision-making" },
+    { "id": "epa-11-fn-3", "competency_id": "epa-11", "name": "Elicit and address patient questions and concerns" },
+    { "id": "epa-11-fn-4", "competency_id": "epa-11", "name": "Document the informed consent process appropriately" },
+
+    { "id": "epa-12-fn-1", "competency_id": "epa-12", "name": "Perform basic cardiopulmonary resuscitation (CPR)" },
+    { "id": "epa-12-fn-2", "competency_id": "epa-12", "name": "Perform bag and mask ventilation" },
+    { "id": "epa-12-fn-3", "competency_id": "epa-12", "name": "Perform venipuncture" },
+    { "id": "epa-12-fn-4", "competency_id": "epa-12", "name": "Insert an intravenous line" },
+    { "id": "epa-12-fn-5", "competency_id": "epa-12", "name": "Demonstrate knowledge of indications, contraindications, and complications of core procedures" },
+
+    { "id": "epa-13-fn-1", "competency_id": "epa-13", "name": "Recognize system-level factors that contribute to patient safety events and near misses" },
+    { "id": "epa-13-fn-2", "competency_id": "epa-13", "name": "Report patient safety events and near misses through appropriate institutional channels" },
+    { "id": "epa-13-fn-3", "competency_id": "epa-13", "name": "Participate in root cause analysis and other quality improvement methods" },
+    { "id": "epa-13-fn-4", "competency_id": "epa-13", "name": "Propose and contribute to implementation of changes to improve patient safety" },
+    { "id": "epa-13-fn-5", "competency_id": "epa-13", "name": "Demonstrate a commitment to a culture of safety, including disclosure of errors and non-punitive reporting" }
   ]
 }
