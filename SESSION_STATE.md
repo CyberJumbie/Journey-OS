@@ -1,67 +1,60 @@
 # Session State
 
 ## Position
-- Story: [none — spec phase]
-- Lane: [none]
-- Phase: Spec pipeline — decompose_all COMPLETE, next is /prioritize
+- Story: [none — brief generation phase]
+- Lane: faculty (P3) — batch brief generation
+- Phase: Spec pipeline — briefs 163/166 complete
 - Branch: main
 - Mode: Standard
-- Task: Next → /prioritize (assign persona lane ordering + cross-lane dependency detection)
+- Task: Next → generate 3 remaining briefs (F-67, U-8, IA-36), then update coverage.yaml to match
 
 ## Handoff
-Completed /decompose-all — decomposed all 45 epics into 166 implementable user stories across 26 sprints and 6 persona lanes (U=14, SA=9, IA=44, F=75, ST=15, AD=9). Used 5 parallel subagents to generate story files in batches by sprint group, then created ALL-STORIES.md master index, 26 SPRINT-NN-STORIES.md per-sprint execution plans, and FULL-DEPENDENCY-GRAPH.md with critical path analysis and full adjacency list. Two schedule conflicts resolved: E-17 moved Sprint 1→Sprint 3 (auth dependency), E-42 uses mock mastery data in Sprint 27 (BKT/IRT not ready until Sprint 31). Ran /compound which captured the parallel-agent coverage.yaml race condition as a new rule in CLAUDE.md and created docs/solutions/parallel-batch-decomposition.md. Next session should run /prioritize to assign within-lane ordering and detect cross-lane blocking dependencies.
+Batch-generated 15 Faculty lane briefs (F-1, F-2, F-5, F-6, F-7, F-9, F-10, F-11, F-12, F-13, F-14, F-15, F-16, F-17, F-18) using 5 parallel subagents. Each brief follows the 16-section format (Sections 0-15) established by STORY-F-3-BRIEF.md. Source document data was extracted via RLM pattern: read story files, epic specs, feature specs, Supabase DDL, Node Registry, API Contract, and Design Spec to produce fully self-contained briefs. Other parallel sessions also generated briefs for remaining lanes (SA-3..SA-9, IA-1..IA-44, ST-1..ST-15, AD-1..AD-9, U-9..U-14, F-19..F-75). Total brief count is now 163/166 — only F-67, U-8, and IA-36 are missing. The coverage.yaml has been externally updated to 92/166 but the actual count is 163. Next session should generate the 3 remaining briefs and update coverage.yaml to reflect the true count (163 or 166 after generation).
+
+## Files Created This Session (15 briefs)
+- .context/spec/stories/STORY-F-1-BRIEF.md (Course Model & Repository)
+- .context/spec/stories/STORY-F-2-BRIEF.md (Notification Model & Repository)
+- .context/spec/stories/STORY-F-5-BRIEF.md (Profile Page)
+- .context/spec/stories/STORY-F-6-BRIEF.md (Activity Feed Component)
+- .context/spec/stories/STORY-F-7-BRIEF.md (KPI Strip Component)
+- .context/spec/stories/STORY-F-9-BRIEF.md (Upload Dropzone Component)
+- .context/spec/stories/STORY-F-10-BRIEF.md (Socket.io Notification Service)
+- .context/spec/stories/STORY-F-11-BRIEF.md (Course Hierarchy)
+- .context/spec/stories/STORY-F-12-BRIEF.md (Course Cards)
+- .context/spec/stories/STORY-F-13-BRIEF.md (Course List & Detail Views)
+- .context/spec/stories/STORY-F-14-BRIEF.md (Template Management Page)
+- .context/spec/stories/STORY-F-15-BRIEF.md (Field Mapping UI)
+- .context/spec/stories/STORY-F-16-BRIEF.md (Notification Preferences)
+- .context/spec/stories/STORY-F-17-BRIEF.md (Generation Settings)
+- .context/spec/stories/STORY-F-18-BRIEF.md (Supabase Storage Integration)
 
 ## Files Modified This Session
-### Created (45 epic files)
-- .context/spec/epics/E-01-auth-infrastructure.md through E-45-advisor-cohort-dashboard.md
-
-### Created (166 story files)
-- .context/spec/stories/S-U-01-1.md through S-U-16-4.md (14 universal)
-- .context/spec/stories/S-SA-04-1.md through S-SA-07-2.md (9 superadmin)
-- .context/spec/stories/S-IA-06-1.md through S-IA-37-4.md (44 institutional_admin)
-- .context/spec/stories/S-F-08-1.md through S-F-39-4.md (75 faculty)
-- .context/spec/stories/S-ST-40-1.md through S-ST-43-3.md (15 student)
-- .context/spec/stories/S-AD-44-1.md through S-AD-45-5.md (9 advisor)
-
-### Created (index files)
-- .context/spec/stories/ALL-STORIES.md
-- .context/spec/stories/SPRINT-01-STORIES.md through SPRINT-39-STORIES.md (26 files)
-- .context/spec/maps/FULL-DEPENDENCY-GRAPH.md
-- docs/solutions/parallel-batch-decomposition.md
-
-### Modified
-- docs/coverage.yaml (decompose_all: done, stories_total: 166, lane totals, error_pipeline: 2)
-- .context/spec/maps/FEATURE-EPIC-MAP.md (E-17 sprint change noted)
-- CLAUDE.md (added Spec Pipeline Rules section, updated Things Claude Gets Wrong)
-- docs/error-log.yaml (added coverage.yaml race condition error)
+- docs/coverage.yaml (briefs count updated)
 
 ## Open Questions
-- None
+- 3 briefs still missing: STORY-F-67, STORY-U-8, STORY-IA-36 — generate in next session
+- coverage.yaml says 92/166 but actual file count is 163/166 — needs reconciliation
 
 ## Context Files to Read on Resume
-- docs/coverage.yaml (pipeline status — decompose_all: done, prioritize: pending)
-- .context/spec/stories/ALL-STORIES.md (master story index with lane/size/sprint data)
-- .context/spec/maps/FULL-DEPENDENCY-GRAPH.md (critical path, cross-lane blocking points)
-- .context/spec/maps/FEATURE-EPIC-MAP.md (feature→epic→sprint mapping)
-- CLAUDE.md (project rules, including new Spec Pipeline Rules)
+- docs/coverage.yaml (pipeline status)
+- .context/spec/backlog/BACKLOG-FACULTY.md (faculty lane ordering)
+- .context/spec/backlog/CROSS-LANE-DEPENDENCIES.md (cross-lane deps)
 
 ## Decisions Made
-- D-003: E-17 (Framework Browser UI) moved Sprint 1 → Sprint 3 (requires auth middleware from E-01)
-- D-004: E-42 (Student Dashboard) builds with mock mastery data in Sprint 27; real BKT/IRT data available Sprint 31
-- D-005: Story ID convention: S-{LANE}-{EPIC}-{SEQ} with lane prefixes U/SA/IA/F/ST/AD
+- No new architectural decisions this session (brief generation only)
 
 ## Spec Pipeline Progress
 - [x] /classify
 - [x] /personas
 - [x] ALL /feature (21 features defined)
-- [x] ALL /user-flow (35 flows: T0=17, T1=13, T2=5)
-- [x] ALL /epic (45 epics across 21 features)
-- [x] /decompose-all (166 stories, 45 epics, 26 sprints, 6 lanes)
-- [ ] /prioritize
-- [ ] ALL /brief
+- [x] ALL /user-flow (35 flows)
+- [x] ALL /epic (45 epics)
+- [x] /decompose-all (166 stories)
+- [x] /prioritize (166 stories ordered, 41 cross-lane deps)
+- [~] ALL /brief (163/166 — missing F-67, U-8, IA-36)
 - [ ] /spec-status → READY FOR DEVELOPMENT
 
 ## Development Progress
-- [ ] Development started
-- Active lane: [none]
-- Stories completed: 0
+- Stories completed: 12 (U-1..U-8, U-10, U-11, SA-1, SA-2)
+- Active lane: universal (P0) complete through U-11
+- Tests: 292 passing (22 test files)
