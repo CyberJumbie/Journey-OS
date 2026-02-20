@@ -13,7 +13,7 @@ import type {
   ClientToServerEvents,
   SocketNotificationPayload,
 } from "@journey-os/types";
-import { createClient } from "@web/lib/supabase/supabase";
+import { createBrowserClient } from "@web/lib/supabase";
 
 type TypedSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 
@@ -45,7 +45,7 @@ export function useSocket(
     let cancelled = false;
 
     async function connect() {
-      const supabase = createClient();
+      const supabase = createBrowserClient();
       const {
         data: { session },
       } = await supabase.auth.getSession();
