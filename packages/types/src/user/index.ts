@@ -5,3 +5,12 @@ export type {
   GlobalUserListItem,
   GlobalUserListResponse,
 } from "./global-user.types";
+export type {
+  InstitutionUserStatus,
+  InstitutionUserSortField,
+  InstitutionUserListQuery,
+  InstitutionUserListItem,
+  InstitutionUserListResponse,
+  InviteUserRequest,
+  InviteUserResponse,
+} from "./institution-user.types";

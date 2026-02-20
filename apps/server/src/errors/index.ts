@@ -16,4 +16,16 @@ export {
 export {
   DuplicateApplicationError,
   InvalidApplicationError,
+  ApplicationNotFoundError,
 } from "./application.error";
+export {
+  DuplicateApprovalError,
+  InstitutionCreationError,
+  DuplicateDomainError,
+} from "./institution.error";
+export {
+  InvitationError,
+  DuplicateInvitationError,
+  InvitationExpiredError,
+  InvitationLimitError,
+} from "./invitation.error";

@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express, { type Express } from "express";
 import cors from "cors";
 import { createAuthMiddleware } from "./middleware/auth.middleware";
@@ -17,6 +18,12 @@ import { GlobalUserService } from "./services/user/global-user.service";
 import { GlobalUserController } from "./controllers/user/global-user.controller";
 import { ApplicationReviewService } from "./services/institution/application-review.service";
 import { ApplicationReviewController } from "./controllers/institution/application-review.controller";
+import { InstitutionService } from "./services/institution/institution.service";
+import { ApprovalController } from "./controllers/institution/approval.controller";
+import { InvitationEmailService } from "./services/email/invitation-email.service";
+import { UserInvitationEmailService } from "./services/email/user-invitation-email.service";
+import { InstitutionUserService } from "./services/user/institution-user.service";
+import { InstitutionUserController } from "./controllers/user/institution-user.controller";
 import { getSupabaseClient } from "./config/supabase.config";
 import { envConfig } from "./config/env.config";
 import { AuthRole } from "@journey-os/types";
@@ -92,6 +99,36 @@ app.get(
   "/api/v1/admin/applications/:id",
   rbac.require(AuthRole.SUPERADMIN),
   (req, res) => applicationReviewController.handleGetById(req, res),
+);
+
+// Application approval — SuperAdmin only
+const emailService = new InvitationEmailService();
+const institutionService = new InstitutionService(supabaseClient, emailService);
+const approvalController = new ApprovalController(institutionService);
+app.patch(
+  "/api/v1/admin/applications/:id/approve",
+  rbac.require(AuthRole.SUPERADMIN),
+  (req, res) => approvalController.handleApprove(req, res),
+);
+
+// Institution user management — InstitutionalAdmin only
+const userInvitationEmailService = new UserInvitationEmailService();
+const institutionUserService = new InstitutionUserService(
+  supabaseClient,
+  userInvitationEmailService,
+);
+const institutionUserController = new InstitutionUserController(
+  institutionUserService,
+);
+app.get(
+  "/api/v1/institution/users",
+  rbac.require(AuthRole.INSTITUTIONAL_ADMIN),
+  (req, res) => institutionUserController.handleList(req, res),
+);
+app.post(
+  "/api/v1/institution/users/invite",
+  rbac.require(AuthRole.INSTITUTIONAL_ADMIN),
+  (req, res) => institutionUserController.handleInvite(req, res),
 );
 
 app.listen(PORT, () => {
