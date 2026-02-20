@@ -52,3 +52,7 @@ export type {
   OnboardingCompleteRequest,
   OnboardingCompleteResult,
 } from "./onboarding.types";
+export type {
+  ResendVerificationResult,
+  VerificationStatus,
+} from "./verification.types";

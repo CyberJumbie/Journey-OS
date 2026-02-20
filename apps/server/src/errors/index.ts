@@ -60,3 +60,9 @@ export {
   LintReportNotFoundError,
   LintEngineError,
 } from "./kaizen.error";
+export { EmailNotVerifiedError } from "./email-not-verified.error";
+export {
+  NotificationNotFoundError,
+  NotificationForbiddenError,
+  InvalidNotificationTypeError,
+} from "./notification.error";

@@ -72,12 +72,41 @@ Key differences from password reset:
 - **Two endpoints** — validate (GET, display-only) + accept (POST, creates account)
 - **Optimistic lock** — consume with `WHERE accepted_at IS NULL` to prevent races
 
+## Protected No-RBAC Variant (STORY-U-13)
+
+Some endpoints require authentication but should be accessible to ALL roles (no RBAC). Place these AFTER the auth middleware but WITHOUT `rbac.require()`:
+
+```typescript
+// All other /api/v1 routes require authentication
+app.use("/api/v1", createAuthMiddleware());
+
+// Onboarding — authenticated, no RBAC (all roles access their own data)
+const onboardingService = new OnboardingService(supabaseClient);
+const onboardingController = new OnboardingController(onboardingService);
+app.get("/api/v1/onboarding/status", (req, res) =>
+  onboardingController.handleGetStatus(req, res),
+);
+app.post("/api/v1/onboarding/complete", (req, res) =>
+  onboardingController.handleComplete(req, res),
+);
+
+// Protected routes — SuperAdmin only (RBAC applied)
+const rbac = createRbacMiddleware();
+app.get("/api/v1/admin/users", rbac.require(AuthRole.SUPERADMIN), ...);
+```
+
+Key differences from RBAC-protected routes:
+- **No `rbac.require()`** — any authenticated user can access
+- **Scoped to own data** — controller extracts `userId` from JWT `sub` claim
+- **Placement** — after auth middleware, before RBAC-protected routes
+
 ## When to Use
 - Any unauthenticated API endpoint (forgot-password, login, register, email verification, invitation acceptance)
 - Public endpoints that need abuse protection
+- Authenticated endpoints accessible to all roles (use protected no-RBAC variant)
 
 ## When Not to Use
-- Authenticated endpoints (use auth middleware + RBAC instead)
+- Role-restricted endpoints (use auth middleware + RBAC instead)
 - WebSocket endpoints (different rate limiting strategy)
 
 ## Source Reference

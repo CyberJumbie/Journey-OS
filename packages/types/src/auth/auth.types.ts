@@ -11,6 +11,7 @@ export interface AuthTokenPayload {
   readonly role: AuthRole;
   readonly institution_id: string;
   readonly is_course_director: boolean;
+  readonly email_confirmed_at?: string | null;
   readonly aud: string;
   readonly exp: number;
   readonly iat: number;

@@ -79,6 +79,7 @@ export class AuthService {
       role: role as AuthRole,
       institution_id: institutionId,
       is_course_director: Boolean(appMetadata.is_course_director),
+      email_confirmed_at: user.email_confirmed_at ?? null,
       aud: "authenticated",
       exp: Math.floor(new Date(user.updated_at ?? Date.now()).getTime() / 1000),
       iat: Math.floor(new Date(user.created_at).getTime() / 1000),
