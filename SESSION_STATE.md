@@ -9,13 +9,15 @@
 - Task: Next → /pull for next story
 
 ## Handoff
-Completed STORY-IA-5 (Admin Dashboard Page). Institutional admins can now view a dashboard at `/institution/dashboard` showing 4 KPI cards (Total Users, Active Courses, Questions Generated, Sync Health), system health section, and quick action links. Implementation includes: types (AdminKPI, AdminDashboardData, QuickAction), service with parallel Supabase queries and graceful fallbacks, controller with ApiResponse envelope, route with multi-role RBAC (INSTITUTIONAL_ADMIN + SUPERADMIN), useAdminDashboard hook with 60s auto-refresh and visibility API pause, SparklineSVG atom, KPICard molecule, QuickActionCard molecule, AdminDashboard organism, dashboard page, and 18 API tests (12 service + 6 controller). All tests pass. /validate 4-pass complete. /compound learnings captured.
+Completed STORY-IA-5 (Admin Dashboard Page). Institutional admins can now view a dashboard at `/institution/dashboard` showing 4 KPI cards (Total Users, Active Courses, Questions Generated, Sync Health), system health section, and quick action links. Implementation includes: types (AdminKPI, AdminDashboardData, QuickAction), service with parallel Supabase queries and graceful fallbacks, controller with ApiResponse envelope, route with multi-role RBAC (INSTITUTIONAL_ADMIN + SUPERADMIN), useAdminDashboard hook with 60s auto-refresh and visibility API pause, SparklineSVG atom, KPICard molecule, QuickActionCard molecule, AdminDashboard organism, dashboard page, and 18 API tests (12 service + 6 controller). All tests pass (461 total). /validate 4-pass complete. /compound learnings captured.
 
 Key issue caught during /validate:
 1. Express 5 strict mode TS2352 — `req as Record<string, unknown>` needs double-cast through `unknown`
 Rule added to CLAUDE.md.
 
-## Files Created This Session
+Also in this session: STORY-U-9 (Invitation Acceptance Flow) was completed in a parallel commit with 25 tests.
+
+## Files Created This Session (STORY-IA-5)
 - packages/types/src/admin/dashboard.types.ts
 - packages/types/src/admin/index.ts
 - apps/server/src/services/admin/admin-dashboard.service.ts
@@ -32,17 +34,19 @@ Rule added to CLAUDE.md.
 
 ## Files Modified This Session
 - packages/types/src/index.ts (added admin module export)
-- apps/server/src/index.ts (route registration)
-- docs/coverage.yaml (IA-5 complete, 16/166)
-- docs/error-log.yaml (1 new error)
-- CLAUDE.md (1 new rule)
+- apps/server/src/index.ts (route registration + dashboard route)
+- docs/coverage.yaml (IA-5 + U-9 complete, 17/166)
+- docs/error-log.yaml (1 new error from IA-5)
+- CLAUDE.md (1 new rule: Express 5 double-cast)
 - SESSION_STATE.md
 
 ## Development Progress
-- Stories completed: 16 (U-1..U-8, U-10, U-11, SA-1..SA-5, IA-1, IA-4, IA-5)
+- Stories completed: 17 (U-1..U-9, U-10, U-11, SA-1..SA-5, IA-1, IA-4, IA-5)
 - Active lane: institutional_admin (P2) — 3/44 done
-- Tests: 461 API tests passing (18 new from IA-5)
+- Tests: 461 API tests passing (18 new from IA-5, 25 from U-9)
 - Error pipeline: 24 errors captured, 24 rules created, ~4% recurrence
+- Universal lane: 11/14 done
+- SuperAdmin lane: 5/9 done
 
 ## Context Files to Read on Resume
 - docs/coverage.yaml (pipeline status)
