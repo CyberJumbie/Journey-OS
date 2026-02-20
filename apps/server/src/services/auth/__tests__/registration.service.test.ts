@@ -169,7 +169,7 @@ describe("RegistrationService", () => {
     const fromMock = client.from as ReturnType<typeof vi.fn>;
     expect(fromMock).toHaveBeenCalledWith("profiles");
 
-    const upsertCall = upsertMock.mock.calls[0][0];
+    const upsertCall = upsertMock.mock.calls[0]![0];
     expect(upsertCall.ferpa_consent_version).toBe("1.0");
     expect(upsertCall.ferpa_consent_ip).toBe("10.0.0.1");
     expect(upsertCall.ferpa_consent_at).toBeDefined();

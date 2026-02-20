@@ -100,3 +100,24 @@ errors:
     rule: "When modifying shared infrastructure files, read existing tests for that file BEFORE making changes"
     location: "Root CLAUDE.md → Things Claude Gets Wrong"
     recurrence: 0
+
+  - date: 2026-02-19
+    story: STORY-SA-1
+    error: "Supabase mock used mockReturnThis() across insert/select chains, causing single() to be missing"
+    rule: "Create separate mock objects per Supabase chain stage. See docs/solutions/supabase-mock-factory.md"
+    location: "Root CLAUDE.md → Things Claude Gets Wrong + docs/solutions/supabase-mock-factory.md"
+    recurrence: 0
+
+  - date: 2026-02-19
+    story: STORY-SA-1
+    error: "Used string literal 'superadmin' instead of AuthRole.SUPERADMIN enum in rbac.require() call"
+    rule: "Always use AuthRole enum values (not string literals) when calling rbac.require()"
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0
+
+  - date: 2026-02-19
+    story: STORY-SA-2
+    error: "Accessed .mock.calls[0][0] without non-null assertion, causing TS2532 in strict mode"
+    rule: "Use .mock.calls[0]![0] (non-null assertion) when accessing vitest mock call args"
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0

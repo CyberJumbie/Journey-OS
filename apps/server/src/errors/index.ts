@@ -13,3 +13,7 @@ export {
   InvalidRegistrationError,
   InstitutionNotFoundError,
 } from "./registration.error";
+export {
+  DuplicateApplicationError,
+  InvalidApplicationError,
+} from "./application.error";

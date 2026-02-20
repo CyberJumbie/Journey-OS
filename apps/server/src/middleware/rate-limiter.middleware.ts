@@ -79,3 +79,19 @@ export function createRegistrationRateLimiter(): (
   );
   return (req, res, next) => limiter.handle(req, res, next);
 }
+
+/**
+ * Factory: creates a rate limiter for waitlist applications keyed by IP address.
+ * 3 requests per IP per hour.
+ */
+export function createApplicationRateLimiter(): (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => void {
+  const limiter = new RateLimiterMiddleware(
+    { maxRequests: 3, windowMs: 60 * 60 * 1000 },
+    (req: Request) => req.ip ?? "unknown",
+  );
+  return (req, res, next) => limiter.handle(req, res, next);
+}

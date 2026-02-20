@@ -75,3 +75,6 @@ Types → Model → Repository → Service → Controller → View → API Tests
 - `vi.mock()` closures can't reference variables declared after the mock. Use `vi.hoisted()` to hoist mock declarations.
 - Don't use `SeedResult["errors"]` as a mutable accumulator type — it resolves to `readonly SeedNodeError[]`. Import `SeedNodeError` directly and type as `SeedNodeError[]`.
 - When modifying shared infrastructure (middleware, utils, config), read existing tests for that file BEFORE changing behavior — string assertions and mock expectations will break silently.
+- Used string literal `"superadmin"` instead of `AuthRole.SUPERADMIN` enum when calling `rbac.require()`. Always use the `AuthRole` enum — the method signature requires it.
+- Accessed `.mock.calls[0][0]` in vitest without non-null assertion. TypeScript strict mode requires `.mock.calls[0]![0]` since array index access returns `T | undefined`.
+- Supabase mock with `mockReturnThis()` across insert/select chains caused `single is not a function`. Create separate mock objects per chain stage. See `docs/solutions/supabase-mock-factory.md`.
