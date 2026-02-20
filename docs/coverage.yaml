@@ -31,9 +31,9 @@ lanes:
   institutional_admin:
     priority: 2
     total: 44       # E-06: 3, E-09: 3, E-14: 4, E-15: 4, E-17: 4, E-28: 5, E-29: 3, E-30: 3, E-31: 3, E-33: 4, E-36: 4, E-37: 4
-    done: 0
-    ready: 0
-    blocked: 44     # all blocked by upstream dependencies
+    done: 2         # IA-1 (User List & Invitation), IA-4 (ILO Model & Repository)
+    ready: 4        # IA-5 (Admin Dashboard), IA-17 (User Deactivation), IA-18 (Role Assignment), IA-23 (ILO Management UI)
+    blocked: 38
   faculty:
     priority: 3
     total: 75       # E-08: 4, E-10: 3, E-11: 4, E-12: 4, E-13: 3, E-18: 4, E-19: 4, E-20: 4, E-21: 4, E-22: 3, E-23: 4, E-24: 4, E-25: 4, E-26: 4, E-27: 4, E-32: 4, E-34: 4, E-35: 3, E-38: 3, E-39: 4
@@ -143,7 +143,7 @@ completed:
     title: "User Reassignment"
     lane: superadmin
     completed: 2026-02-20
-    api_tests: 19      # user-reassignment.service (10) + user-reassignment.controller (9)
+    api_tests: 21      # user-reassignment.service (12) + user-reassignment.controller (9)
     e2e_tests: 0
 
 # Error-to-rule pipeline
@@ -161,5 +161,5 @@ metrics:
   review_pct: 0      # target: 40%
   execution_pct: 0   # target: 10%
   learning_pct: 0    # target: 10%
-  api_tests_total: 348  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33, U-8: 15, U-10: 38, U-11: 16, SA-1: 28, SA-2: 22, SA-3: 20, SA-4: 19, SA-5: 17
+  api_tests_total: 350  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33, U-8: 15, U-10: 38, U-11: 16, SA-1: 28, SA-2: 22, SA-3: 20, SA-4: 21, SA-5: 17
   e2e_tests_total: 0

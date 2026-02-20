@@ -5,6 +5,7 @@ import {
   UserNotFoundError,
   InstitutionNotFoundError,
   ConcurrentModificationError,
+  UserReassignmentError,
 } from "../../../errors";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { ReassignmentEmailProvider } from "../../email/reassignment-email.service";
@@ -30,12 +31,6 @@ const MOCK_TARGET_INSTITUTION = {
   status: "approved",
 };
 
-const MOCK_COURSE_MEMBERSHIPS = [
-  { id: "cm-1" },
-  { id: "cm-2" },
-  { id: "cm-3" },
-];
-
 const ADMIN_USER_ID = "sa-uuid-1";
 const REASON = "Faculty transfer to partner institution";
 
@@ -52,11 +47,8 @@ function createMockSupabase(
     sourceInstitutionData?: unknown;
     targetInstitutionData?: unknown;
     targetInstitutionError?: { message: string } | null;
-    updateProfileData?: unknown;
-    updateProfileError?: { message: string } | null;
-    archiveData?: unknown[];
-    auditLogData?: { id: string } | null;
-    auditLogError?: { message: string } | null;
+    rpcData?: { courses_archived: number; audit_log_id: string } | null;
+    rpcError?: { message: string } | null;
   } = {},
 ): SupabaseClient {
   const {
@@ -65,11 +57,8 @@ function createMockSupabase(
     sourceInstitutionData = MOCK_SOURCE_INSTITUTION,
     targetInstitutionData = MOCK_TARGET_INSTITUTION,
     targetInstitutionError = null,
-    updateProfileData = { id: "user-1" },
-    updateProfileError = null,
-    archiveData = MOCK_COURSE_MEMBERSHIPS,
-    auditLogData = { id: "audit-1" },
-    auditLogError = null,
+    rpcData = { courses_archived: 3, audit_log_id: "audit-1" },
+    rpcError = null,
   } = overrides;
 
   const fromFn = vi.fn();
@@ -83,18 +72,6 @@ function createMockSupabase(
             single: vi.fn().mockResolvedValue({
               data: userData,
               error: userError,
-            }),
-          }),
-        }),
-        update: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            eq: vi.fn().mockReturnValue({
-              select: vi.fn().mockReturnValue({
-                single: vi.fn().mockResolvedValue({
-                  data: updateProfileData,
-                  error: updateProfileError,
-                }),
-              }),
             }),
           }),
         }),
@@ -121,38 +98,15 @@ function createMockSupabase(
       };
     }
 
-    if (table === "course_members") {
-      return {
-        update: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            eq: vi.fn().mockReturnValue({
-              select: vi.fn().mockResolvedValue({
-                data: archiveData,
-                error: null,
-              }),
-            }),
-          }),
-        }),
-      };
-    }
-
-    if (table === "audit_log") {
-      return {
-        insert: vi.fn().mockReturnValue({
-          select: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: auditLogData,
-              error: auditLogError,
-            }),
-          }),
-        }),
-      };
-    }
-
     return {};
   });
 
-  return { from: fromFn } as unknown as SupabaseClient;
+  const rpcFn = vi.fn().mockResolvedValue({
+    data: rpcData,
+    error: rpcError,
+  });
+
+  return { from: fromFn, rpc: rpcFn } as unknown as SupabaseClient;
 }
 
 describe("UserReassignmentService", () => {
@@ -163,7 +117,7 @@ describe("UserReassignmentService", () => {
   });
 
   describe("reassign", () => {
-    it("updates user's institution_id in profiles table", async () => {
+    it("updates user's institution_id via transactional RPC", async () => {
       const supabase = createMockSupabase();
       const service = new UserReassignmentService(supabase, emailService);
 
@@ -176,7 +130,17 @@ describe("UserReassignmentService", () => {
 
       expect(result.to_institution_id).toBe("inst-2");
       expect(result.from_institution_id).toBe("inst-1");
-      expect(supabase.from).toHaveBeenCalledWith("profiles");
+      expect(supabase.rpc).toHaveBeenCalledWith("reassign_user", {
+        p_user_id: "user-1",
+        p_target_institution_id: "inst-2",
+        p_expected_updated_at: "2026-02-19T10:00:00Z",
+        p_admin_user_id: ADMIN_USER_ID,
+        p_from_institution_id: "inst-1",
+        p_from_institution_name: "Morehouse School of Medicine",
+        p_to_institution_name: "Howard University College of Medicine",
+        p_was_course_director: true,
+        p_reason: REASON,
+      });
     });
 
     it("resets is_course_director to false when user was CD", async () => {
@@ -209,7 +173,7 @@ describe("UserReassignmentService", () => {
       expect(result.course_director_reset).toBe(false);
     });
 
-    it("archives active course memberships for old institution", async () => {
+    it("returns courses_archived count from RPC result", async () => {
       const supabase = createMockSupabase();
       const service = new UserReassignmentService(supabase, emailService);
 
@@ -221,10 +185,9 @@ describe("UserReassignmentService", () => {
       );
 
       expect(result.courses_archived).toBe(3);
-      expect(supabase.from).toHaveBeenCalledWith("course_members");
     });
 
-    it("creates audit_log entry with correct old/new values and metadata", async () => {
+    it("returns audit_log_id from RPC result", async () => {
       const supabase = createMockSupabase();
       const service = new UserReassignmentService(supabase, emailService);
 
@@ -236,7 +199,6 @@ describe("UserReassignmentService", () => {
       );
 
       expect(result.audit_log_id).toBe("audit-1");
-      expect(supabase.from).toHaveBeenCalledWith("audit_log");
     });
 
     it("calls email service with notification details", async () => {
@@ -290,8 +252,34 @@ describe("UserReassignmentService", () => {
       ).rejects.toThrow(InstitutionNotFoundError);
     });
 
-    it("returns courses_archived=0 when user has no course memberships", async () => {
-      const supabase = createMockSupabase({ archiveData: [] });
+    it("throws ConcurrentModificationError when RPC raises it", async () => {
+      const supabase = createMockSupabase({
+        rpcData: null,
+        rpcError: { message: "CONCURRENT_MODIFICATION" },
+      });
+      const service = new UserReassignmentService(supabase, emailService);
+
+      await expect(
+        service.reassign("user-1", "inst-2", REASON, ADMIN_USER_ID),
+      ).rejects.toThrow(ConcurrentModificationError);
+    });
+
+    it("throws UserReassignmentError for other RPC failures", async () => {
+      const supabase = createMockSupabase({
+        rpcData: null,
+        rpcError: { message: "some database error" },
+      });
+      const service = new UserReassignmentService(supabase, emailService);
+
+      await expect(
+        service.reassign("user-1", "inst-2", REASON, ADMIN_USER_ID),
+      ).rejects.toThrow(UserReassignmentError);
+    });
+
+    it("returns courses_archived=0 when RPC reports zero", async () => {
+      const supabase = createMockSupabase({
+        rpcData: { courses_archived: 0, audit_log_id: "audit-1" },
+      });
       const service = new UserReassignmentService(supabase, emailService);
 
       const result = await service.reassign(

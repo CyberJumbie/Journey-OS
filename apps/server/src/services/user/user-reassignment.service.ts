@@ -67,24 +67,18 @@ export class UserReassignmentService {
       true,
     );
 
-    // 5. Update profile: institution_id + reset CD flag
+    // 5. Execute transactional reassignment (profile update + course archival + audit log)
     const wasCourseDirector = user.is_course_director;
-    await this.#updateProfile(userId, targetInstitutionId, user.updated_at);
-
-    // 6. Archive course memberships for old institution
-    const coursesArchived = await this.#archiveCourseMemberships(userId);
-
-    // 7. Create audit log entry
     const reassignedAt = new Date().toISOString();
-    const auditLogId = await this.#createAuditLog(
-      adminUserId,
+    const { coursesArchived, auditLogId } = await this.#executeReassignment(
       userId,
-      user.institution_id!,
       targetInstitutionId,
+      user.updated_at,
+      adminUserId,
+      user.institution_id!,
       fromInstitution.name,
       toInstitution.name,
       wasCourseDirector,
-      coursesArchived,
       reason,
     );
 
@@ -152,81 +146,44 @@ export class UserReassignmentService {
     return institution;
   }
 
-  async #updateProfile(
+  async #executeReassignment(
     userId: string,
     targetInstitutionId: string,
     expectedUpdatedAt: string,
-  ): Promise<void> {
-    const { data, error } = await this.#supabaseClient
-      .from("profiles")
-      .update({
-        institution_id: targetInstitutionId,
-        is_course_director: false,
-      })
-      .eq("id", userId)
-      .eq("updated_at", expectedUpdatedAt)
-      .select("id")
-      .single();
-
-    if (error || !data) {
-      throw new ConcurrentModificationError();
-    }
-  }
-
-  async #archiveCourseMemberships(userId: string): Promise<number> {
-    const { data } = await this.#supabaseClient
-      .from("course_members")
-      .update({ status: "archived" })
-      .eq("user_id", userId)
-      .eq("status", "active")
-      .select("id");
-
-    return data?.length ?? 0;
-  }
-
-  async #createAuditLog(
     adminUserId: string,
-    userId: string,
     fromInstitutionId: string,
-    toInstitutionId: string,
     fromInstitutionName: string,
     toInstitutionName: string,
     wasCourseDirector: boolean,
-    coursesArchived: number,
     reason: string | null,
-  ): Promise<string> {
-    const { data, error } = await this.#supabaseClient
-      .from("audit_log")
-      .insert({
-        user_id: adminUserId,
-        action: "user_reassignment",
-        entity_type: "profile",
-        entity_id: userId,
-        old_values: {
-          institution_id: fromInstitutionId,
-          is_course_director: wasCourseDirector,
-        },
-        new_values: {
-          institution_id: toInstitutionId,
-          is_course_director: false,
-        },
-        metadata: {
-          from_institution_name: fromInstitutionName,
-          to_institution_name: toInstitutionName,
-          courses_archived: coursesArchived,
-          reason,
-        },
-      })
-      .select("id")
-      .single();
+  ): Promise<{ coursesArchived: number; auditLogId: string }> {
+    const { data, error } = await this.#supabaseClient.rpc("reassign_user", {
+      p_user_id: userId,
+      p_target_institution_id: targetInstitutionId,
+      p_expected_updated_at: expectedUpdatedAt,
+      p_admin_user_id: adminUserId,
+      p_from_institution_id: fromInstitutionId,
+      p_from_institution_name: fromInstitutionName,
+      p_to_institution_name: toInstitutionName,
+      p_was_course_director: wasCourseDirector,
+      p_reason: reason,
+    });
 
-    if (error || !data) {
+    if (error) {
+      if (error.message.includes("CONCURRENT_MODIFICATION")) {
+        throw new ConcurrentModificationError();
+      }
       throw new UserReassignmentError(
-        `Failed to create audit log: ${error?.message ?? "No data returned"}`,
+        `Reassignment transaction failed: ${error.message}`,
       );
     }
 
-    return (data as { id: string }).id;
+    const result = data as { courses_archived: number; audit_log_id: string };
+
+    return {
+      coursesArchived: result.courses_archived,
+      auditLogId: result.audit_log_id,
+    };
   }
 
   async #tryNeo4jWrite(

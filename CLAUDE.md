@@ -39,6 +39,7 @@ packages/types, packages/ui (shadcn/ui), packages/python-api (Tier 2+).
 - All Supabase operations through Supabase MCP. Never raw psql.
 - All Neo4j operations through Neo4j MCP. Never raw cypher-shell.
 - DualWriteService: Supabase first → Neo4j second → sync_status = 'synced'.
+- Multi-table writes that must be atomic → use `supabase.rpc()` with a Postgres function. Never sequential client-side queries. See `docs/solutions/supabase-transactional-rpc-pattern.md`.
 
 ## Testing Rules
 - API tests (70%): vitest for CRUD, auth, validation, data integrity, dual-write.
@@ -85,6 +86,6 @@ Types → Model → Repository → Service → Controller → View → API Tests
 - Added new type files to `packages/types` but forgot to rebuild the composite project. Server `tsc --noEmit` couldn't find the new exports. Always run `tsc -b packages/types/tsconfig.json` after modifying the types package.
 - Used `as unknown as UpdateFooRequest` to pass `sync_status`/`graph_node_id` through `repo.update()`, bypassing type safety. Add a dedicated `updateSyncStatus()` method to the repository instead.
 - Repository `archive()` used `.update()` without `.select().single()`, so Supabase silently succeeds when 0 rows match. Use `.select().single()` on all Supabase write operations to verify exactly 1 row was affected.
-- PostToolUse eslint/prettier hook can strip newly-added barrel exports from `index.ts` files. After editing barrel files, re-read to verify exports weren't removed. Re-add if stripped.
-- PostToolUse hook runs eslint --fix after EVERY edit, stripping unused imports. When adding imports AND their usage to a file (e.g., `index.ts` route registration), always add BOTH in a single Edit call. Never split import addition and usage addition into separate edits.
+- **CRITICAL (recurrence: 1)** — PostToolUse eslint hook strips "unused" exports/imports from `index.ts` barrel files. TWO mandatory steps: (1) After editing any barrel file, IMMEDIATELY re-read it and verify exports are intact. Re-add if stripped. (2) When adding imports AND their usage (e.g., route registration), add BOTH in a single Edit call — never split across two edits.
 - When writing test assertions for custom error codes (e.g., `expect(error.code).toBe("...")"`), read the error class source to verify the exact code string. Don't copy codes from other error classes — `ApplicationNotFoundError` uses `"NOT_FOUND"` but `InstitutionNotFoundError` uses `"INSTITUTION_NOT_FOUND"`.
+- Used 3 sequential `.from().update()` / `.from().insert()` calls for multi-table mutations (profile + course_members + audit_log) without transaction protection. Partial failure left data inconsistent. Always use a Postgres RPC function via `.rpc()` for atomic multi-table writes. See `docs/solutions/supabase-transactional-rpc-pattern.md`.
