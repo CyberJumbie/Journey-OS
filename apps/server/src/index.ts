@@ -451,6 +451,19 @@ app.post(
   (req, res) => hierarchyController.handleCreateSession(req, res),
 );
 
+// Weekly schedule — InstitutionalAdmin, Faculty, SuperAdmin
+const scheduleService = new ScheduleService(supabaseClient);
+const scheduleController = new ScheduleController(scheduleService);
+app.get(
+  "/api/v1/courses/:id/schedule",
+  rbac.require(
+    AuthRole.INSTITUTIONAL_ADMIN,
+    AuthRole.FACULTY,
+    AuthRole.SUPERADMIN,
+  ),
+  (req, res) => scheduleController.getSchedule(req, res),
+);
+
 // File upload — Faculty only
 const uploadRepository = new UploadRepository(supabaseClient);
 const uploadService = new UploadService(uploadRepository, supabaseClient);

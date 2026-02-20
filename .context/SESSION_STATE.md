@@ -1,56 +1,54 @@
 # Session State — 2026-02-20
 
 ## Current Position
-- **Active story:** none — ready for /next
-- **Lane:** faculty (P3)
-- **Phase:** IDLE
+- **Active story:** STORY-IA-7 (Weekly Schedule View) — COMPLETE (validate + compound done)
+- **Lane:** institutional_admin (P2)
+- **Phase:** DONE — ready for /next
 - **Branch:** main
-- **Previous story:** STORY-F-3 (Import Parser) — done (compound complete)
+- **Previous story:** STORY-F-6, F-7, F-8 (batch) — done
 
 ## Narrative Handoff
 
-This session ran /compound for STORY-F-3 (Import Parser), which was already fully implemented from a prior session. Verified all 14 tests pass (4 CSV + 3 QTI + 3 text + 4 factory), types build clean, no new CLAUDE.md rules needed. Captured the format parser factory pattern in `docs/solutions/format-parser-factory-pattern.md`.
+Implemented STORY-IA-7 (Weekly Schedule View) — a read-only leaf story providing a `GET /api/v1/courses/:id/schedule?week=N` endpoint and frontend weekly calendar components. The critical deviation from the brief was that `sessions` has no direct `course_id` column — the FK path is `sessions.section_id` → `sections.course_id` → `courses.id`, requiring Supabase `!inner` join syntax. This pattern was captured in `docs/solutions/supabase-inner-join-filter-pattern.md`.
 
-The implementation consists of three file parsers (CSV via papaparse, QTI 2.1 XML via fast-xml-parser, plain text via regex) plus a `ParserFactory` with format auto-detection (extension + content sniffing). All parsers produce standardized `ParsedQuestion[]`. Non-fatal error collection pattern: `ParseErrorDetail[]` with severity, line, field. No DB, no API endpoints — pure in-memory services.
+All 7 backend files created (types, service, controller, route registration, 2 test files). All 3 frontend components created (WeekSelector, SessionCard, WeeklySchedule). 20/20 tests pass. `/validate` passed all 4 passes. `/compound` added 2 CLAUDE.md rules (fetch json typing, inner-join pattern), 1 solution doc, 1 error log entry. Material status is stubbed (`"empty"`, count 0) until `session_materials` table is created.
 
-STORY-F-3 unblocks: STORY-F-15 (Field Mapping UI), STORY-F-57 (Import Pipeline).
-
-Overall progress: 35/166 stories (21%), 805 API tests.
+Overall progress: 39/166 stories (23%), 887 API tests.
 - **Universal lane:** 14/14 COMPLETE
 - **SuperAdmin lane:** 9/9 COMPLETE
-- **IA lane:** 6/44 done — IA-1, IA-2, IA-4, IA-5, IA-6, IA-12
-- **Faculty lane:** 8/75 done — F-1, F-2, F-3, F-4, F-5, F-9, F-10, F-11
+- **IA lane:** 7/44 done — IA-1, IA-2, IA-4, IA-5, IA-6, IA-7, IA-12
+- **Faculty lane:** 11/75 done — F-1, F-2, F-3, F-4, F-5, F-6, F-7, F-8, F-9, F-10, F-11
 - **Student lane:** 0/15
 - **Advisor lane:** 0/9
 
-Next unblocked faculty stories: F-6 (Activity Feed), F-7 (KPI Strip), F-8 (Help Pages), F-12 (Course Cards), F-13 (Course List), F-14 (Template Management), F-15 (Field Mapping UI), F-20 (Course Creation Wizard).
+Next unblocked IA stories: IA-8 (Course Oversight), IA-14 (SLO Management UI), IA-17 (User Deactivation), IA-18 (Role Assignment).
+Next unblocked faculty stories: F-12 (Course Cards), F-13 (Course List), F-14 (Template Management), F-15 (Field Mapping UI), F-20 (Course Creation Wizard).
 
 ## Files Modified This Session
 
-### STORY-F-3 Compound
-- `docs/solutions/format-parser-factory-pattern.md` — NEW: parser factory + error collection pattern
-- `.context/SESSION_STATE.md` — updated
+### STORY-IA-7 (NEW files)
+- `packages/types/src/course/schedule.types.ts` — MaterialStatus, ScheduleSession, WeeklySchedule types
+- `apps/server/src/services/course/schedule.service.ts` — ScheduleService with 3-step Supabase query
+- `apps/server/src/controllers/course/schedule.controller.ts` — ScheduleController with UUID + week validation
+- `apps/server/src/services/course/__tests__/schedule.service.test.ts` — 11 service tests
+- `apps/server/src/controllers/course/__tests__/schedule.controller.test.ts` — 9 controller tests
+- `apps/web/src/components/course/week-selector.tsx` — Prev/Next week navigation
+- `apps/web/src/components/course/session-card.tsx` — Session card with material status dot
+- `apps/web/src/components/course/weekly-schedule.tsx` — Main weekly calendar grid (loading/error/empty/data states)
+- `docs/solutions/supabase-inner-join-filter-pattern.md` — NEW solution doc
 
-### Untracked Files (from prior sessions, not committed)
-- `apps/server/src/controllers/admin/__tests__/institution-detail.controller.test.ts` — SA-9
-- `apps/server/src/services/admin/__tests__/institution-detail.service.test.ts` — SA-9
-- `apps/web/src/app/(protected)/admin/institutions/[id]/page.tsx` — SA-9
-- `apps/web/src/components/admin/institution-*.tsx` (6 files) — SA-9 dashboard components
-- `apps/web/src/hooks/use-institution-detail.ts` — SA-9
-- `docs/plans/STORY-F-6-F-7-F-8-plan.md` — plan for next faculty stories
-- `docs/plans/STORY-SA-9-plan.md` — SA-9 plan
-- `docs/solutions/aggregation-dashboard-rpc-pattern.md` — prior session
-- `docs/solutions/profile-settings-page-pattern.md` — prior session
-- `packages/types/src/admin/institution-detail.types.ts` — SA-9
-- `packages/types/src/dashboard/` — dashboard types (activity, kpi)
-- `packages/types/src/help/` — help page types
+### STORY-IA-7 (MODIFIED files)
+- `packages/types/src/course/index.ts` — added schedule.types barrel export
+- `apps/server/src/index.ts` — added ScheduleService/Controller imports + route registration
+- `CLAUDE.md` — 2 new rules in "Things Claude Gets Wrong"
+- `docs/error-log.yaml` — 1 new entry
 
 ## Open Questions
 None.
 
 ## Context Files to Read on Resume
+- `.context/spec/backlog/BACKLOG-IA.md` — IA lane ordering
 - `.context/spec/backlog/BACKLOG-FACULTY.md` — faculty lane ordering
 - `.context/spec/backlog/CROSS-LANE-DEPENDENCIES.md` — cross-lane blockers
-- `docs/solutions/format-parser-factory-pattern.md` — new pattern from this session
-- `docs/plans/STORY-F-6-F-7-F-8-plan.md` — if continuing faculty lane
+- `docs/solutions/supabase-inner-join-filter-pattern.md` — new pattern from this session
 - The brief for whatever story is pulled next

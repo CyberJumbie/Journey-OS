@@ -31,9 +31,9 @@ lanes:
   institutional_admin:
     priority: 2
     total: 44       # E-06: 3, E-09: 3, E-14: 4, E-15: 4, E-17: 4, E-28: 5, E-29: 3, E-30: 3, E-31: 3, E-33: 4, E-36: 4, E-37: 4
-    done: 6         # IA-1 (User List & Invitation), IA-2 (SLO Model & Repository), IA-4 (ILO Model & Repository), IA-5 (Admin Dashboard), IA-6 (Framework List Page), IA-12 (KaizenML Lint Rule Engine)
-    ready: 6        # IA-8 (Course Oversight), IA-14 (SLO Management UI), IA-17 (User Deactivation), IA-18 (Role Assignment), IA-22 (SLO-to-ILO Linking), IA-23 (ILO Management UI)
-    blocked: 32
+    done: 7         # IA-1 (User List & Invitation), IA-2 (SLO Model & Repository), IA-4 (ILO Model & Repository), IA-5 (Admin Dashboard), IA-6 (Framework List Page), IA-7 (Weekly Schedule View), IA-12 (KaizenML Lint Rule Engine)
+    ready: 5        # IA-8 (Course Oversight), IA-14 (SLO Management UI), IA-17 (User Deactivation), IA-18 (Role Assignment), IA-22 (SLO-to-ILO Linking)
+    blocked: 32     # IA-23 moved to ready since IA-4 done, but IA-7 completed so net same
   faculty:
     priority: 3
     total: 75       # E-08: 4, E-10: 3, E-11: 4, E-12: 4, E-13: 3, E-18: 4, E-19: 4, E-20: 4, E-21: 4, E-22: 3, E-23: 4, E-24: 4, E-25: 4, E-26: 4, E-27: 4, E-32: 4, E-34: 4, E-35: 3, E-38: 3, E-39: 4
@@ -283,21 +283,27 @@ completed:
     completed: 2026-02-20
     api_tests: 8       # faq.route (8): search(3) + category-filter(2) + scoring(2) + validation(1)
     e2e_tests: 0
+  - id: STORY-IA-7
+    title: "Weekly Schedule View"
+    lane: institutional_admin
+    completed: 2026-02-20
+    api_tests: 20      # schedule.service (11) + schedule.controller (9)
+    e2e_tests: 0
 
 # Error-to-rule pipeline
 error_pipeline:
-  total_errors_captured: 49
-  total_rules_created: 41
-  recurrence_rate: 5    # tsc-from-root at 10, hardcoded-hex at 2, .select().single() at 1, table-name-verify at 1, no-dom-in-types at 1
+  total_errors_captured: 52
+  total_rules_created: 44
+  recurrence_rate: 5    # tsc-from-root at 10, hardcoded-hex at 2, .select().single() at 1, table-name-verify at 1, no-dom-in-types at 1, inline-style at 1
 
 # Time allocation tracking
 metrics:
-  stories_completed: 38
+  stories_completed: 39
   stories_total: 166
   avg_story_time_minutes: 0    # not tracked yet
   planning_pct: 0    # target: 40%
   review_pct: 0      # target: 40%
   execution_pct: 0   # target: 10%
   learning_pct: 0    # target: 10%
-  api_tests_total: 867  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33, U-8: 15, U-9: 25, U-10: 38, U-11: 16, U-12: 72, U-13: 20, U-14: 14, SA-1: 28, SA-2: 22, SA-3: 20, SA-4: 21, SA-5: 17, SA-6: 16, SA-7: 15, SA-8: 24, SA-9: 16, IA-2: 21, IA-5: 18, IA-6: 15, IA-12: 23, F-1: 26, F-2: 35, F-3: 14, F-4: 18, F-5: 40, F-6: 18, F-7: 16, F-8: 8, F-9: 23, F-10: 20, F-11: 20
+  api_tests_total: 887  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33, U-8: 15, U-9: 25, U-10: 38, U-11: 16, U-12: 72, U-13: 20, U-14: 14, SA-1: 28, SA-2: 22, SA-3: 20, SA-4: 21, SA-5: 17, SA-6: 16, SA-7: 15, SA-8: 24, SA-9: 16, IA-2: 21, IA-5: 18, IA-6: 15, IA-7: 20, IA-12: 23, F-1: 26, F-2: 35, F-3: 14, F-4: 18, F-5: 40, F-6: 18, F-7: 16, F-8: 8, F-9: 23, F-10: 20, F-11: 20
   e2e_tests_total: 0

@@ -450,3 +450,24 @@ errors:
     rule: "If building a server API endpoint, wire it into the UI that needs it. Unused endpoints are dead code."
     location: "docs/error-log.yaml (tracking only — F-8 is static content, acceptable for MVP)"
     recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-IA-7
+    error: "Used fetch().json() without type assertion in weekly-schedule.tsx — res.json() returns unknown in strict TypeScript. Caught by tsc during /validate Pass 1."
+    rule: "Always cast fetch().json() result with `as` to a typed response shape in client components. See CLAUDE.md → Things Claude Gets Wrong."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-7
+    error: "4 independent Supabase queries in #fetchPersonalMetrics and #fetchInstitutionMetrics were awaited sequentially instead of using Promise.all. Doubled latency."
+    rule: "Wrap independent Supabase queries in Promise.all. Never await independent queries sequentially."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-8
+    error: "Used inline style={{ fontSize: '22px', width: 240 }} in 8 places across help page, FAQ accordion, and sidebar instead of Tailwind classes."
+    rule: "Never use inline style={{}} for static values. Use Tailwind arbitrary values (text-[0.9375rem], w-60). Design tokens rule applies to style props too."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 1
