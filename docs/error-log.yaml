@@ -688,3 +688,10 @@ errors:
     rule: "When reading JSONB columns via Supabase .maybeSingle(), always null-check both the row AND the specific JSONB field."
     location: "docs/error-log.yaml (tracking only — Supabase JSONB null check)"
     recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-13-service-test
+    error: "No new errors — clean implementation. 12 service tests pass on first run. Followed sibling mock factory pattern from course.service.test.ts."
+    rule: "No new rule needed."
+    location: "n/a"
+    recurrence: 0

@@ -293,7 +293,7 @@ completed:
     title: "Course List & Detail Views"
     lane: faculty
     completed: 2026-02-20
-    api_tests: 8       # course-view.controller (8): list(5) + detail(3)
+    api_tests: 20      # course-view.controller (8): list(5) + detail(3) + course-view.service (12): listView(4) + getDetailView(8)
     e2e_tests: 0
   - id: STORY-F-14
     title: "Template Management Page"
@@ -347,5 +347,5 @@ metrics:
   review_pct: 0      # target: 40%
   execution_pct: 0   # target: 10%
   learning_pct: 0    # target: 10%
-  api_tests_total: 989  # 88 test files, 989 tests — server full suite verified 2026-02-20
+  api_tests_total: 1001  # 89 test files, 1001 tests — server full suite verified 2026-02-20
   e2e_tests_total: 1
