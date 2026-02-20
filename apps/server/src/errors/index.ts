@@ -97,3 +97,8 @@ export {
   InstitutionSuspendedError,
 } from "./institution-lifecycle.error";
 export { SocketNotificationError, SocketAuthError } from "./socket.errors";
+export {
+  ActivityEventNotFoundError,
+  ActivityFeedForbiddenError,
+  ActivityFeedValidationError,
+} from "./activity.error";
