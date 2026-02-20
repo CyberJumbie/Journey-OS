@@ -254,3 +254,17 @@ errors:
     rule: "Existing rule in CLAUDE.md. Recurrence bumped on STORY-IA-12 entry."
     location: "Root CLAUDE.md → Monorepo Conventions"
     recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-IA-2
+    error: "Copied ILO updateSyncStatus() verbatim — missing .select().single() on Supabase .update(). Caught by /validate Pass 4c."
+    rule: "Use .select().single() on ALL Supabase write operations including updateSyncStatus. Don't blindly copy sibling implementations — they may have the same gap."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong (rule tightened)"
+    recurrence: 1
+
+  - date: 2026-02-20
+    story: STORY-F-3
+    error: "Used Buffer type in packages/types/src/import/parser.types.ts — TS2580 because packages/types has no @types/node"
+    rule: "Use Uint8Array instead of Buffer in shared type definitions. packages/types does not include @types/node."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0
