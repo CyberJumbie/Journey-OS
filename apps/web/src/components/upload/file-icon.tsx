@@ -12,12 +12,12 @@ export function FileIcon({ filename, className = "h-5 w-5" }: FileIconProps) {
 
   switch (ext) {
     case "pdf":
-      return <FileText className={`${className} text-red-500`} />;
+      return <FileText className={`${className} text-error`} />;
     case "pptx":
       return <Presentation className={`${className} text-orange-500`} />;
     case "docx":
-      return <File className={`${className} text-blue-500`} />;
+      return <File className={`${className} text-blue-mid`} />;
     default:
-      return <File className={`${className} text-gray-400`} />;
+      return <File className={`${className} text-text-muted`} />;
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { getAuthToken } from "@web/lib/auth/get-auth-token";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
@@ -22,7 +23,7 @@ export function InviteUserModal({ onClose, onSuccess }: InviteUserModalProps) {
     setSubmitting(true);
 
     try {
-      const token = ""; // TODO: get from auth context
+      const token = await getAuthToken();
       const res = await fetch(`${API_URL}/api/v1/institution/users/invite`, {
         method: "POST",
         headers: {
@@ -58,10 +59,12 @@ export function InviteUserModal({ onClose, onSuccess }: InviteUserModalProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">Invite User</h2>
+          <h2 className="text-lg font-semibold text-text-primary">
+            Invite User
+          </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-text-muted transition-colors hover:text-text-secondary"
           >
             &times;
           </button>
@@ -71,7 +74,7 @@ export function InviteUserModal({ onClose, onSuccess }: InviteUserModalProps) {
           <div>
             <label
               htmlFor="invite-email"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-text-secondary"
             >
               Email
             </label>
@@ -82,14 +85,14 @@ export function InviteUserModal({ onClose, onSuccess }: InviteUserModalProps) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="user@institution.edu"
-              className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-[#2b71b9] focus:outline-none focus:ring-1 focus:ring-[#2b71b9]"
+              className="mt-1 w-full rounded border border-border px-3 py-2 text-sm focus:border-blue-mid focus:outline-none focus:ring-1 focus:ring-blue-mid"
             />
           </div>
 
           <div>
             <label
               htmlFor="invite-role"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-text-secondary"
             >
               Role
             </label>
@@ -102,7 +105,7 @@ export function InviteUserModal({ onClose, onSuccess }: InviteUserModalProps) {
                   setIsCourseDirector(false);
                 }
               }}
-              className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded border border-border px-3 py-2 text-sm"
             >
               <option value="faculty">Faculty</option>
               <option value="student">Student</option>
@@ -117,28 +120,31 @@ export function InviteUserModal({ onClose, onSuccess }: InviteUserModalProps) {
                 type="checkbox"
                 checked={isCourseDirector}
                 onChange={(e) => setIsCourseDirector(e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300 text-[#2b71b9] focus:ring-[#2b71b9]"
+                className="h-4 w-4 rounded border-border text-blue-mid focus:ring-blue-mid"
               />
-              <label htmlFor="invite-cd" className="text-sm text-gray-700">
+              <label
+                htmlFor="invite-cd"
+                className="text-sm text-text-secondary"
+              >
                 Course Director
               </label>
             </div>
           )}
 
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-error">{error}</p>}
 
           <div className="flex justify-end gap-3 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="rounded border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+              className="rounded border border-border px-4 py-2 text-sm text-text-secondary transition-colors hover:bg-parchment"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="rounded bg-[#2b71b9] px-4 py-2 text-sm font-medium text-white hover:bg-[#245d9a] disabled:opacity-50"
+              className="rounded bg-blue-mid px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-navy-deep disabled:opacity-50"
             >
               {submitting ? "Sending..." : "Send Invitation"}
             </button>

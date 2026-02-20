@@ -31,17 +31,14 @@ export function ConsentStep({
 }: ConsentStepProps) {
   return (
     <div>
-      <h2
-        className="mb-2 text-center text-xl font-semibold"
-        style={{ fontFamily: "Source Sans 3, sans-serif" }}
-      >
+      <h2 className="mb-2 text-center font-serif text-xl font-semibold text-navy-deep">
         FERPA Consent
       </h2>
-      <p className="mb-4 text-center text-sm text-gray-600">
+      <p className="mb-4 text-center text-sm text-text-secondary">
         Please review and accept the FERPA disclosure.
       </p>
 
-      <div className="max-h-48 overflow-y-auto rounded-md border border-gray-200 bg-gray-50 p-4 text-sm leading-relaxed text-gray-700">
+      <div className="max-h-48 overflow-y-auto rounded-lg border border-border-light bg-parchment p-4 text-sm leading-relaxed text-text-secondary">
         {FERPA_DISCLOSURE.split("\n\n").map((paragraph, i) => (
           <p key={i} className={i > 0 ? "mt-3" : ""}>
             {paragraph}
@@ -49,7 +46,7 @@ export function ConsentStep({
         ))}
       </div>
 
-      <p className="mt-2 text-right text-xs text-gray-400">
+      <p className="mt-2 text-right font-mono text-[9px] uppercase tracking-wider text-text-muted">
         Version {FERPA_VERSION}
       </p>
 
@@ -58,10 +55,9 @@ export function ConsentStep({
           type="checkbox"
           checked={consented}
           onChange={(e) => onConsentChange(e.target.checked)}
-          className="mt-0.5 h-4 w-4 rounded border-gray-300"
-          style={{ accentColor: "#2b71b9" }}
+          className="mt-0.5 h-4 w-4 rounded border-border accent-blue-mid"
         />
-        <span className="text-sm text-gray-700">
+        <span className="text-sm text-text-secondary">
           I have read and agree to the FERPA disclosure above. I understand how
           my educational data will be used and shared.
         </span>
@@ -72,7 +68,7 @@ export function ConsentStep({
           type="button"
           onClick={onBack}
           disabled={isSubmitting}
-          className="flex-1 rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-60"
+          className="flex-1 rounded-lg border border-border px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:bg-parchment disabled:opacity-60"
         >
           Back
         </button>
@@ -80,8 +76,7 @@ export function ConsentStep({
           type="button"
           onClick={onSubmit}
           disabled={!consented || isSubmitting}
-          className="flex-1 rounded-md px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
-          style={{ backgroundColor: "#2b71b9" }}
+          className="flex-1 rounded-lg bg-navy-deep px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue disabled:opacity-60"
         >
           {isSubmitting ? (
             <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />

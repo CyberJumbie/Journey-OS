@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import type { FrameworkSummary } from "@journey-os/types";
 import { FrameworkCard } from "./framework-card";
+import { getAuthToken } from "@web/lib/auth/get-auth-token";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
@@ -16,7 +17,7 @@ export function FrameworkList() {
   const fetchFrameworks = useCallback(async () => {
     setState("loading");
     try {
-      const token = ""; // TODO: get from auth context
+      const token = await getAuthToken();
       const res = await fetch(`${API_URL}/api/v1/institution/frameworks`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -57,7 +58,7 @@ export function FrameworkList() {
         {Array.from({ length: 8 }).map((_, i) => (
           <div
             key={i}
-            className="h-48 animate-pulse rounded-lg border border-gray-200 bg-gray-50"
+            className="h-48 animate-pulse rounded-lg border border-border-light bg-parchment"
           />
         ))}
       </div>
@@ -67,10 +68,10 @@ export function FrameworkList() {
   if (state === "empty") {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
-        <p className="text-lg font-medium text-gray-900">
+        <p className="text-lg font-medium text-text-primary">
           No frameworks have been seeded yet.
         </p>
-        <p className="mt-2 text-sm text-gray-600">
+        <p className="mt-2 text-sm text-text-secondary">
           Run the seed script to populate educational frameworks.
         </p>
       </div>
@@ -80,11 +81,11 @@ export function FrameworkList() {
   if (state === "error") {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
-        <p className="text-lg font-medium text-red-900">{errorMsg}</p>
+        <p className="text-lg font-medium text-error">{errorMsg}</p>
         <button
           type="button"
           onClick={() => void fetchFrameworks()}
-          className="mt-4 rounded-md bg-[#2b71b9] px-4 py-2 text-sm font-medium text-white hover:bg-[#2b71b9]/90"
+          className="mt-4 rounded-md bg-blue-mid px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-mid/90"
         >
           Retry
         </button>

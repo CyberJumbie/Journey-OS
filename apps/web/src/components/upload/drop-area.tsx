@@ -53,8 +53,8 @@ export function DropArea({ onFilesSelected, disabled = false }: DropAreaProps) {
   );
 
   const borderClass = isDragOver
-    ? "border-blue-500 bg-blue-50"
-    : "border-gray-300 bg-white";
+    ? "border-blue-mid bg-blue-mid/5"
+    : "border-border bg-white";
 
   const cursorClass = disabled
     ? "cursor-not-allowed opacity-50"
@@ -73,12 +73,12 @@ export function DropArea({ onFilesSelected, disabled = false }: DropAreaProps) {
         if (e.key === "Enter" || e.key === " ") handleClick();
       }}
     >
-      <UploadCloud className="h-10 w-10 text-gray-400" />
-      <p className="text-sm text-gray-600">
+      <UploadCloud className="h-10 w-10 text-text-muted" />
+      <p className="text-sm text-text-secondary">
         {isDragOver ? "Drop files here" : "Drag & drop files here"}
       </p>
-      <p className="text-xs text-gray-400">or click to browse</p>
-      <p className="text-xs text-gray-400">PDF, PPTX, DOCX up to 50MB</p>
+      <p className="text-xs text-text-muted">or click to browse</p>
+      <p className="text-xs text-text-muted">PDF, PPTX, DOCX up to 50MB</p>
       <input
         ref={inputRef}
         type="file"

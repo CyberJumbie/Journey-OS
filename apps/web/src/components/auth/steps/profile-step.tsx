@@ -58,17 +58,14 @@ export function ProfileStep({
   }
 
   const inputClassName =
-    "w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2";
+    "w-full rounded-lg border border-border bg-parchment px-3 py-2 text-sm text-text-primary focus:border-blue-mid focus:outline-none focus:ring-2 focus:ring-blue-mid/15";
 
   return (
     <div>
-      <h2
-        className="mb-2 text-center text-xl font-semibold"
-        style={{ fontFamily: "Source Sans 3, sans-serif" }}
-      >
+      <h2 className="mb-2 text-center font-serif text-xl font-semibold text-navy-deep">
         Profile Information
       </h2>
-      <p className="mb-6 text-center text-sm text-gray-600">
+      <p className="mb-6 text-center text-sm text-text-secondary">
         Enter your name, email, and password.
       </p>
 
@@ -76,8 +73,7 @@ export function ProfileStep({
         <div>
           <label
             htmlFor="displayName"
-            className="mb-1 block text-sm font-medium text-gray-700"
-            style={{ fontFamily: "DM Mono, monospace" }}
+            className="mb-1 block font-mono text-[10px] uppercase tracking-wider text-text-muted"
           >
             Full Name
           </label>
@@ -87,19 +83,17 @@ export function ProfileStep({
             value={displayName}
             onChange={(e) => onDisplayNameChange(e.target.value)}
             className={inputClassName}
-            style={{ "--tw-ring-color": "#2b71b9" } as React.CSSProperties}
             placeholder="Dr. Jane Smith"
           />
           {errors.displayName && (
-            <p className="mt-1 text-sm text-red-600">{errors.displayName}</p>
+            <p className="mt-1 text-sm text-error">{errors.displayName}</p>
           )}
         </div>
 
         <div>
           <label
             htmlFor="email"
-            className="mb-1 block text-sm font-medium text-gray-700"
-            style={{ fontFamily: "DM Mono, monospace" }}
+            className="mb-1 block font-mono text-[10px] uppercase tracking-wider text-text-muted"
           >
             Email
           </label>
@@ -109,19 +103,17 @@ export function ProfileStep({
             value={email}
             onChange={(e) => onEmailChange(e.target.value)}
             className={inputClassName}
-            style={{ "--tw-ring-color": "#2b71b9" } as React.CSSProperties}
             placeholder="you@example.edu"
           />
           {errors.email && (
-            <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+            <p className="mt-1 text-sm text-error">{errors.email}</p>
           )}
         </div>
 
         <div>
           <label
             htmlFor="password"
-            className="mb-1 block text-sm font-medium text-gray-700"
-            style={{ fontFamily: "DM Mono, monospace" }}
+            className="mb-1 block font-mono text-[10px] uppercase tracking-wider text-text-muted"
           >
             Password
           </label>
@@ -131,11 +123,10 @@ export function ProfileStep({
             value={password}
             onChange={(e) => onPasswordChange(e.target.value)}
             className={inputClassName}
-            style={{ "--tw-ring-color": "#2b71b9" } as React.CSSProperties}
             placeholder="Min 8 chars, 1 uppercase, 1 number"
           />
           {errors.password && (
-            <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+            <p className="mt-1 text-sm text-error">{errors.password}</p>
           )}
         </div>
       </div>
@@ -144,15 +135,14 @@ export function ProfileStep({
         <button
           type="button"
           onClick={onBack}
-          className="flex-1 rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          className="flex-1 rounded-lg border border-border px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:bg-parchment"
         >
           Back
         </button>
         <button
           type="button"
           onClick={handleNext}
-          className="flex-1 rounded-md px-4 py-2 text-sm font-medium text-white"
-          style={{ backgroundColor: "#2b71b9" }}
+          className="flex-1 rounded-lg bg-navy-deep px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue"
         >
           Continue
         </button>

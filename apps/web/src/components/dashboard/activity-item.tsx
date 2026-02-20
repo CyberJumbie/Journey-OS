@@ -82,7 +82,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                 {a.text}
               </p>
               <span
-                className="font-mono text-text-muted"
+                className="font-mono uppercase text-text-muted"
                 style={{ fontSize: 9, letterSpacing: "0.04em" }}
               >
                 {a.time}

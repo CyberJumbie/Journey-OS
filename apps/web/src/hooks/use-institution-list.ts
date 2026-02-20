@@ -7,6 +7,7 @@ import type {
   InstitutionMonitoringStatus,
   SortDirection,
 } from "@journey-os/types";
+import { getAuthToken } from "@web/lib/auth/get-auth-token";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 const PAGE_SIZE = 20;
@@ -56,7 +57,7 @@ export function useInstitutionList(): UseInstitutionListReturn {
       if (search.trim()) params.set("search", search.trim());
       if (statusFilter) params.set("status", statusFilter);
 
-      const token = ""; // TODO: get from auth context
+      const token = await getAuthToken();
       const res = await fetch(
         `${API_URL}/api/v1/admin/institutions?${params}`,
         {

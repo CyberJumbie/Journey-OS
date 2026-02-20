@@ -9,6 +9,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@journey-os/types": path.resolve(__dirname, "../../packages/types/src"),
+      "@journey-os/ui": path.resolve(__dirname, "../../packages/ui/src"),
       "@web": path.resolve(__dirname, "src"),
     },
   },

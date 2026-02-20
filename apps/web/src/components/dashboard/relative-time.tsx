@@ -13,7 +13,7 @@ export function RelativeTime({ dateString }: RelativeTimeProps) {
   return (
     <time
       dateTime={dateString}
-      className="text-xs text-muted-foreground whitespace-nowrap"
+      className="font-mono text-[10px] uppercase tracking-wider text-text-muted whitespace-nowrap"
     >
       {label}
     </time>

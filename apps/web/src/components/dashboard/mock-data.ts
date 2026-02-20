@@ -144,6 +144,7 @@ export const mockTasks = [
 export const navItems = [
   { key: "dashboard", label: "Dashboard", icon: "◈" },
   { key: "courses", label: "Courses", icon: "◆" },
+  { key: "templates", label: "Templates", icon: "❐" },
   { key: "generate", label: "Generate", icon: "✦" },
   { key: "assessments", label: "Assessments", icon: "◇" },
   { key: "students", label: "Students", icon: "▢" },

@@ -1,16 +1,17 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useBreakpoint } from "@web/hooks/use-breakpoint";
 import { KpiStrip } from "@web/components/dashboard/kpi-strip";
-import { CourseCard } from "@web/components/dashboard/course-card";
+import { CourseCardsGrid } from "@web/components/dashboard/course-cards-grid";
 import { MasteryCell } from "@web/components/dashboard/mastery-cell";
 import { QuickActions } from "@web/components/dashboard/quick-actions";
 import { TaskList } from "@web/components/dashboard/task-item";
 import { ActivityFeed } from "@web/components/dashboard/activity-item";
+import { createBrowserClient } from "@web/lib/supabase";
 import {
   mockUser,
   mockKpis,
-  mockCourses,
   mockMasteryTopics,
   mockTasks,
   mockActivity,
@@ -18,11 +19,11 @@ import {
 } from "@web/components/dashboard/mock-data";
 
 const C = {
-  green: "#69a338",
-  blueMid: "#2b71b9",
-  bluePale: "#a3d9ff",
-  warning: "#fa9d33",
-  borderLight: "#edeae4",
+  green: "var(--color-green)",
+  blueMid: "var(--color-blue-mid)",
+  bluePale: "var(--color-blue-pale, #a3d9ff)",
+  warning: "var(--color-warning)",
+  borderLight: "var(--color-border-light)",
 };
 
 // Next.js App Router requires default export for pages
@@ -30,6 +31,14 @@ export default function FacultyDashboardPage() {
   const bp = useBreakpoint();
   const isMobile = bp === "mobile";
   const isDesktop = bp === "desktop";
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const supabase = createBrowserClient();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUserId(session?.user?.id ?? null);
+    });
+  }, []);
 
   return (
     <>
@@ -44,7 +53,7 @@ export default function FacultyDashboardPage() {
       >
         {/* Left Column */}
         <div className="flex flex-col" style={{ gap: isMobile ? 16 : 20 }}>
-          <CourseCard courses={mockCourses} />
+          {userId ? <CourseCardsGrid facultyId={userId} /> : null}
 
           {/* Mastery Overview */}
           <div

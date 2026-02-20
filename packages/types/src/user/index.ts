@@ -35,3 +35,27 @@ export {
   PROFILE_TITLE_MAX,
   PROFILE_DEPARTMENT_MAX,
 } from "./profile.types";
+export type {
+  NotificationPreferenceType,
+  NotificationChannel,
+  NotificationChannelPreference,
+  NotificationPreferenceMatrix,
+  UserPreferencesRow,
+  NotificationPreferencesResponse,
+  UpdateNotificationPreferencesRequest,
+} from "./notification-preferences.types";
+export {
+  DEFAULT_NOTIFICATION_PREFERENCES,
+  NOTIFICATION_PREFERENCE_TYPES,
+} from "./notification-preferences.types";
+export type {
+  AutomationLevel,
+  GenerationPreferences,
+  GenerationPreferencesResponse,
+  UpdateGenerationPreferencesRequest,
+} from "./generation-preferences.types";
+export {
+  AUTOMATION_STRICTNESS,
+  DEFAULT_GENERATION_PREFERENCES,
+  AUTOMATION_LEVELS,
+} from "./generation-preferences.types";

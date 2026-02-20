@@ -1,0 +1,42 @@
+@import 'tailwindcss' source(none);
+@source '../**/*.{js,ts,jsx,tsx}';
+
+@import 'tw-animate-css';
+
+/* Journey OS Design System - Tailwind Configuration for CSS Variables */
+@theme {
+  /* Map CSS variables to Tailwind using var() */
+  --color-navy-deep: var(--navy-deep);
+  --color-navy: var(--navy);
+  --color-blue: var(--blue);
+  --color-blue-mid: var(--blue-mid);
+  --color-blue-light: var(--blue-light);
+  --color-blue-pale: var(--blue-pale);
+  
+  --color-green-dark: var(--green-dark);
+  --color-green: var(--green);
+  --color-lime: var(--lime);
+  
+  --color-ink: var(--ink);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-warm-gray: var(--warm-gray);
+  --color-cream: var(--cream);
+  --color-parchment: var(--parchment);
+  --color-white: var(--white);
+  
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+  
+  --color-success-bg: var(--success-bg);
+  --color-warning-bg: var(--warning-bg);
+  --color-danger-bg: var(--danger-bg);
+  --color-info-bg: var(--info-bg);
+  
+  --color-border-default: var(--border-default);
+  --color-border-light: var(--border-light);
+  --color-border-focus: var(--border-focus);
+  --color-border-hover: var(--border-hover);
+}

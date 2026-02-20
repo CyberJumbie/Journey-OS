@@ -8,21 +8,17 @@ export const metadata: Metadata = {
 // Next.js App Router requires default export for pages
 export default function UnauthorizedPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-cream px-4">
       <div className="text-center">
-        <h1
-          className="mb-4 text-3xl font-semibold"
-          style={{ fontFamily: "Source Sans 3, sans-serif" }}
-        >
+        <h1 className="mb-4 font-serif text-3xl font-semibold text-navy-deep">
           Access Denied
         </h1>
-        <p className="mb-6 text-gray-600">
+        <p className="mb-6 text-text-secondary">
           You do not have permission to access this page.
         </p>
         <a
           href="/login"
-          className="rounded-md px-4 py-2 text-sm font-medium text-white"
-          style={{ backgroundColor: "#2b71b9" }}
+          className="rounded-lg bg-navy-deep px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue"
         >
           Back to Sign In
         </a>

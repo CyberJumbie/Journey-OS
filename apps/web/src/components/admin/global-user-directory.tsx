@@ -6,6 +6,7 @@ import type {
   GlobalUserSortField,
   SortDirection,
 } from "@journey-os/types";
+import { getAuthToken } from "@web/lib/auth/get-auth-token";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 const PAGE_SIZE = 25;
@@ -22,10 +23,10 @@ const ROLE_LABELS: Record<string, string> = {
 
 const ROLE_COLORS: Record<string, string> = {
   superadmin: "bg-purple-100 text-purple-800",
-  institutional_admin: "bg-blue-100 text-blue-800",
-  faculty: "bg-green-100 text-green-800",
+  institutional_admin: "bg-blue-mid/10 text-blue-mid",
+  faculty: "bg-green/10 text-green",
   advisor: "bg-amber-100 text-amber-800",
-  student: "bg-gray-100 text-gray-800",
+  student: "bg-warm-gray text-text-secondary",
 };
 
 export function GlobalUserDirectory() {
@@ -56,7 +57,7 @@ export function GlobalUserDirectory() {
       if (roleFilter) params.set("role", roleFilter);
       if (statusFilter) params.set("is_active", statusFilter);
 
-      const token = ""; // TODO: get from auth context
+      const token = await getAuthToken();
       const res = await fetch(`${API_URL}/api/v1/admin/users?${params}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -124,7 +125,7 @@ export function GlobalUserDirectory() {
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           placeholder="Search by name or email..."
-          className="rounded border border-gray-300 px-3 py-2 text-sm focus:border-[#2b71b9] focus:outline-none focus:ring-1 focus:ring-[#2b71b9]"
+          className="rounded border border-border px-3 py-2 text-sm focus:border-blue-mid focus:outline-none focus:ring-2 focus:ring-blue-mid/15"
           style={{ minWidth: 240 }}
         />
         <select
@@ -133,7 +134,7 @@ export function GlobalUserDirectory() {
             setRoleFilter(e.target.value);
             setPage(1);
           }}
-          className="rounded border border-gray-300 px-3 py-2 text-sm"
+          className="rounded border border-border px-3 py-2 text-sm"
         >
           <option value="">All Roles</option>
           <option value="superadmin">Super Admin</option>
@@ -148,21 +149,21 @@ export function GlobalUserDirectory() {
             setStatusFilter(e.target.value);
             setPage(1);
           }}
-          className="rounded border border-gray-300 px-3 py-2 text-sm"
+          className="rounded border border-border px-3 py-2 text-sm"
         >
           <option value="">All Status</option>
           <option value="true">Active</option>
           <option value="false">Inactive</option>
         </select>
-        <span className="text-sm text-gray-500">
+        <span className="text-sm text-text-muted">
           {total} user{total !== 1 ? "s" : ""}
         </span>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
+      <div className="overflow-x-auto rounded-lg border border-border-light bg-white shadow-sm">
         <table className="w-full text-left text-sm">
-          <thead className="border-b bg-gray-50 text-xs uppercase text-gray-500">
+          <thead className="border-b bg-parchment text-xs uppercase text-text-muted">
             <tr>
               <SortableHeader
                 label="Name"
@@ -209,7 +210,7 @@ export function GlobalUserDirectory() {
                 <tr key={i} className="border-b">
                   {Array.from({ length: 7 }).map((__, j) => (
                     <td key={j} className="px-4 py-3">
-                      <div className="h-4 w-24 animate-pulse rounded bg-gray-200" />
+                      <div className="h-4 w-24 animate-pulse rounded bg-warm-gray" />
                     </td>
                   ))}
                 </tr>
@@ -217,8 +218,11 @@ export function GlobalUserDirectory() {
 
             {status === "data" &&
               users.map((user) => (
-                <tr key={user.id} className="border-b hover:bg-gray-50">
-                  <td className="px-4 py-3 font-medium text-gray-900">
+                <tr
+                  key={user.id}
+                  className="border-b transition-colors hover:bg-parchment"
+                >
+                  <td className="px-4 py-3 font-medium text-text-primary">
                     {user.full_name}
                     {user.is_course_director && (
                       <span
@@ -229,26 +233,26 @@ export function GlobalUserDirectory() {
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-3 font-mono text-xs text-gray-600">
+                  <td className="px-4 py-3 font-mono text-xs text-text-secondary">
                     {user.email}
                   </td>
                   <td className="px-4 py-3">
                     <span
-                      className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${ROLE_COLORS[user.role] ?? "bg-gray-100 text-gray-800"}`}
+                      className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${ROLE_COLORS[user.role] ?? "bg-warm-gray text-text-secondary"}`}
                     >
                       {ROLE_LABELS[user.role] ?? user.role}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-gray-600">
-                    {user.institution_name ?? "—"}
+                  <td className="px-4 py-3 text-text-secondary">
+                    {user.institution_name ?? "\u2014"}
                   </td>
                   <td className="px-4 py-3">
                     <span
-                      className={`inline-block h-2 w-2 rounded-full ${user.is_active ? "bg-[#69a338]" : "bg-gray-300"}`}
+                      className={`inline-block h-2 w-2 rounded-full ${user.is_active ? "bg-green" : "bg-border"}`}
                       title={user.is_active ? "Active" : "Inactive"}
                     />
                   </td>
-                  <td className="px-4 py-3 text-xs text-gray-500">
+                  <td className="px-4 py-3 text-xs text-text-muted">
                     {user.last_login_at
                       ? new Date(user.last_login_at).toLocaleDateString()
                       : "Never"}
@@ -257,7 +261,7 @@ export function GlobalUserDirectory() {
                     {user.institution_id && (
                       <button
                         onClick={() => setReassignUser(user)}
-                        className="rounded border border-gray-300 px-2 py-1 text-xs text-gray-700 hover:bg-gray-50"
+                        className="rounded border border-border px-2 py-1 text-xs text-text-secondary transition-colors hover:bg-parchment"
                       >
                         Reassign
                       </button>
@@ -268,11 +272,14 @@ export function GlobalUserDirectory() {
 
             {status === "empty" && (
               <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-gray-500">
+                <td
+                  colSpan={7}
+                  className="px-4 py-8 text-center text-text-muted"
+                >
                   No users found.{" "}
                   <button
                     onClick={resetFilters}
-                    className="text-[#2b71b9] underline"
+                    className="text-blue-mid underline"
                   >
                     Reset filters
                   </button>
@@ -282,11 +289,11 @@ export function GlobalUserDirectory() {
 
             {status === "error" && (
               <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-red-600">
+                <td colSpan={7} className="px-4 py-8 text-center text-error">
                   {errorMsg}{" "}
                   <button
                     onClick={fetchUsers}
-                    className="text-[#2b71b9] underline"
+                    className="text-blue-mid underline"
                   >
                     Retry
                   </button>
@@ -300,21 +307,21 @@ export function GlobalUserDirectory() {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-500">
+          <span className="text-text-muted">
             Page {page} of {totalPages}
           </span>
           <div className="flex gap-2">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1}
-              className="rounded border px-3 py-1 text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              className="rounded border px-3 py-1 text-text-secondary transition-colors hover:bg-parchment disabled:opacity-50"
             >
               Previous
             </button>
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
-              className="rounded border px-3 py-1 text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              className="rounded border px-3 py-1 text-text-secondary transition-colors hover:bg-parchment disabled:opacity-50"
             >
               Next
             </button>
@@ -351,13 +358,13 @@ function ReassignmentConfirmModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="rounded-lg bg-white p-6 shadow-lg">
         <h3 className="text-lg font-medium">Reassign {user.full_name}</h3>
-        <p className="mt-2 text-sm text-gray-500">
+        <p className="mt-2 text-sm text-text-muted">
           Institution reassignment is not yet implemented.
         </p>
         <div className="mt-4 flex justify-end gap-2">
           <button
             onClick={onClose}
-            className="rounded border px-3 py-1 text-sm text-gray-700 hover:bg-gray-50"
+            className="rounded border px-3 py-1 text-sm text-text-secondary transition-colors hover:bg-parchment"
           >
             Close
           </button>
@@ -383,7 +390,7 @@ function SortableHeader({
   const active = current === field;
   return (
     <th
-      className="cursor-pointer px-4 py-3 hover:text-gray-700"
+      className="cursor-pointer px-4 py-3 hover:text-text-secondary"
       onClick={() => onSort(field)}
     >
       {label}{" "}

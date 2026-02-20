@@ -11,7 +11,7 @@ export function SparklineSVG({
   data,
   width = 80,
   height = 32,
-  color = "#2b71b9",
+  color = "#2b71b9" /* token: --color-blue-mid */,
 }: SparklineSVGProps) {
   if (data.length < 2) return null;
 

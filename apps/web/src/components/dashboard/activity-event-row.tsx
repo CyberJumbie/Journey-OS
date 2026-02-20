@@ -15,11 +15,11 @@ export function ActivityEventRow({ event }: ActivityEventRowProps) {
         <ActivityIcon eventType={event.event_type} />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm text-foreground leading-snug">
+        <p className="text-sm text-text-primary leading-snug">
           {event.metadata.description}
         </p>
         {event.metadata.course_name ? (
-          <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium rounded-full bg-secondary text-secondary-foreground">
+          <span className="inline-block mt-1 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider font-medium rounded-full bg-secondary text-secondary-foreground">
             {event.metadata.course_name}
           </span>
         ) : null}

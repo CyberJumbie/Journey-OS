@@ -53,6 +53,8 @@ import { SectionRepository } from "./repositories/section.repository";
 import { SessionRepository } from "./repositories/session.repository";
 import { HierarchyService } from "./services/course/hierarchy.service";
 import { HierarchyController } from "./controllers/course/hierarchy.controller";
+import { CourseViewService } from "./services/course/course-view.service";
+import { CourseViewController } from "./controllers/course/course-view.controller";
 import { TemplateRepository } from "./repositories/template.repository";
 import { TemplateService } from "./services/template/template.service";
 import { TemplateController } from "./controllers/template/template.controller";
@@ -99,6 +101,10 @@ import { ActivityFeedService } from "./services/activity/activity-feed.service";
 import { ActivityFeedController } from "./controllers/activity.controller";
 import { KpiService } from "./services/dashboard/kpi.service";
 import { KpiController } from "./controllers/dashboard/kpi.controller";
+import { NotificationPreferenceService } from "./services/user/notification-preference.service";
+import { NotificationPreferenceController } from "./controllers/user/notification-preference.controller";
+import { GenerationPreferenceService } from "./services/user/generation-preference.service"; // [STORY-F-17]
+import { GenerationPreferenceController } from "./controllers/user/generation-preference.controller"; // [STORY-F-17]
 
 const app: Express = express();
 const PORT = process.env.PORT || 3001;
@@ -451,6 +457,21 @@ app.post(
   (req, res) => hierarchyController.handleCreateSession(req, res),
 );
 
+// Course views — enriched list + detail (Faculty)
+const courseViewService = new CourseViewService(
+  courseRepository,
+  hierarchyService,
+);
+const courseViewController = new CourseViewController(courseViewService);
+app.get("/api/v1/courses/view", rbac.require(AuthRole.FACULTY), (req, res) =>
+  courseViewController.handleListView(req, res),
+);
+app.get(
+  "/api/v1/courses/:id/view",
+  rbac.require(AuthRole.FACULTY),
+  (req, res) => courseViewController.handleGetDetailView(req, res),
+);
+
 // Weekly schedule — InstitutionalAdmin, Faculty, SuperAdmin
 const scheduleService = new ScheduleService(supabaseClient);
 const scheduleController = new ScheduleController(scheduleService);
@@ -563,6 +584,47 @@ app.post("/api/v1/profile/avatar", avatarUpload.single("avatar"), (req, res) =>
 );
 app.delete("/api/v1/profile/avatar", (req, res) =>
   profileController.handleRemoveAvatar(req, res),
+);
+
+// Settings — notification preferences (faculty+)
+const notificationPreferenceService = new NotificationPreferenceService(
+  supabaseClient,
+);
+const notificationPreferenceController = new NotificationPreferenceController(
+  notificationPreferenceService,
+);
+app.get(
+  "/api/v1/settings/notifications",
+  rbac.require(AuthRole.FACULTY),
+  (req, res) => notificationPreferenceController.handleGet(req, res),
+);
+app.put(
+  "/api/v1/settings/notifications",
+  rbac.require(AuthRole.FACULTY),
+  (req, res) => notificationPreferenceController.handleUpdate(req, res),
+);
+app.post(
+  "/api/v1/settings/notifications/reset",
+  rbac.require(AuthRole.FACULTY),
+  (req, res) => notificationPreferenceController.handleReset(req, res),
+);
+
+// Settings — generation preferences (faculty+) [STORY-F-17]
+const generationPreferenceService = new GenerationPreferenceService(
+  supabaseClient,
+);
+const generationPreferenceController = new GenerationPreferenceController(
+  generationPreferenceService,
+);
+app.get(
+  "/api/v1/settings/generation",
+  rbac.require(AuthRole.FACULTY),
+  (req, res) => generationPreferenceController.handleGet(req, res),
+);
+app.put(
+  "/api/v1/settings/generation",
+  rbac.require(AuthRole.FACULTY),
+  (req, res) => generationPreferenceController.handleUpdate(req, res),
 );
 
 // Socket.io — real-time notifications and presence

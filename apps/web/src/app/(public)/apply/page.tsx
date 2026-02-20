@@ -8,12 +8,12 @@ export const metadata: Metadata = {
 
 export default function ApplyPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#faf8f5] px-4 py-12">
+    <div className="flex min-h-screen items-center justify-center bg-parchment px-4 py-12">
       <div className="w-full max-w-lg rounded-lg bg-white p-8 shadow-md">
-        <h1 className="mb-2 font-serif text-2xl font-bold text-[#002c76]">
+        <h1 className="mb-2 font-serif text-2xl font-bold text-navy-deep">
           Apply for Platform Access
         </h1>
-        <p className="mb-6 text-sm text-gray-600">
+        <p className="mb-6 text-sm text-text-secondary">
           Submit your institution&apos;s details to join the Journey OS
           waitlist. We&apos;ll review your application and get back to you.
         </p>

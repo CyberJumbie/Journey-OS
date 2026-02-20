@@ -44,18 +44,15 @@ export function LoginForm() {
 
   return (
     <div>
-      <h1
-        className="mb-2 text-center text-2xl font-semibold"
-        style={{ fontFamily: "Source Sans 3, sans-serif" }}
-      >
+      <h1 className="mb-2 text-center font-serif text-2xl font-semibold text-navy-deep">
         Sign In
       </h1>
-      <p className="mb-6 text-center text-sm text-gray-600">
+      <p className="mb-6 text-center text-sm text-text-secondary">
         Welcome back to Journey OS
       </p>
 
       {callbackError && (
-        <p className="mb-4 text-sm text-red-600">
+        <p className="mb-4 text-sm text-error">
           Authentication failed. Please sign in again.
         </p>
       )}
@@ -64,8 +61,7 @@ export function LoginForm() {
         <div>
           <label
             htmlFor="email"
-            className="mb-1 block text-sm font-medium text-gray-700"
-            style={{ fontFamily: "DM Mono, monospace" }}
+            className="mb-1 block font-mono text-[10px] uppercase tracking-wider text-text-muted"
           >
             Email
           </label>
@@ -75,8 +71,7 @@ export function LoginForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={formState === "loading"}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2"
-            style={{ "--tw-ring-color": "#2b71b9" } as React.CSSProperties}
+            className="w-full rounded-lg border border-border bg-parchment px-3 py-2 text-sm text-text-primary focus:border-blue-mid focus:outline-none focus:ring-2 focus:ring-blue-mid/15"
             placeholder="you@example.edu"
             required
           />
@@ -85,8 +80,7 @@ export function LoginForm() {
         <div>
           <label
             htmlFor="password"
-            className="mb-1 block text-sm font-medium text-gray-700"
-            style={{ fontFamily: "DM Mono, monospace" }}
+            className="mb-1 block font-mono text-[10px] uppercase tracking-wider text-text-muted"
           >
             Password
           </label>
@@ -96,20 +90,18 @@ export function LoginForm() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             disabled={formState === "loading"}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2"
-            style={{ "--tw-ring-color": "#2b71b9" } as React.CSSProperties}
+            className="w-full rounded-lg border border-border bg-parchment px-3 py-2 text-sm text-text-primary focus:border-blue-mid focus:outline-none focus:ring-2 focus:ring-blue-mid/15"
             placeholder="Enter your password"
             required
           />
         </div>
 
-        {errorMessage && <p className="text-sm text-red-600">{errorMessage}</p>}
+        {errorMessage && <p className="text-sm text-error">{errorMessage}</p>}
 
         <button
           type="submit"
           disabled={formState === "loading"}
-          className="flex w-full items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
-          style={{ backgroundColor: "#2b71b9" }}
+          className="flex w-full items-center justify-center rounded-lg bg-navy-deep px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue disabled:opacity-60"
         >
           {formState === "loading" ? (
             <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
@@ -124,15 +116,13 @@ export function LoginForm() {
       <div className="mt-4 flex justify-between text-sm">
         <a
           href="/forgot-password"
-          className="hover:underline"
-          style={{ color: "#2b71b9" }}
+          className="font-medium text-blue-mid transition-colors hover:text-navy-deep hover:underline"
         >
           Forgot password?
         </a>
         <a
           href="/register"
-          className="hover:underline"
-          style={{ color: "#2b71b9" }}
+          className="font-medium text-blue-mid transition-colors hover:text-navy-deep hover:underline"
         >
           Create account
         </a>

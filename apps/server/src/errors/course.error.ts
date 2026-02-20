@@ -29,3 +29,18 @@ export class InvalidCourseStatusError extends JourneyOSError {
     );
   }
 }
+
+export class CourseValidationError extends JourneyOSError {
+  constructor(message: string) {
+    super(message, "VALIDATION_ERROR");
+  }
+}
+
+export class DirectorNotFoundError extends JourneyOSError {
+  constructor(directorId: string) {
+    super(
+      `Course Director with ID '${directorId}' not found`,
+      "DIRECTOR_NOT_FOUND",
+    );
+  }
+}

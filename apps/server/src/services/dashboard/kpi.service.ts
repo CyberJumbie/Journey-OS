@@ -187,24 +187,7 @@ export class KpiService {
     startIso: string,
     endIso: string,
   ): Promise<PeriodMetrics> {
-    // Count all assessment_items created by this user in period
-    const { count: questionsGenerated } = await this.#supabase
-      .from("assessment_items")
-      .select("*", { count: "exact", head: true })
-      .eq("created_by", userId)
-      .gte("created_at", startIso)
-      .lte("created_at", endIso);
-
-    // Count approved items
-    const { count: approvedCount } = await this.#supabase
-      .from("assessment_items")
-      .select("*", { count: "exact", head: true })
-      .eq("created_by", userId)
-      .eq("status", "approved")
-      .gte("created_at", startIso)
-      .lte("created_at", endIso);
-
-    // Count reviewed items (all non-draft statuses)
+    // Parallelize all 4 independent queries
     const reviewedStatuses = [
       "approved",
       "retired",
@@ -212,22 +195,41 @@ export class KpiService {
       "in_review",
       "pending_review",
     ];
-    const { count: reviewedCount } = await this.#supabase
-      .from("assessment_items")
-      .select("*", { count: "exact", head: true })
-      .eq("created_by", userId)
-      .in("status", reviewedStatuses)
-      .gte("created_at", startIso)
-      .lte("created_at", endIso);
 
-    // Avg quality_score
-    const { data: qualityData } = await this.#supabase
-      .from("assessment_items")
-      .select("quality_score")
-      .eq("created_by", userId)
-      .gte("created_at", startIso)
-      .lte("created_at", endIso)
-      .not("quality_score", "is", null);
+    const [
+      { count: questionsGenerated },
+      { count: approvedCount },
+      { count: reviewedCount },
+      { data: qualityData },
+    ] = await Promise.all([
+      this.#supabase
+        .from("assessment_items")
+        .select("*", { count: "exact", head: true })
+        .eq("created_by", userId)
+        .gte("created_at", startIso)
+        .lte("created_at", endIso),
+      this.#supabase
+        .from("assessment_items")
+        .select("*", { count: "exact", head: true })
+        .eq("created_by", userId)
+        .eq("status", "approved")
+        .gte("created_at", startIso)
+        .lte("created_at", endIso),
+      this.#supabase
+        .from("assessment_items")
+        .select("*", { count: "exact", head: true })
+        .eq("created_by", userId)
+        .in("status", reviewedStatuses)
+        .gte("created_at", startIso)
+        .lte("created_at", endIso),
+      this.#supabase
+        .from("assessment_items")
+        .select("quality_score")
+        .eq("created_by", userId)
+        .gte("created_at", startIso)
+        .lte("created_at", endIso)
+        .not("quality_score", "is", null),
+    ]);
 
     const avgQualityScore = this.#calculateAvg(
       qualityData as Array<{ quality_score: number }> | null,
@@ -279,24 +281,7 @@ export class KpiService {
       };
     }
 
-    // Count all assessment_items in institution courses in period
-    const { count: questionsGenerated } = await this.#supabase
-      .from("assessment_items")
-      .select("*", { count: "exact", head: true })
-      .in("course_id", courseIds)
-      .gte("created_at", startIso)
-      .lte("created_at", endIso);
-
-    // Count approved
-    const { count: approvedCount } = await this.#supabase
-      .from("assessment_items")
-      .select("*", { count: "exact", head: true })
-      .in("course_id", courseIds)
-      .eq("status", "approved")
-      .gte("created_at", startIso)
-      .lte("created_at", endIso);
-
-    // Count reviewed
+    // Parallelize all 4 independent metric queries
     const reviewedStatuses = [
       "approved",
       "retired",
@@ -304,22 +289,41 @@ export class KpiService {
       "in_review",
       "pending_review",
     ];
-    const { count: reviewedCount } = await this.#supabase
-      .from("assessment_items")
-      .select("*", { count: "exact", head: true })
-      .in("course_id", courseIds)
-      .in("status", reviewedStatuses)
-      .gte("created_at", startIso)
-      .lte("created_at", endIso);
 
-    // Avg quality_score
-    const { data: qualityData } = await this.#supabase
-      .from("assessment_items")
-      .select("quality_score")
-      .in("course_id", courseIds)
-      .gte("created_at", startIso)
-      .lte("created_at", endIso)
-      .not("quality_score", "is", null);
+    const [
+      { count: questionsGenerated },
+      { count: approvedCount },
+      { count: reviewedCount },
+      { data: qualityData },
+    ] = await Promise.all([
+      this.#supabase
+        .from("assessment_items")
+        .select("*", { count: "exact", head: true })
+        .in("course_id", courseIds)
+        .gte("created_at", startIso)
+        .lte("created_at", endIso),
+      this.#supabase
+        .from("assessment_items")
+        .select("*", { count: "exact", head: true })
+        .in("course_id", courseIds)
+        .eq("status", "approved")
+        .gte("created_at", startIso)
+        .lte("created_at", endIso),
+      this.#supabase
+        .from("assessment_items")
+        .select("*", { count: "exact", head: true })
+        .in("course_id", courseIds)
+        .in("status", reviewedStatuses)
+        .gte("created_at", startIso)
+        .lte("created_at", endIso),
+      this.#supabase
+        .from("assessment_items")
+        .select("quality_score")
+        .in("course_id", courseIds)
+        .gte("created_at", startIso)
+        .lte("created_at", endIso)
+        .not("quality_score", "is", null),
+    ]);
 
     const avgQualityScore = this.#calculateAvg(
       qualityData as Array<{ quality_score: number }> | null,

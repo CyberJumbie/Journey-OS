@@ -7,8 +7,8 @@ import { RejectionConfirmDialog } from "./rejection-confirm-dialog";
 
 const STATUS_BADGES: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-800",
-  approved: "bg-green-100 text-green-800",
-  rejected: "bg-red-100 text-red-800",
+  approved: "bg-green/10 text-green",
+  rejected: "bg-error/10 text-error",
 };
 
 const TYPE_LABELS: Record<string, string> = {
@@ -40,12 +40,12 @@ export function ApplicationDetailModal({
       <div className="mx-4 w-full max-w-lg rounded-lg bg-white shadow-xl">
         {/* Header */}
         <div className="flex items-center justify-between border-b px-6 py-4">
-          <h2 className="font-serif text-lg font-bold text-[#002c76]">
+          <h2 className="font-serif text-lg font-bold text-navy-deep">
             Application Details
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-text-muted hover:text-text-secondary transition-colors"
             aria-label="Close"
           >
             &times;
@@ -83,12 +83,12 @@ export function ApplicationDetailModal({
             />
             <Field label="Reason" value={application.reason || "\u2014"} />
             <div>
-              <span className="text-xs font-medium uppercase text-gray-500">
+              <span className="text-xs font-medium uppercase text-text-muted">
                 Status
               </span>
               <div className="mt-1">
                 <span
-                  className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_BADGES[application.status] ?? "bg-gray-100 text-gray-800"}`}
+                  className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_BADGES[application.status] ?? "bg-warm-gray text-text-secondary"}`}
                 >
                   {application.status}
                 </span>
@@ -125,20 +125,20 @@ export function ApplicationDetailModal({
           <button
             onClick={() => setShowApprovalDialog(true)}
             disabled={application.status !== "pending"}
-            className="rounded bg-[#69a338] px-4 py-2 text-sm font-medium text-white hover:bg-[#5a8c2f] disabled:opacity-50"
+            className="rounded bg-green px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-green-dark disabled:opacity-50"
           >
             Approve
           </button>
           <button
             onClick={() => setShowRejectionDialog(true)}
             disabled={application.status !== "pending"}
-            className="rounded bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
+            className="rounded bg-error px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-error/90 disabled:opacity-50"
           >
             Reject
           </button>
           <button
             onClick={onClose}
-            className="rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="rounded border border-border px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:bg-parchment"
           >
             Close
           </button>
@@ -177,10 +177,10 @@ export function ApplicationDetailModal({
 function Field({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <span className="text-xs font-medium uppercase text-gray-500">
+      <span className="text-xs font-medium uppercase text-text-muted">
         {label}
       </span>
-      <p className="mt-1 text-sm text-gray-900">{value}</p>
+      <p className="mt-1 text-sm text-text-primary">{value}</p>
     </div>
   );
 }

@@ -129,10 +129,10 @@ export function ApplicationForm() {
     return (
       <div className="text-center">
         <div className="mb-4 text-4xl">&#10003;</div>
-        <h2 className="mb-2 font-serif text-xl font-bold text-[#002c76]">
+        <h2 className="mb-2 font-serif text-xl font-bold text-navy-deep">
           Application Submitted
         </h2>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-text-secondary">
           Thank you! Your application for <strong>{submittedName}</strong> is
           now pending review. We&apos;ll contact you at the email you provided.
         </p>
@@ -152,13 +152,13 @@ export function ApplicationForm() {
       />
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">
-          Institution Type <span className="text-red-500">*</span>
+        <label className="mb-1 block text-sm font-medium text-text-secondary">
+          Institution Type <span className="text-error">*</span>
         </label>
         <select
           value={form.institution_type}
           onChange={(e) => updateField("institution_type", e.target.value)}
-          className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-[#2b71b9] focus:outline-none focus:ring-1 focus:ring-[#2b71b9]"
+          className="w-full rounded border border-border px-3 py-2 text-sm focus:border-blue-mid focus:outline-none focus:ring-1 focus:ring-blue-mid"
         >
           <option value="">Select type...</option>
           <option value="md">MD (Allopathic)</option>
@@ -166,7 +166,7 @@ export function ApplicationForm() {
           <option value="combined">Combined MD/DO</option>
         </select>
         {errors.institution_type && (
-          <p className="mt-1 text-xs text-red-500">{errors.institution_type}</p>
+          <p className="mt-1 text-xs text-error">{errors.institution_type}</p>
         )}
       </div>
 
@@ -225,7 +225,7 @@ export function ApplicationForm() {
       />
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">
+        <label className="mb-1 block text-sm font-medium text-text-secondary">
           Reason for Interest
         </label>
         <textarea
@@ -233,13 +233,13 @@ export function ApplicationForm() {
           onChange={(e) => updateField("reason", e.target.value)}
           rows={3}
           maxLength={1000}
-          className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-[#2b71b9] focus:outline-none focus:ring-1 focus:ring-[#2b71b9]"
+          className="w-full rounded border border-border px-3 py-2 text-sm focus:border-blue-mid focus:outline-none focus:ring-1 focus:ring-blue-mid"
           placeholder="Tell us why your institution is interested in Journey OS..."
         />
       </div>
 
       {serverError && (
-        <div className="rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+        <div className="rounded border border-error/20 bg-error/5 px-3 py-2 text-sm text-error">
           {serverError}
         </div>
       )}
@@ -247,7 +247,7 @@ export function ApplicationForm() {
       <button
         type="submit"
         disabled={status === "submitting"}
-        className="w-full rounded bg-[#002c76] px-4 py-2 text-sm font-medium text-white hover:bg-[#001d4f] disabled:opacity-50"
+        className="w-full rounded bg-navy-deep px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-navy disabled:opacity-50"
       >
         {status === "submitting" ? "Submitting..." : "Submit Application"}
       </button>
@@ -274,17 +274,17 @@ function Field({
 }) {
   return (
     <div>
-      <label className="mb-1 block text-sm font-medium text-gray-700">
-        {label} {required && <span className="text-red-500">*</span>}
+      <label className="mb-1 block text-sm font-medium text-text-secondary">
+        {label} {required && <span className="text-error">*</span>}
       </label>
       <input
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-[#2b71b9] focus:outline-none focus:ring-1 focus:ring-[#2b71b9]"
+        className="w-full rounded border border-border px-3 py-2 text-sm focus:border-blue-mid focus:outline-none focus:ring-1 focus:ring-blue-mid"
         placeholder={placeholder}
       />
-      {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
+      {error && <p className="mt-1 text-xs text-error">{error}</p>}
     </div>
   );
 }

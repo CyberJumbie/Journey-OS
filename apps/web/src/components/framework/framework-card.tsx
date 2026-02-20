@@ -45,21 +45,25 @@ export function FrameworkCard({
 
   return (
     <Link href={`/institution/frameworks/${frameworkKey}`}>
-      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition hover:border-[#2b71b9] hover:shadow-md">
+      <div className="rounded-lg border border-border-light bg-white p-6 shadow-sm transition hover:border-blue-mid hover:shadow-md">
         <div className="flex items-start gap-3">
           {IconComponent && (
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#2b71b9]/10">
-              <IconComponent className="h-5 w-5 text-[#2b71b9]" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-mid/10">
+              <IconComponent className="h-5 w-5 text-blue-mid" />
             </div>
           )}
-          <h3 className="text-lg font-semibold text-gray-900">{name}</h3>
+          <h3 className="font-serif text-lg font-semibold text-text-primary">
+            {name}
+          </h3>
         </div>
-        <p className="mt-3 line-clamp-2 text-sm text-gray-600">{description}</p>
+        <p className="mt-3 line-clamp-2 text-sm text-text-secondary">
+          {description}
+        </p>
         <div className="mt-4 flex gap-2">
-          <span className="rounded-full bg-[#2b71b9]/10 px-2 py-1 text-xs text-[#2b71b9]">
+          <span className="font-mono text-[10px] uppercase tracking-wider rounded-full bg-blue-mid/10 px-2 py-1 text-blue-mid">
             {nodeCount} nodes
           </span>
-          <span className="rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-600">
+          <span className="font-mono text-[10px] uppercase tracking-wider rounded-full bg-parchment px-2 py-1 text-text-secondary">
             {hierarchyDepth} {hierarchyDepth === 1 ? "level" : "levels"}
           </span>
         </div>

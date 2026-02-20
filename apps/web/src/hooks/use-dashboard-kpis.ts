@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import type { KpiMetric, KpiPeriod, KpiResponse } from "@journey-os/types";
+import { getAuthToken } from "@web/lib/auth/get-auth-token";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
@@ -24,7 +25,7 @@ export function useDashboardKpis(userId: string): UseDashboardKpisReturn {
     setLoading(true);
     setError("");
     try {
-      const token = ""; // TODO: get from auth context
+      const token = await getAuthToken();
       const res = await fetch(
         `${API_URL}/api/v1/dashboard/kpis?user_id=${encodeURIComponent(userId)}&period=${encodeURIComponent(period)}`,
         {

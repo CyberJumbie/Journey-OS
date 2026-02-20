@@ -38,13 +38,10 @@ interface RoleStepProps {
 export function RoleStep({ selectedRole, onSelect, onNext }: RoleStepProps) {
   return (
     <div>
-      <h2
-        className="mb-2 text-center text-xl font-semibold"
-        style={{ fontFamily: "Source Sans 3, sans-serif" }}
-      >
+      <h2 className="mb-2 text-center font-serif text-xl font-semibold text-navy-deep">
         Select Your Role
       </h2>
-      <p className="mb-6 text-center text-sm text-gray-600">
+      <p className="mb-6 text-center text-sm text-text-secondary">
         Choose the role that best describes you.
       </p>
 
@@ -56,17 +53,14 @@ export function RoleStep({ selectedRole, onSelect, onNext }: RoleStepProps) {
             onClick={() => onSelect(option.value)}
             className={`w-full rounded-lg border-2 p-4 text-left transition-colors ${
               selectedRole === option.value
-                ? "border-blue-500 bg-blue-50"
-                : "border-gray-200 hover:border-gray-300"
+                ? "border-blue-mid bg-blue-mid/5"
+                : "border-border-light hover:border-border"
             }`}
-            style={
-              selectedRole === option.value
-                ? { borderColor: "#2b71b9", backgroundColor: "#f0f6ff" }
-                : undefined
-            }
           >
-            <div className="font-medium">{option.label}</div>
-            <div className="mt-1 text-sm text-gray-600">
+            <div className="font-serif font-medium text-text-primary">
+              {option.label}
+            </div>
+            <div className="mt-1 text-sm text-text-secondary">
               {option.description}
             </div>
           </button>
@@ -77,8 +71,7 @@ export function RoleStep({ selectedRole, onSelect, onNext }: RoleStepProps) {
         type="button"
         onClick={onNext}
         disabled={!selectedRole}
-        className="mt-6 flex w-full items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
-        style={{ backgroundColor: "#2b71b9" }}
+        className="mt-6 flex w-full items-center justify-center rounded-lg bg-navy-deep px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue disabled:opacity-60"
       >
         Continue
       </button>

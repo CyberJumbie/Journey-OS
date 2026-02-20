@@ -21,13 +21,14 @@ const PUBLIC_ROUTES = [
   "/reset-password",
   "/unauthorized",
   "/apply",
+  "/team",
 ];
 
 /**
  * Routes that are part of the auth flow (login, register, etc.).
  * Authenticated users should be redirected away from these.
  */
-const AUTH_ROUTES = ["/login", "/register", "/forgot-password"];
+const AUTH_ROUTES = ["/login", "/register", "/forgot-password", "/team"];
 
 /**
  * All dashboard base paths (values from DASHBOARD_ROUTES).

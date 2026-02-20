@@ -181,19 +181,19 @@ export function OnboardingFlow() {
   if (state === "loading") {
     return (
       <div className="flex items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-border border-t-blue-mid" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="mx-auto max-w-md rounded-lg border border-red-200 bg-red-50 p-6 text-center">
-        <p className="text-red-700">{error}</p>
+      <div className="mx-auto max-w-md rounded-lg border border-error/20 bg-error/5 p-6 text-center">
+        <p className="text-error">{error}</p>
         <button
           type="button"
           onClick={() => window.location.reload()}
-          className="mt-4 rounded-md bg-red-600 px-4 py-2 text-sm text-white hover:bg-red-700"
+          className="mt-4 rounded-md bg-error px-4 py-2 text-sm text-white transition-colors hover:bg-error/90"
         >
           Retry
         </button>
@@ -206,15 +206,17 @@ export function OnboardingFlow() {
   if (state === "welcome") {
     return (
       <div className="mx-auto max-w-lg text-center">
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className="text-3xl font-bold text-text-primary">
           {config.welcome_title}
         </h1>
-        <p className="mt-3 text-lg text-gray-600">{config.welcome_subtitle}</p>
+        <p className="mt-3 text-lg text-text-secondary">
+          {config.welcome_subtitle}
+        </p>
         <div className="mt-8 flex flex-col items-center gap-3">
           <button
             type="button"
             onClick={() => setState("steps")}
-            className="flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-white hover:bg-blue-700"
+            className="flex items-center gap-2 rounded-lg bg-blue-mid px-6 py-3 text-white transition-colors hover:bg-navy-deep"
           >
             Get Started
             <ChevronRight className="h-4 w-4" />
@@ -222,7 +224,7 @@ export function OnboardingFlow() {
           <button
             type="button"
             onClick={skipOnboarding}
-            className="text-sm text-gray-500 hover:text-gray-700"
+            className="text-sm text-text-muted transition-colors hover:text-text-secondary"
           >
             Skip onboarding
           </button>
@@ -234,8 +236,8 @@ export function OnboardingFlow() {
   if (state === "completing") {
     return (
       <div className="flex flex-col items-center justify-center gap-3">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600" />
-        <p className="text-gray-600">Finishing up...</p>
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-border border-t-blue-mid" />
+        <p className="text-text-secondary">Finishing up...</p>
       </div>
     );
   }
@@ -295,10 +297,10 @@ function StepIndicator({
             <div
               className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium ${
                 index < currentStep
-                  ? "bg-blue-600 text-white"
+                  ? "bg-blue-mid text-white"
                   : index === currentStep
-                    ? "border-2 border-blue-600 text-blue-600"
-                    : "border-2 border-gray-300 text-gray-400"
+                    ? "border-2 border-blue-mid text-blue-mid"
+                    : "border-2 border-border text-text-muted"
               }`}
             >
               {index < currentStep ? <Check className="h-4 w-4" /> : index + 1}
@@ -306,14 +308,14 @@ function StepIndicator({
             {index < totalSteps - 1 && (
               <div
                 className={`mx-2 h-0.5 w-12 sm:w-20 ${
-                  index < currentStep ? "bg-blue-600" : "bg-gray-300"
+                  index < currentStep ? "bg-blue-mid" : "bg-border"
                 }`}
               />
             )}
           </div>
         ))}
       </div>
-      <p className="mt-2 text-center text-sm text-gray-500">
+      <p className="mt-2 text-center text-sm text-text-muted">
         Step {currentStep + 1} of {totalSteps}
       </p>
     </div>
@@ -339,34 +341,36 @@ function OnboardingCard({
   const IconComponent = ICON_MAP[step.icon];
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
+    <div className="rounded-xl border border-border-light bg-white p-8 shadow-sm">
       <div className="mb-6 flex items-center gap-4">
         {IconComponent && (
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-50">
-            <IconComponent className="h-6 w-6 text-blue-600" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-mid/5">
+            <IconComponent className="h-6 w-6 text-blue-mid" />
           </div>
         )}
-        <h2 className="text-xl font-semibold text-gray-900">{step.title}</h2>
+        <h2 className="text-xl font-semibold text-text-primary">
+          {step.title}
+        </h2>
       </div>
 
-      <p className="mb-6 text-gray-600">{step.description}</p>
+      <p className="mb-6 text-text-secondary">{step.description}</p>
 
       {step.action_href && (
         <a
           href={step.action_href}
-          className="mb-6 inline-block text-sm font-medium text-blue-600 hover:text-blue-800"
+          className="mb-6 inline-block text-sm font-medium text-blue-mid transition-colors hover:text-navy-deep"
         >
           {step.action_label ?? "Learn more"} →
         </a>
       )}
 
-      <div className="flex items-center justify-between border-t border-gray-100 pt-6">
+      <div className="flex items-center justify-between border-t border-border-light pt-6">
         <div className="flex gap-3">
           {onPrev && (
             <button
               type="button"
               onClick={onPrev}
-              className="flex items-center gap-1 rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+              className="flex items-center gap-1 rounded-md border border-border px-4 py-2 text-sm text-text-secondary transition-colors hover:bg-parchment"
             >
               <ChevronLeft className="h-4 w-4" />
               Back
@@ -375,7 +379,7 @@ function OnboardingCard({
           <button
             type="button"
             onClick={onSkip}
-            className="rounded-md px-4 py-2 text-sm text-gray-500 hover:text-gray-700"
+            className="rounded-md px-4 py-2 text-sm text-text-muted transition-colors hover:text-text-secondary"
           >
             Skip
           </button>
@@ -383,7 +387,7 @@ function OnboardingCard({
         <button
           type="button"
           onClick={onNext}
-          className="flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-2 text-sm text-white hover:bg-blue-700"
+          className="flex items-center gap-2 rounded-lg bg-blue-mid px-6 py-2 text-sm text-white transition-colors hover:bg-navy-deep"
         >
           {isLast ? "Complete" : "Next"}
           {isLast ? (

@@ -67,7 +67,7 @@ export class AuthService {
 
     const institutionId = appMetadata.institution_id as string | undefined;
 
-    if (!institutionId) {
+    if (!institutionId && role !== AuthRole.SUPERADMIN) {
       throw new AuthenticationError(
         "User has no institution_id in app_metadata",
       );
@@ -77,7 +77,7 @@ export class AuthService {
       sub: user.id,
       email: user.email ?? "",
       role: role as AuthRole,
-      institution_id: institutionId,
+      institution_id: institutionId ?? "",
       is_course_director: Boolean(appMetadata.is_course_director),
       email_confirmed_at: user.email_confirmed_at ?? null,
       aud: "authenticated",

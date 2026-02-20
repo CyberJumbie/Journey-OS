@@ -24,10 +24,10 @@ export function KpiCard({ metric }: KpiCardProps) {
 
   return (
     <div className="rounded-lg border border-border-light bg-parchment p-4">
-      <p className="text-sm font-medium text-text-secondary mb-1">
+      <p className="font-mono text-[10px] uppercase tracking-wider font-medium text-text-secondary mb-1">
         {metric.label}
       </p>
-      <p className="text-2xl font-bold text-text-primary mb-1">
+      <p className="text-2xl font-bold font-serif text-text-primary mb-1">
         {metric.value}
         {metric.unit ? (
           <span className="text-sm font-normal text-text-muted ml-1">

@@ -126,69 +126,31 @@ export function AvatarUploader({
   const initials = userId.slice(0, 2).toUpperCase();
 
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "var(--space-4, 16px)",
-      }}
-    >
+    <div className="flex items-center gap-4">
       {/* Avatar preview */}
-      <div
-        style={{
-          width: 64,
-          height: 64,
-          borderRadius: "var(--radius-full, 9999px)",
-          overflow: "hidden",
-          backgroundColor: "var(--surface-parchment, #f0ebe3)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexShrink: 0,
-          border: "2px solid var(--border-default, #d1d5db)",
-        }}
-      >
+      <div className="w-16 h-16 rounded-full overflow-hidden bg-parchment flex items-center justify-center shrink-0 border-2 border-border">
         {currentAvatarUrl ? (
           <img
             src={currentAvatarUrl}
             alt="Avatar"
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            className="w-full h-full object-cover"
           />
         ) : (
-          <span
-            style={{
-              fontFamily: "var(--font-sans, system-ui, sans-serif)",
-              fontSize: "1.25rem",
-              fontWeight: 600,
-              color: "var(--color-text-secondary, #6b7280)",
-            }}
-          >
+          <span className="font-sans text-xl font-semibold text-text-secondary">
             {initials}
           </span>
         )}
       </div>
 
       {/* Upload/Remove controls */}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "var(--space-2, 8px)",
-        }}
-      >
-        <div style={{ display: "flex", gap: "var(--space-2, 8px)" }}>
+      <div className="flex flex-col gap-2">
+        <div className="flex gap-2">
           <label
-            style={{
-              padding: "6px 14px",
-              backgroundColor: "var(--color-primary, #1a1a2e)",
-              color: "#ffffff",
-              borderRadius: "var(--radius-sm, 6px)",
-              fontFamily: "var(--font-sans, system-ui, sans-serif)",
-              fontSize: "0.8125rem",
-              fontWeight: 500,
-              cursor: status === "uploading" ? "not-allowed" : "pointer",
-              opacity: status === "uploading" ? 0.6 : 1,
-            }}
+            className={`px-3.5 py-1.5 bg-primary text-white rounded-sm font-sans text-[0.8125rem] font-medium ${
+              status === "uploading"
+                ? "cursor-not-allowed opacity-60"
+                : "cursor-pointer"
+            }`}
           >
             {status === "uploading" ? "Uploading..." : "Upload Photo"}
             <input
@@ -197,7 +159,7 @@ export function AvatarUploader({
               accept="image/jpeg,image/png,image/webp"
               onChange={handleUpload}
               disabled={status === "uploading"}
-              style={{ display: "none" }}
+              className="hidden"
             />
           </label>
 
@@ -206,45 +168,20 @@ export function AvatarUploader({
               type="button"
               onClick={handleRemove}
               disabled={status === "uploading"}
-              style={{
-                padding: "6px 14px",
-                backgroundColor: "transparent",
-                color: "var(--color-error, #dc2626)",
-                border: "1px solid var(--color-error, #dc2626)",
-                borderRadius: "var(--radius-sm, 6px)",
-                fontFamily: "var(--font-sans, system-ui, sans-serif)",
-                fontSize: "0.8125rem",
-                fontWeight: 500,
-                cursor: status === "uploading" ? "not-allowed" : "pointer",
-                opacity: status === "uploading" ? 0.6 : 1,
-              }}
+              className={`px-3.5 py-1.5 bg-transparent text-error border border-error rounded-sm font-sans text-[0.8125rem] font-medium ${
+                status === "uploading"
+                  ? "cursor-not-allowed opacity-60"
+                  : "cursor-pointer"
+              }`}
             >
               Remove
             </button>
           )}
         </div>
 
-        {error && (
-          <p
-            style={{
-              fontFamily: "var(--font-sans, system-ui, sans-serif)",
-              fontSize: "0.75rem",
-              color: "var(--color-error, #dc2626)",
-              margin: 0,
-            }}
-          >
-            {error}
-          </p>
-        )}
+        {error && <p className="font-sans text-xs text-error m-0">{error}</p>}
 
-        <p
-          style={{
-            fontFamily: "var(--font-sans, system-ui, sans-serif)",
-            fontSize: "0.6875rem",
-            color: "var(--color-text-secondary, #6b7280)",
-            margin: 0,
-          }}
-        >
+        <p className="font-sans text-[0.6875rem] text-text-secondary m-0">
           JPEG, PNG, or WebP. Max 2MB.
         </p>
       </div>

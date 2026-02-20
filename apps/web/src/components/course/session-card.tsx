@@ -19,7 +19,7 @@ function getMaterialDotColor(status: MaterialStatus): string {
       return "bg-amber-500";
     case "empty":
     default:
-      return "bg-gray-400";
+      return "bg-text-muted";
   }
 }
 
@@ -44,18 +44,22 @@ export function SessionCard({
   materialStatus,
 }: SessionCardProps) {
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-3 shadow-sm">
+    <div className="rounded-lg border border-border-light bg-white p-3 shadow-sm">
       <div className="mb-1 flex items-start justify-between">
-        <h4 className="text-sm font-semibold text-gray-900">{title}</h4>
+        <h4 className="text-sm font-semibold font-serif text-text-primary">
+          {title}
+        </h4>
         <span
           className={`mt-0.5 inline-block h-2.5 w-2.5 shrink-0 rounded-full ${getMaterialDotColor(materialStatus)}`}
           title={getMaterialLabel(materialStatus, materialCount)}
         />
       </div>
-      <p className="mb-1 text-xs text-gray-500">
+      <p className="mb-1 font-mono text-xs text-text-muted">
         {startTime} &ndash; {endTime}
       </p>
-      <p className="text-xs text-gray-400">{sectionName}</p>
+      <p className="font-mono text-[10px] uppercase tracking-wider text-text-muted">
+        {sectionName}
+      </p>
     </div>
   );
 }

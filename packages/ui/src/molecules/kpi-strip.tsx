@@ -25,7 +25,7 @@ export function KpiStrip({
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-text-primary">
+        <h2 className="text-lg font-semibold font-serif text-text-primary">
           Performance Overview
         </h2>
         <select

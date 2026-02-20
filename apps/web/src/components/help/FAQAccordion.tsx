@@ -101,10 +101,7 @@ export function FAQAccordion({
                 className="inline-block h-2 w-2 rounded-full bg-[var(--blue-mid)]"
                 aria-hidden="true"
               />
-              <h3
-                className="font-serif text-base font-bold text-[var(--ink)]"
-                style={{ fontSize: "16px" }}
-              >
+              <h3 className="font-serif text-base font-bold text-[var(--ink)]">
                 {category.label}
               </h3>
               <span className="font-mono text-[10px] font-medium uppercase tracking-wider text-[var(--text-muted)]">
@@ -122,7 +119,6 @@ export function FAQAccordion({
                   <div
                     key={entry.id}
                     className="overflow-hidden rounded-xl border border-[var(--border-light)] bg-white"
-                    style={{ borderRadius: "12px" }}
                   >
                     <button
                       type="button"
@@ -131,10 +127,7 @@ export function FAQAccordion({
                       aria-expanded={isOpen}
                       aria-controls={`faq-answer-${entry.id}`}
                     >
-                      <span
-                        className="font-sans font-semibold text-[var(--ink)]"
-                        style={{ fontSize: "15px" }}
-                      >
+                      <span className="font-sans text-[0.9375rem] font-semibold text-[var(--ink)]">
                         {searchQuery
                           ? highlightMatch(entry.question, searchQuery)
                           : entry.question}
@@ -162,10 +155,7 @@ export function FAQAccordion({
                         id={`faq-answer-${entry.id}`}
                         className="border-t border-[var(--border-light)] bg-[var(--parchment)] px-5 py-4"
                       >
-                        <p
-                          className="font-sans leading-relaxed text-[var(--text-secondary)]"
-                          style={{ fontSize: "15px" }}
-                        >
+                        <p className="font-sans text-[0.9375rem] leading-relaxed text-[var(--text-secondary)]">
                           {renderMarkdown(entry.answer)}
                         </p>
                         {entry.tags.length > 0 ? (

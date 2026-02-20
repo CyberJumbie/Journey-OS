@@ -16,10 +16,10 @@ const STATUS_LABELS: Record<InstitutionMonitoringStatus, string> = {
 };
 
 const STATUS_COLORS: Record<InstitutionMonitoringStatus, string> = {
-  active: "bg-green-100 text-green-800",
+  active: "bg-green/10 text-green",
   pending: "bg-yellow-100 text-yellow-800",
-  suspended: "bg-red-100 text-red-800",
-  archived: "bg-gray-100 text-gray-800",
+  suspended: "bg-error/10 text-error",
+  archived: "bg-warm-gray text-text-secondary",
 };
 
 function formatRelativeTime(dateString: string | null): string {
@@ -63,11 +63,11 @@ export function InstitutionListDashboard() {
     <div className="space-y-4">
       {/* Header with Add button */}
       <div className="flex items-center justify-between">
-        <span className="text-sm text-gray-500">
+        <span className="text-sm text-text-muted">
           {total} institution{total !== 1 ? "s" : ""}
         </span>
         <button
-          className="rounded bg-[#2b71b9] px-4 py-2 text-sm font-medium text-white hover:bg-[#1e5a96]"
+          className="rounded bg-blue-mid px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-navy-deep"
           onClick={() => router.push("/admin/institutions/new")}
         >
           Add Institution
@@ -81,13 +81,13 @@ export function InstitutionListDashboard() {
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           placeholder="Search by institution name..."
-          className="rounded border border-gray-300 px-3 py-2 text-sm focus:border-[#2b71b9] focus:outline-none focus:ring-1 focus:ring-[#2b71b9]"
+          className="rounded border border-border px-3 py-2 text-sm focus:border-blue-mid focus:outline-none focus:ring-2 focus:ring-blue-mid/15"
           style={{ minWidth: 260 }}
         />
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="rounded border border-gray-300 px-3 py-2 text-sm"
+          className="rounded border border-border px-3 py-2 text-sm"
         >
           <option value="">All Statuses</option>
           <option value="active">Active</option>
@@ -98,9 +98,9 @@ export function InstitutionListDashboard() {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
+      <div className="overflow-x-auto rounded-lg border border-border-light bg-white shadow-sm">
         <table className="w-full text-left text-sm">
-          <thead className="border-b bg-gray-50 text-xs uppercase text-gray-500">
+          <thead className="border-b bg-parchment text-xs uppercase text-text-muted">
             <tr>
               <SortableHeader
                 label="Name"
@@ -152,7 +152,7 @@ export function InstitutionListDashboard() {
                 <tr key={i} className="border-b">
                   {Array.from({ length: 6 }).map((__, j) => (
                     <td key={j} className="px-4 py-3">
-                      <div className="h-4 w-24 animate-pulse rounded bg-gray-200" />
+                      <div className="h-4 w-24 animate-pulse rounded bg-warm-gray" />
                     </td>
                   ))}
                 </tr>
@@ -162,27 +162,29 @@ export function InstitutionListDashboard() {
               institutions.map((inst) => (
                 <tr
                   key={inst.id}
-                  className="cursor-pointer border-b hover:bg-gray-50"
+                  className="cursor-pointer border-b transition-colors hover:bg-parchment"
                   onClick={() => router.push(`/admin/institutions/${inst.id}`)}
                 >
-                  <td className="px-4 py-3 font-medium text-gray-900">
+                  <td className="px-4 py-3 font-medium text-text-primary">
                     {inst.name}
                   </td>
                   <td className="px-4 py-3">
                     <span
-                      className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[inst.status] ?? "bg-gray-100 text-gray-800"}`}
+                      className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[inst.status] ?? "bg-warm-gray text-text-secondary"}`}
                     >
                       {STATUS_LABELS[inst.status] ?? inst.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-gray-600">{inst.user_count}</td>
-                  <td className="px-4 py-3 text-gray-600">
+                  <td className="px-4 py-3 text-text-secondary">
+                    {inst.user_count}
+                  </td>
+                  <td className="px-4 py-3 text-text-secondary">
                     {inst.course_count}
                   </td>
-                  <td className="px-4 py-3 text-xs text-gray-500">
+                  <td className="px-4 py-3 text-xs text-text-muted">
                     {formatRelativeTime(inst.last_activity)}
                   </td>
-                  <td className="px-4 py-3 text-xs text-gray-500">
+                  <td className="px-4 py-3 text-xs text-text-muted">
                     {new Date(inst.created_at).toLocaleDateString()}
                   </td>
                 </tr>
@@ -190,11 +192,14 @@ export function InstitutionListDashboard() {
 
             {status === "empty" && (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
+                <td
+                  colSpan={6}
+                  className="px-4 py-8 text-center text-text-muted"
+                >
                   No institutions found.{" "}
                   <button
                     onClick={resetFilters}
-                    className="text-[#2b71b9] underline"
+                    className="text-blue-mid underline"
                   >
                     Reset filters
                   </button>
@@ -204,9 +209,9 @@ export function InstitutionListDashboard() {
 
             {status === "error" && (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-red-600">
+                <td colSpan={6} className="px-4 py-8 text-center text-error">
                   {errorMsg}{" "}
-                  <button onClick={retry} className="text-[#2b71b9] underline">
+                  <button onClick={retry} className="text-blue-mid underline">
                     Retry
                   </button>
                 </td>
@@ -219,21 +224,21 @@ export function InstitutionListDashboard() {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-500">
+          <span className="text-text-muted">
             Page {page} of {totalPages}
           </span>
           <div className="flex gap-2">
             <button
               onClick={() => setPage(Math.max(1, page - 1))}
               disabled={page <= 1}
-              className="rounded border px-3 py-1 text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              className="rounded border px-3 py-1 text-text-secondary transition-colors hover:bg-parchment disabled:opacity-50"
             >
               Previous
             </button>
             <button
               onClick={() => setPage(Math.min(totalPages, page + 1))}
               disabled={page >= totalPages}
-              className="rounded border px-3 py-1 text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              className="rounded border px-3 py-1 text-text-secondary transition-colors hover:bg-parchment disabled:opacity-50"
             >
               Next
             </button>
@@ -260,7 +265,7 @@ function SortableHeader({
   const active = current === field;
   return (
     <th
-      className="cursor-pointer px-4 py-3 hover:text-gray-700"
+      className="cursor-pointer px-4 py-3 hover:text-text-secondary"
       onClick={() => onSort(field)}
     >
       {label}{" "}

@@ -103,42 +103,8 @@ export function ProfileForm({
     [onUpdate],
   );
 
-  const inputStyle = {
-    width: "100%",
-    padding: "10px 12px",
-    border: "1px solid var(--border-default, #d1d5db)",
-    borderRadius: "var(--radius-sm, 6px)",
-    fontFamily: "var(--font-sans, system-ui, sans-serif)",
-    fontSize: "0.875rem",
-    color: "var(--color-text-primary, #1a1a2e)",
-    outline: "none",
-    boxSizing: "border-box" as const,
-  };
-
-  const labelStyle = {
-    display: "block",
-    fontFamily: "var(--font-sans, system-ui, sans-serif)",
-    fontSize: "0.8125rem",
-    fontWeight: 500 as const,
-    color: "var(--color-text-secondary, #6b7280)",
-    marginBottom: "var(--space-1, 4px)",
-  };
-
-  const errorStyle = {
-    fontFamily: "var(--font-sans, system-ui, sans-serif)",
-    fontSize: "0.75rem",
-    color: "var(--color-error, #dc2626)",
-    marginTop: "var(--space-1, 4px)",
-  };
-
   return (
-    <div
-      style={{
-        backgroundColor: "var(--surface-white, #ffffff)",
-        borderRadius: "var(--radius-md, 8px)",
-        padding: "var(--space-6, 24px)",
-      }}
-    >
+    <div className="bg-white rounded-md p-6">
       {/* Avatar section */}
       <AvatarUploader
         currentAvatarUrl={initialProfile.avatar_url}
@@ -148,82 +114,66 @@ export function ProfileForm({
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "var(--space-4, 16px)",
-          marginTop: "var(--space-6, 24px)",
-        }}
+        className="flex flex-col gap-4 mt-6"
       >
         {/* Display Name */}
         <div>
-          <label style={labelStyle}>Display Name *</label>
+          <label className="block font-mono text-[10px] uppercase tracking-wider font-medium text-text-secondary mb-1">
+            Display Name *
+          </label>
           <input
             type="text"
             {...register("display_name")}
-            style={{
-              ...inputStyle,
-              borderColor: errors.display_name
-                ? "var(--color-error, #dc2626)"
-                : "var(--border-default, #d1d5db)",
-            }}
+            className={`w-full px-3 py-2.5 border rounded-sm font-sans text-sm text-text-primary outline-none ${
+              errors.display_name ? "border-error" : "border-border"
+            }`}
           />
           {errors.display_name && (
-            <p style={errorStyle}>{errors.display_name.message}</p>
+            <p className="font-sans text-xs text-error mt-1">
+              {errors.display_name.message}
+            </p>
           )}
         </div>
 
         {/* Email (read-only) */}
         <div>
-          <label style={labelStyle}>Email</label>
+          <label className="block font-mono text-[10px] uppercase tracking-wider font-medium text-text-secondary mb-1">
+            Email
+          </label>
           <input
             type="email"
             value={initialProfile.email}
             disabled
-            style={{
-              ...inputStyle,
-              backgroundColor: "var(--surface-parchment, #f0ebe3)",
-              color: "var(--color-text-disabled, #9ca3af)",
-              cursor: "not-allowed",
-            }}
+            className="w-full px-3 py-2.5 border border-border rounded-sm font-sans text-sm text-text-muted bg-parchment cursor-not-allowed outline-none"
           />
         </div>
 
         {/* Bio */}
         <div>
-          <label style={labelStyle}>Bio</label>
+          <label className="block font-mono text-[10px] uppercase tracking-wider font-medium text-text-secondary mb-1">
+            Bio
+          </label>
           <textarea
             {...register("bio")}
             rows={3}
-            style={{
-              ...inputStyle,
-              resize: "vertical" as const,
-              borderColor: errors.bio
-                ? "var(--color-error, #dc2626)"
-                : "var(--border-default, #d1d5db)",
-            }}
+            className={`w-full px-3 py-2.5 border rounded-sm font-sans text-sm text-text-primary outline-none resize-y ${
+              errors.bio ? "border-error" : "border-border"
+            }`}
           />
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginTop: "var(--space-1, 4px)",
-            }}
-          >
+          <div className="flex justify-between mt-1">
             {errors.bio ? (
-              <p style={errorStyle}>{errors.bio.message}</p>
+              <p className="font-sans text-xs text-error">
+                {errors.bio.message}
+              </p>
             ) : (
               <span />
             )}
             <span
-              style={{
-                fontFamily: "var(--font-sans, system-ui, sans-serif)",
-                fontSize: "0.75rem",
-                color:
-                  (bioValue?.length ?? 0) > PROFILE_BIO_MAX
-                    ? "var(--color-error, #dc2626)"
-                    : "var(--color-text-secondary, #6b7280)",
-              }}
+              className={`font-sans text-xs ${
+                (bioValue?.length ?? 0) > PROFILE_BIO_MAX
+                  ? "text-error"
+                  : "text-text-secondary"
+              }`}
             >
               {bioValue?.length ?? 0}/{PROFILE_BIO_MAX}
             </span>
@@ -232,64 +182,52 @@ export function ProfileForm({
 
         {/* Department */}
         <div>
-          <label style={labelStyle}>Department</label>
+          <label className="block font-mono text-[10px] uppercase tracking-wider font-medium text-text-secondary mb-1">
+            Department
+          </label>
           <input
             type="text"
             {...register("department")}
-            style={{
-              ...inputStyle,
-              borderColor: errors.department
-                ? "var(--color-error, #dc2626)"
-                : "var(--border-default, #d1d5db)",
-            }}
+            className={`w-full px-3 py-2.5 border rounded-sm font-sans text-sm text-text-primary outline-none ${
+              errors.department ? "border-error" : "border-border"
+            }`}
           />
           {errors.department && (
-            <p style={errorStyle}>{errors.department.message}</p>
+            <p className="font-sans text-xs text-error mt-1">
+              {errors.department.message}
+            </p>
           )}
         </div>
 
         {/* Title */}
         <div>
-          <label style={labelStyle}>Title</label>
+          <label className="block font-mono text-[10px] uppercase tracking-wider font-medium text-text-secondary mb-1">
+            Title
+          </label>
           <input
             type="text"
             {...register("title")}
-            style={{
-              ...inputStyle,
-              borderColor: errors.title
-                ? "var(--color-error, #dc2626)"
-                : "var(--border-default, #d1d5db)",
-            }}
+            className={`w-full px-3 py-2.5 border rounded-sm font-sans text-sm text-text-primary outline-none ${
+              errors.title ? "border-error" : "border-border"
+            }`}
           />
-          {errors.title && <p style={errorStyle}>{errors.title.message}</p>}
+          {errors.title && (
+            <p className="font-sans text-xs text-error mt-1">
+              {errors.title.message}
+            </p>
+          )}
         </div>
 
         {/* Server error */}
         {serverError && (
-          <p
-            style={{
-              ...errorStyle,
-              padding: "8px 12px",
-              backgroundColor: "var(--color-error-bg, #fef2f2)",
-              borderRadius: "var(--radius-sm, 6px)",
-            }}
-          >
+          <p className="font-sans text-xs text-error px-3 py-2 bg-[var(--color-error)]/5 rounded-sm">
             {serverError}
           </p>
         )}
 
         {/* Success message */}
         {submitStatus === "success" && (
-          <p
-            style={{
-              fontFamily: "var(--font-sans, system-ui, sans-serif)",
-              fontSize: "0.8125rem",
-              color: "var(--color-success, #16a34a)",
-              padding: "8px 12px",
-              backgroundColor: "var(--color-success-bg, #f0fdf4)",
-              borderRadius: "var(--radius-sm, 6px)",
-            }}
-          >
+          <p className="font-sans text-[0.8125rem] text-green px-3 py-2 bg-green/5 rounded-sm">
             Profile updated successfully
           </p>
         )}
@@ -299,23 +237,11 @@ export function ProfileForm({
           <button
             type="submit"
             disabled={!isDirty || submitStatus === "saving"}
-            style={{
-              padding: "10px 24px",
-              backgroundColor:
-                !isDirty || submitStatus === "saving"
-                  ? "var(--color-text-disabled, #9ca3af)"
-                  : "var(--color-primary, #1a1a2e)",
-              color: "#ffffff",
-              border: "none",
-              borderRadius: "var(--radius-sm, 6px)",
-              fontFamily: "var(--font-sans, system-ui, sans-serif)",
-              fontSize: "0.875rem",
-              fontWeight: 500,
-              cursor:
-                !isDirty || submitStatus === "saving"
-                  ? "not-allowed"
-                  : "pointer",
-            }}
+            className={`px-6 py-2.5 text-white border-none rounded-sm font-sans text-sm font-medium ${
+              !isDirty || submitStatus === "saving"
+                ? "bg-text-muted cursor-not-allowed"
+                : "bg-primary cursor-pointer"
+            }`}
           >
             {submitStatus === "saving" ? "Saving..." : "Save Changes"}
           </button>

@@ -169,7 +169,7 @@ errors:
     error: "PostToolUse eslint hook stripped newly-added barrel exports from index.ts, causing runtime 'is not a constructor' errors"
     rule: "After editing barrel export files (index.ts), re-read the file to verify the hook didn't strip new exports. Re-add if stripped."
     location: "Root CLAUDE.md → Things Claude Gets Wrong"
-    recurrence: 1
+    recurrence: 2
 
   - date: 2026-02-20
     story: STORY-SA-4
@@ -471,3 +471,87 @@ errors:
     rule: "Never use inline style={{}} for static values. Use Tailwind arbitrary values (text-[0.9375rem], w-60). Design tokens rule applies to style props too."
     location: "Root CLAUDE.md → Things Claude Gets Wrong"
     recurrence: 1
+
+  - date: 2026-02-20
+    story: STORY-F-14
+    error: "shadcn/ui init overwrote brand CSS variables (--background, --foreground, --border, --primary) with generic oklch values. Had to manually restore brand-mapped tokens after init."
+    rule: "After shadcn init, immediately restore brand-mapped CSS variables. shadcn defaults to neutral oklch palette — remap to project design tokens."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong + docs/solutions/shadcn-brand-token-mapping.md"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-14
+    error: "zodResolver(templateFormSchema) caused TS2769 — @hookform/resolvers@5.2.2 overload types expect _zod.version.minor=0 but zod@4.3.6 has minor=3. Runtime works (has runtime detection)."
+    rule: "Cast schema as any when passing to zodResolver() — zod@4.3 / @hookform/resolvers@5.2 type mismatch. Runtime detection works correctly."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-14
+    error: "@testing-library/react auto-cleanup did not run between tests in vitest globals:false mode. DOM from TemplateGrid test (3 cards with 'Institution' badge) leaked into TemplateCard test, causing 'Found multiple elements' error."
+    rule: "Always add afterEach(() => cleanup()) in jsdom test files when vitest globals:false. Auto-cleanup requires globals:true."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-14
+    error: "Radix Select click test threw 'target.hasPointerCapture is not a function' in jsdom. Radix primitives require browser APIs jsdom doesn't implement."
+    rule: "Don't write userEvent interaction tests for Radix Select/Popover in jsdom. Test callbacks with fireEvent on plain inputs or test logic without rendering."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-14
+    error: "useEffect(() => { fetchTemplates(); }, []) triggered react-hooks/set-state-in-effect because fetchTemplates calls setState via setLoading/setTemplates."
+    rule: "Wrap async-state-setting functions in async IIFE inside useEffect to break the lint rule's static analysis chain."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-13
+    error: "Used .in('sections.course_id', courseIds) on a joined table — PostgREST .in() only works on direct table columns, returned empty results"
+    rule: "Query intermediate table directly with nested selects for batch counting through joins. See docs/solutions/enriched-view-service-pattern.md"
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-13
+    error: "PostgREST .or() filter string constructed from raw user search input — % and _ act as LIKE wildcards, comma/dot are filter syntax delimiters"
+    rule: "Escape %, _, comma, and dot in user input before constructing PostgREST .or() filter strings"
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-13
+    error: "PostToolUse eslint hook stripped CourseViewService/CourseViewController imports from index.ts (recurrence of barrel-stripping issue)"
+    rule: "Add imports AND their usage in a single Edit call. Existing CRITICAL rule in CLAUDE.md."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong (existing rule)"
+    recurrence: 2
+
+  - date: 2026-02-20
+    story: STORY-F-13
+    error: "Sequential awaits for independent queries in getDetailView (findByIdEnriched then getCourseHierarchy) — recurrence of Promise.all rule"
+    rule: "Wrap independent queries in Promise.all. Existing rule in CLAUDE.md."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong (existing rule)"
+    recurrence: 1
+
+  - date: 2026-02-20
+    story: STORY-F-17
+    error: "PostToolUse eslint hook stripped GenerationPreferenceService/Controller imports from index.ts — TWICE. First time: added imports in one edit, usage in another. Second time: editing the test file triggered the hook on index.ts again."
+    rule: "Existing CRITICAL rule: add imports AND their usage in a single Edit call. Recurrence bumped on STORY-IA-4 entry."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong (existing rule)"
+    recurrence: 3
+
+  - date: 2026-02-20
+    story: STORY-F-17
+    error: "Defined DifficultyDistribution interface in generation-preferences.types.ts when identical type already existed in template/template.types.ts — caused TS2308 duplicate export from root barrel."
+    rule: "Existing rule: grep packages/types/src for existing type names before creating new ones. This extends to interfaces used across domains — check template/shared types too."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong (existing rule)"
+    recurrence: 1
+
+  - date: 2026-02-20
+    story: STORY-F-17
+    error: "Tried packages/types/node_modules/.bin/tsc (gone since node_modules pruned), npx tsc (wrong binary), pnpm exec tsc (not found) before using pnpm --filter types exec tsc."
+    rule: "Existing rule in CLAUDE.md Monorepo Conventions. New working command: pnpm --filter <workspace> exec tsc."
+    location: "Root CLAUDE.md → Monorepo Conventions"
+    recurrence: 10

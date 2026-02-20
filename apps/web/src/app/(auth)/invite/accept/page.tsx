@@ -15,8 +15,8 @@ export default function InviteAcceptPage() {
         <Suspense
           fallback={
             <div className="flex flex-col items-center justify-center py-8">
-              <span className="mb-4 inline-block h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-transparent" />
-              <p className="text-sm text-gray-600">Loading...</p>
+              <span className="mb-4 inline-block h-6 w-6 animate-spin rounded-full border-2 border-border-light border-t-transparent" />
+              <p className="text-sm text-text-secondary">Loading...</p>
             </div>
           }
         >

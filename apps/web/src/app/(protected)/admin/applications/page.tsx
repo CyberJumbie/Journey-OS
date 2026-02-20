@@ -8,9 +8,9 @@ export const metadata: Metadata = {
 
 export default function AdminApplicationsPage() {
   return (
-    <div className="min-h-screen bg-[#f5f3ef] p-6">
+    <div className="min-h-screen bg-cream p-6">
       <div className="mx-auto max-w-7xl">
-        <h1 className="mb-6 font-serif text-2xl font-bold text-[#002c76]">
+        <h1 className="mb-6 font-serif text-2xl font-bold text-navy-deep">
           Application Review Queue
         </h1>
         <ApplicationReviewQueue />

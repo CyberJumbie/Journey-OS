@@ -72,6 +72,13 @@ export interface CreateCourseRequest {
   readonly semester?: string;
   readonly credit_hours?: number;
   readonly course_type?: CourseType;
+  readonly program_id?: string | null;
+  readonly max_enrollment?: number;
+  readonly is_required?: boolean;
+  readonly prerequisites?: readonly string[];
+  readonly learning_objectives?: readonly string[];
+  readonly tags?: readonly string[];
+  readonly status?: CourseStatus;
 }
 
 export interface UpdateCourseRequest {

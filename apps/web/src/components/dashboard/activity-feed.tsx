@@ -40,7 +40,7 @@ export function ActivityFeed({ userId }: ActivityFeedProps) {
   return (
     <div className="rounded-lg border border-border bg-card">
       <div className="px-4 py-3 border-b border-border">
-        <h3 className="text-sm font-semibold text-foreground">
+        <h3 className="text-sm font-semibold font-serif text-text-primary">
           Recent Activity
         </h3>
         <div className="flex flex-wrap gap-2 mt-2">
@@ -55,7 +55,7 @@ export function ActivityFeed({ userId }: ActivityFeedProps) {
                 onChange={() => toggleEventType(et.value)}
                 className="rounded border-border"
               />
-              <span className="text-muted-foreground">{et.label}</span>
+              <span className="text-text-muted">{et.label}</span>
             </label>
           ))}
         </div>
@@ -91,7 +91,7 @@ export function ActivityFeed({ userId }: ActivityFeedProps) {
         {(status === "data" || status === "loading_more") &&
         events.length === 0 ? (
           <div className="py-8 text-center">
-            <p className="text-sm text-muted-foreground">No recent activity</p>
+            <p className="text-sm text-text-muted">No recent activity</p>
           </div>
         ) : null}
 
@@ -106,13 +106,13 @@ export function ActivityFeed({ userId }: ActivityFeedProps) {
 
         {status === "loading_more" ? (
           <div className="py-3 text-center">
-            <p className="text-xs text-muted-foreground">Loading more...</p>
+            <p className="text-xs text-text-muted">Loading more...</p>
           </div>
         ) : null}
 
         {status === "data" && !hasMore && events.length > 0 ? (
           <div className="py-3 text-center">
-            <p className="text-xs text-muted-foreground">All activity loaded</p>
+            <p className="text-xs text-text-muted">All activity loaded</p>
           </div>
         ) : null}
       </div>

@@ -36,19 +36,7 @@ export function HelpSidebar({
   );
 
   return (
-    <aside
-      className="hidden lg:block"
-      style={{
-        width: 240,
-        borderRight: "1px solid var(--border-light)",
-        backgroundColor: "white",
-        position: "sticky",
-        top: 0,
-        height: "fit-content",
-        maxHeight: "100vh",
-        overflowY: "auto",
-      }}
-    >
+    <aside className="hidden w-60 sticky top-0 h-fit max-h-screen overflow-y-auto border-r border-[var(--border-light)] bg-white lg:block">
       <div className="p-4">
         <HelpSearch
           value={searchValue}

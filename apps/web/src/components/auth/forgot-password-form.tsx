@@ -52,20 +52,16 @@ export function ForgotPasswordForm() {
   if (formState === "success") {
     return (
       <div className="text-center">
-        <h1
-          className="mb-4 text-2xl font-semibold"
-          style={{ fontFamily: "Source Sans 3, sans-serif" }}
-        >
+        <h1 className="mb-4 font-serif text-2xl font-semibold text-navy-deep">
           Check Your Email
         </h1>
-        <p className="mb-6" style={{ color: "#69a338" }}>
+        <p className="mb-6 text-green">
           If an account with that email exists, a password reset link has been
           sent.
         </p>
         <a
           href="/login"
-          className="text-sm hover:underline"
-          style={{ color: "#2b71b9" }}
+          className="text-sm font-medium text-blue-mid transition-colors hover:text-navy-deep hover:underline"
         >
           Back to Login
         </a>
@@ -75,13 +71,10 @@ export function ForgotPasswordForm() {
 
   return (
     <div>
-      <h1
-        className="mb-2 text-center text-2xl font-semibold"
-        style={{ fontFamily: "Source Sans 3, sans-serif" }}
-      >
+      <h1 className="mb-2 text-center font-serif text-2xl font-semibold text-navy-deep">
         Forgot Password
       </h1>
-      <p className="mb-6 text-center text-sm text-gray-600">
+      <p className="mb-6 text-center text-sm text-text-secondary">
         Enter your email and we&apos;ll send you a reset link.
       </p>
 
@@ -89,8 +82,7 @@ export function ForgotPasswordForm() {
         <div>
           <label
             htmlFor="email"
-            className="mb-1 block text-sm font-medium text-gray-700"
-            style={{ fontFamily: "DM Mono, monospace" }}
+            className="mb-1 block font-mono text-[10px] uppercase tracking-wider text-text-muted"
           >
             Email
           </label>
@@ -100,17 +92,16 @@ export function ForgotPasswordForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={formState === "loading"}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2"
-            style={{ "--tw-ring-color": "#2b71b9" } as React.CSSProperties}
+            className="w-full rounded-lg border border-border bg-parchment px-3 py-2 text-sm text-text-primary focus:border-blue-mid focus:outline-none focus:ring-2 focus:ring-blue-mid/15"
             placeholder="you@example.edu"
           />
           {validationError && (
-            <p className="mt-1 text-sm text-red-600">{validationError}</p>
+            <p className="mt-1 text-sm text-error">{validationError}</p>
           )}
         </div>
 
         {formState === "error" && (
-          <p className="text-sm text-red-600">
+          <p className="text-sm text-error">
             Something went wrong. Please try again.
           </p>
         )}
@@ -118,8 +109,7 @@ export function ForgotPasswordForm() {
         <button
           type="submit"
           disabled={formState === "loading"}
-          className="flex w-full items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
-          style={{ backgroundColor: "#2b71b9" }}
+          className="flex w-full items-center justify-center rounded-lg bg-navy-deep px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue disabled:opacity-60"
         >
           {formState === "loading" ? (
             <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
@@ -134,8 +124,7 @@ export function ForgotPasswordForm() {
       <p className="mt-4 text-center text-sm">
         <a
           href="/login"
-          className="hover:underline"
-          style={{ color: "#2b71b9" }}
+          className="font-medium text-blue-mid transition-colors hover:text-navy-deep hover:underline"
         >
           Back to Login
         </a>

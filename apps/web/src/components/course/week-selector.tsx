@@ -20,19 +20,19 @@ export function WeekSelector({
         type="button"
         disabled={!canGoPrev}
         onClick={() => onWeekChange(currentWeek - 1)}
-        className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+        className="rounded-md border border-border px-3 py-1.5 text-sm font-medium text-text-secondary transition-colors hover:bg-parchment disabled:cursor-not-allowed disabled:opacity-40"
         aria-label="Previous week"
       >
         &larr; Prev
       </button>
-      <span className="text-sm font-medium text-gray-700">
+      <span className="text-sm font-medium text-text-secondary">
         Week {currentWeek} of {totalWeeks}
       </span>
       <button
         type="button"
         disabled={!canGoNext}
         onClick={() => onWeekChange(currentWeek + 1)}
-        className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+        className="rounded-md border border-border px-3 py-1.5 text-sm font-medium text-text-secondary transition-colors hover:bg-parchment disabled:cursor-not-allowed disabled:opacity-40"
         aria-label="Next week"
       >
         Next &rarr;

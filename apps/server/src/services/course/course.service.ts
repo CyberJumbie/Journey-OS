@@ -10,6 +10,9 @@ import type {
   UpdateCourseRequest,
   CourseListQuery,
   CourseListResponse,
+  CourseListViewResponse,
+  CourseDetailView,
+  CourseStatus,
 } from "@journey-os/types";
 import { VALID_COURSE_TYPES, VALID_COURSE_STATUSES } from "@journey-os/types";
 import {

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import type { GlobalUserListItem } from "@journey-os/types";
+import { getAuthToken } from "@web/lib/auth/get-auth-token";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
@@ -30,7 +31,7 @@ export function ReassignmentConfirmModal({
   useEffect(() => {
     async function fetchInstitutions() {
       try {
-        const token = ""; // TODO: get from auth context
+        const token = await getAuthToken();
         const res = await fetch(
           `${API_URL}/api/v1/auth/institutions/search?q=&limit=100`,
           {
@@ -63,7 +64,7 @@ export function ReassignmentConfirmModal({
     setError("");
 
     try {
-      const token = ""; // TODO: get from auth context
+      const token = await getAuthToken();
       const res = await fetch(
         `${API_URL}/api/v1/admin/users/${user.id}/reassign`,
         {
@@ -103,7 +104,7 @@ export function ReassignmentConfirmModal({
       <div className="mx-4 w-full max-w-md rounded-lg bg-white shadow-xl">
         {/* Header */}
         <div className="border-b px-6 py-4">
-          <h2 className="font-serif text-lg font-bold text-[#002c76]">
+          <h2 className="font-serif text-lg font-bold text-navy-deep">
             Reassign User
           </h2>
         </div>
@@ -113,15 +114,15 @@ export function ReassignmentConfirmModal({
           {/* User Summary */}
           <div className="space-y-1 text-sm">
             <p>
-              <span className="font-medium text-gray-700">User:</span>{" "}
+              <span className="font-medium text-text-secondary">User:</span>{" "}
               {user.full_name}
             </p>
             <p>
-              <span className="font-medium text-gray-700">Email:</span>{" "}
+              <span className="font-medium text-text-secondary">Email:</span>{" "}
               {user.email}
             </p>
             <p>
-              <span className="font-medium text-gray-700">
+              <span className="font-medium text-text-secondary">
                 Current Institution:
               </span>{" "}
               {user.institution_name ?? "None"}
@@ -132,16 +133,16 @@ export function ReassignmentConfirmModal({
           <div>
             <label
               htmlFor="target-institution"
-              className="mb-1 block text-sm font-medium text-gray-700"
+              className="mb-1 block text-sm font-medium text-text-secondary"
             >
-              Target Institution <span className="text-red-500">*</span>
+              Target Institution <span className="text-error">*</span>
             </label>
             <select
               id="target-institution"
               value={targetId}
               onChange={(e) => setTargetId(e.target.value)}
               disabled={submitting || loadingInstitutions}
-              className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-[#2b71b9] focus:outline-none focus:ring-1 focus:ring-[#2b71b9] disabled:opacity-50"
+              className="w-full rounded border border-border px-3 py-2 text-sm focus:border-blue-mid focus:outline-none focus:ring-1 focus:ring-blue-mid disabled:opacity-50"
             >
               <option value="">
                 {loadingInstitutions
@@ -160,7 +161,7 @@ export function ReassignmentConfirmModal({
           <div>
             <label
               htmlFor="reassignment-reason"
-              className="mb-1 block text-sm font-medium text-gray-700"
+              className="mb-1 block text-sm font-medium text-text-secondary"
             >
               Reason (optional)
             </label>
@@ -171,7 +172,7 @@ export function ReassignmentConfirmModal({
               placeholder="e.g. Faculty transfer to partner institution"
               disabled={submitting}
               rows={2}
-              className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-[#2b71b9] focus:outline-none focus:ring-1 focus:ring-[#2b71b9] disabled:opacity-50"
+              className="w-full rounded border border-border px-3 py-2 text-sm focus:border-blue-mid focus:outline-none focus:ring-1 focus:ring-blue-mid disabled:opacity-50"
             />
           </div>
 
@@ -190,7 +191,7 @@ export function ReassignmentConfirmModal({
           </div>
 
           {/* Error */}
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-error">{error}</p>}
         </div>
 
         {/* Footer */}
@@ -198,14 +199,14 @@ export function ReassignmentConfirmModal({
           <button
             onClick={onClose}
             disabled={submitting}
-            className="rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+            className="rounded border border-border px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:bg-parchment disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             onClick={handleConfirm}
             disabled={submitting || !targetId}
-            className="rounded bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
+            className="rounded bg-error px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-error/90 disabled:opacity-50"
           >
             {submitting ? "Reassigning\u2026" : "Reassign User"}
           </button>

@@ -176,7 +176,7 @@ export function UploadDropzone({ courseId, token }: UploadDropzoneProps) {
           type="button"
           onClick={handleUpload}
           disabled={isUploading}
-          className="self-end rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+          className="self-end rounded-md bg-blue-mid px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-navy-deep disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isUploading
             ? "Uploading..."

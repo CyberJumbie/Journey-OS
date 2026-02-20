@@ -9,6 +9,7 @@ import type {
   SortDirection,
 } from "@journey-os/types";
 import { ApplicationDetailModal } from "./application-detail-modal";
+import { getAuthToken } from "@web/lib/auth/get-auth-token";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 const PAGE_SIZE = 20;
@@ -17,8 +18,8 @@ type Status = "loading" | "data" | "empty" | "error";
 
 const STATUS_BADGES: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-800",
-  approved: "bg-green-100 text-green-800",
-  rejected: "bg-red-100 text-red-800",
+  approved: "bg-green/10 text-green",
+  rejected: "bg-error/10 text-error",
 };
 
 const TYPE_LABELS: Record<string, string> = {
@@ -62,7 +63,7 @@ export function ApplicationReviewQueue() {
       params.set("sort_dir", sortDir);
       if (statusFilter !== "all") params.set("status", statusFilter);
 
-      const token = ""; // TODO: get from auth context
+      const token = await getAuthToken();
       const res = await fetch(
         `${API_URL}/api/v1/admin/applications?${params}`,
         {
@@ -99,7 +100,7 @@ export function ApplicationReviewQueue() {
   async function handleViewDetails(id: string) {
     setDetailLoading(true);
     try {
-      const token = ""; // TODO: get from auth context
+      const token = await getAuthToken();
       const res = await fetch(`${API_URL}/api/v1/admin/applications/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -147,7 +148,7 @@ export function ApplicationReviewQueue() {
             setStatusFilter(e.target.value as ApplicationStatus | "all");
             setPage(1);
           }}
-          className="rounded border border-gray-300 px-3 py-2 text-sm"
+          className="rounded border border-border px-3 py-2 text-sm"
         >
           {STATUS_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -155,15 +156,15 @@ export function ApplicationReviewQueue() {
             </option>
           ))}
         </select>
-        <span className="text-sm text-gray-500">
+        <span className="text-sm text-text-muted">
           {total} application{total !== 1 ? "s" : ""}
         </span>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
+      <div className="overflow-x-auto rounded-lg border border-border-light bg-white shadow-sm">
         <table className="w-full text-left text-sm">
-          <thead className="border-b bg-gray-50 text-xs uppercase text-gray-500">
+          <thead className="border-b bg-parchment text-xs uppercase text-text-muted">
             <tr>
               <SortableHeader
                 label="Institution"
@@ -192,7 +193,7 @@ export function ApplicationReviewQueue() {
                 <tr key={i} className="border-b">
                   {Array.from({ length: 7 }).map((__, j) => (
                     <td key={j} className="px-4 py-3">
-                      <div className="h-4 w-24 animate-pulse rounded bg-gray-200" />
+                      <div className="h-4 w-24 animate-pulse rounded bg-warm-gray" />
                     </td>
                   ))}
                 </tr>
@@ -200,34 +201,37 @@ export function ApplicationReviewQueue() {
 
             {status === "data" &&
               applications.map((app) => (
-                <tr key={app.id} className="border-b hover:bg-gray-50">
-                  <td className="px-4 py-3 font-medium text-gray-900">
+                <tr
+                  key={app.id}
+                  className="border-b transition-colors hover:bg-parchment"
+                >
+                  <td className="px-4 py-3 font-medium text-text-primary">
                     {app.institution_name}
                   </td>
-                  <td className="px-4 py-3 text-gray-600">
+                  <td className="px-4 py-3 text-text-secondary">
                     {TYPE_LABELS[app.institution_type] ?? app.institution_type}
                   </td>
-                  <td className="px-4 py-3 text-gray-600">
+                  <td className="px-4 py-3 text-text-secondary">
                     {app.contact_name}
                   </td>
-                  <td className="px-4 py-3 font-mono text-xs text-gray-600">
+                  <td className="px-4 py-3 font-mono text-xs text-text-secondary">
                     {app.contact_email}
                   </td>
                   <td className="px-4 py-3">
                     <span
-                      className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_BADGES[app.status] ?? "bg-gray-100 text-gray-800"}`}
+                      className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_BADGES[app.status] ?? "bg-warm-gray text-text-secondary"}`}
                     >
                       {app.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-xs text-gray-500">
+                  <td className="px-4 py-3 text-xs text-text-muted">
                     {new Date(app.created_at).toLocaleDateString()}
                   </td>
                   <td className="px-4 py-3">
                     <button
                       onClick={() => handleViewDetails(app.id)}
                       disabled={detailLoading}
-                      className="text-sm text-[#2b71b9] hover:underline disabled:opacity-50"
+                      className="text-sm text-blue-mid hover:underline disabled:opacity-50"
                     >
                       View Details
                     </button>
@@ -237,11 +241,14 @@ export function ApplicationReviewQueue() {
 
             {status === "empty" && (
               <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-gray-500">
+                <td
+                  colSpan={7}
+                  className="px-4 py-8 text-center text-text-muted"
+                >
                   No applications found.{" "}
                   <button
                     onClick={resetFilters}
-                    className="text-[#2b71b9] underline"
+                    className="text-blue-mid underline"
                   >
                     Reset filters
                   </button>
@@ -251,11 +258,11 @@ export function ApplicationReviewQueue() {
 
             {status === "error" && (
               <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-red-600">
+                <td colSpan={7} className="px-4 py-8 text-center text-error">
                   {errorMsg}{" "}
                   <button
                     onClick={fetchApplications}
-                    className="text-[#2b71b9] underline"
+                    className="text-blue-mid underline"
                   >
                     Retry
                   </button>
@@ -269,21 +276,21 @@ export function ApplicationReviewQueue() {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-500">
+          <span className="text-text-muted">
             Page {page} of {totalPages}
           </span>
           <div className="flex gap-2">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1}
-              className="rounded border px-3 py-1 text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              className="rounded border px-3 py-1 text-text-secondary transition-colors hover:bg-parchment disabled:opacity-50"
             >
               Previous
             </button>
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
-              className="rounded border px-3 py-1 text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              className="rounded border px-3 py-1 text-text-secondary transition-colors hover:bg-parchment disabled:opacity-50"
             >
               Next
             </button>
@@ -326,7 +333,7 @@ function SortableHeader({
   const active = current === field;
   return (
     <th
-      className="cursor-pointer px-4 py-3 hover:text-gray-700"
+      className="cursor-pointer px-4 py-3 hover:text-text-secondary"
       onClick={() => onSort(field)}
     >
       {label}{" "}

@@ -84,13 +84,13 @@ export function WeeklySchedule({ courseId }: WeeklyScheduleProps) {
   if (state.status === "loading") {
     return (
       <div className="space-y-4">
-        <div className="h-8 w-48 animate-pulse rounded bg-gray-200" />
+        <div className="h-8 w-48 animate-pulse rounded bg-warm-gray" />
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-5">
           {DAY_ORDER.map((day) => (
             <div key={day} className="space-y-2">
-              <div className="h-5 w-20 animate-pulse rounded bg-gray-200" />
-              <div className="h-24 animate-pulse rounded bg-gray-100" />
-              <div className="h-24 animate-pulse rounded bg-gray-100" />
+              <div className="h-5 w-20 animate-pulse rounded bg-warm-gray" />
+              <div className="h-24 animate-pulse rounded bg-parchment" />
+              <div className="h-24 animate-pulse rounded bg-parchment" />
             </div>
           ))}
         </div>
@@ -129,8 +129,8 @@ export function WeeklySchedule({ courseId }: WeeklyScheduleProps) {
       />
 
       {isEmpty ? (
-        <div className="flex items-center justify-center rounded-lg border border-gray-200 bg-gray-50 py-12">
-          <p className="text-sm text-gray-500">
+        <div className="flex items-center justify-center rounded-lg border border-border-light bg-parchment py-12">
+          <p className="text-sm text-text-muted">
             No sessions scheduled for this week.
           </p>
         </div>
@@ -138,7 +138,7 @@ export function WeeklySchedule({ courseId }: WeeklyScheduleProps) {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-5">
           {DAY_ORDER.map((day) => (
             <div key={day}>
-              <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+              <h3 className="mb-2 text-xs font-semibold font-mono uppercase tracking-wide text-text-muted">
                 {DAY_LABELS[day]}
               </h3>
               <div className="space-y-2">

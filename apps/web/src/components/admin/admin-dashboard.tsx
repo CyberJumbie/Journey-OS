@@ -36,14 +36,14 @@ function KPISkeletons() {
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
       {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="h-28 animate-pulse rounded-lg bg-gray-200" />
+        <div key={i} className="h-28 animate-pulse rounded-lg bg-warm-gray" />
       ))}
     </div>
   );
 }
 
 function SystemHealthSkeleton() {
-  return <div className="h-24 animate-pulse rounded-lg bg-gray-200" />;
+  return <div className="h-24 animate-pulse rounded-lg bg-warm-gray" />;
 }
 
 export function AdminDashboard() {
@@ -131,36 +131,45 @@ export function AdminDashboard() {
 
       {/* System Health */}
       <div className="rounded-lg bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">
+        <h2 className="mb-4 font-serif text-lg font-semibold text-text-primary">
           System Health
         </h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div>
-            <p className="text-sm text-gray-500">API Response (p95)</p>
-            <p className="text-xl font-semibold text-gray-900">
+            <p className="font-mono text-[10px] uppercase tracking-wider text-text-muted">
+              API Response (p95)
+            </p>
+            <p className="font-serif text-xl font-semibold text-text-primary">
               {system_health.api_response_p95_ms}
-              <span className="text-sm font-normal text-gray-500"> ms</span>
+              <span className="text-sm font-normal text-text-secondary">
+                {" "}
+                ms
+              </span>
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Error Rate (24h)</p>
-            <p className="text-xl font-semibold text-gray-900">
+            <p className="font-mono text-[10px] uppercase tracking-wider text-text-muted">
+              Error Rate (24h)
+            </p>
+            <p className="font-serif text-xl font-semibold text-text-primary">
               {(system_health.error_rate_24h * 100).toFixed(2)}
-              <span className="text-sm font-normal text-gray-500">%</span>
+              <span className="text-sm font-normal text-text-secondary">%</span>
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Storage Usage</p>
-            <p className="text-xl font-semibold text-gray-900">
+            <p className="font-mono text-[10px] uppercase tracking-wider text-text-muted">
+              Storage Usage
+            </p>
+            <p className="font-serif text-xl font-semibold text-text-primary">
               {system_health.storage_used_mb.toLocaleString()}
-              <span className="text-sm font-normal text-gray-500">
+              <span className="text-sm font-normal text-text-secondary">
                 {" "}
                 / {system_health.storage_limit_mb.toLocaleString()} MB
               </span>
             </p>
-            <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-gray-200">
+            <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-warm-gray">
               <div
-                className="h-full rounded-full bg-[#2b71b9]"
+                className="h-full rounded-full bg-blue-mid"
                 style={{ width: `${Math.min(storagePercent, 100)}%` }}
               />
             </div>
@@ -170,7 +179,7 @@ export function AdminDashboard() {
 
       {/* Quick Actions */}
       <div>
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">
+        <h2 className="mb-4 font-serif text-lg font-semibold text-text-primary">
           Quick Actions
         </h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

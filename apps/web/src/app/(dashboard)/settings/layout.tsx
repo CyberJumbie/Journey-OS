@@ -5,7 +5,8 @@ import Link from "next/link";
 
 const NAV_ITEMS = [
   { label: "Profile", href: "/settings/profile", enabled: true },
-  { label: "Notifications", href: "/settings/notifications", enabled: false },
+  { label: "Generation", href: "/settings/generation", enabled: true },
+  { label: "Notifications", href: "/settings/notifications", enabled: true },
   { label: "Appearance", href: "/settings/appearance", enabled: false },
 ];
 
@@ -18,74 +19,30 @@ export default function SettingsLayout({
   const pathname = usePathname();
 
   return (
-    <div
-      style={{
-        display: "flex",
-        gap: "var(--space-6, 24px)",
-        minHeight: "100%",
-      }}
-    >
+    <div className="flex gap-6 min-h-full">
       {/* Left nav */}
-      <nav
-        style={{
-          width: 240,
-          flexShrink: 0,
-          backgroundColor: "var(--surface-parchment, #f0ebe3)",
-          borderRadius: "var(--radius-md, 8px)",
-          padding: "var(--space-4, 16px)",
-        }}
-      >
-        <h2
-          style={{
-            fontFamily: "var(--font-serif, Georgia, serif)",
-            fontSize: "1.125rem",
-            fontWeight: 600,
-            marginBottom: "var(--space-4, 16px)",
-            color: "var(--color-text-primary, #1a1a2e)",
-          }}
-        >
+      <nav className="w-60 shrink-0 bg-parchment rounded-md p-4">
+        <h2 className="font-serif text-lg font-semibold mb-4 text-text-primary">
           Settings
         </h2>
-        <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+        <ul className="list-none p-0 m-0">
           {NAV_ITEMS.map((item) => {
             const isActive = pathname === item.href;
             return (
-              <li
-                key={item.href}
-                style={{ marginBottom: "var(--space-1, 4px)" }}
-              >
+              <li key={item.href} className="mb-1">
                 {item.enabled ? (
                   <Link
                     href={item.href}
-                    style={{
-                      display: "block",
-                      padding: "8px 12px",
-                      borderRadius: "var(--radius-sm, 6px)",
-                      textDecoration: "none",
-                      fontFamily: "var(--font-sans, system-ui, sans-serif)",
-                      fontSize: "0.875rem",
-                      fontWeight: isActive ? 600 : 400,
-                      color: isActive
-                        ? "var(--color-primary, #1a1a2e)"
-                        : "var(--color-text-secondary, #6b7280)",
-                      backgroundColor: isActive
-                        ? "var(--surface-white, #ffffff)"
-                        : "transparent",
-                    }}
+                    className={`block px-3 py-2 rounded-sm text-sm no-underline font-sans ${
+                      isActive
+                        ? "font-semibold text-primary bg-white"
+                        : "font-normal text-text-secondary"
+                    }`}
                   >
                     {item.label}
                   </Link>
                 ) : (
-                  <span
-                    style={{
-                      display: "block",
-                      padding: "8px 12px",
-                      fontFamily: "var(--font-sans, system-ui, sans-serif)",
-                      fontSize: "0.875rem",
-                      color: "var(--color-text-disabled, #9ca3af)",
-                      cursor: "not-allowed",
-                    }}
-                  >
+                  <span className="block px-3 py-2 font-sans text-sm text-text-muted cursor-not-allowed">
                     {item.label}
                   </span>
                 )}
@@ -95,7 +52,7 @@ export default function SettingsLayout({
         </ul>
       </nav>
       {/* Right content */}
-      <div style={{ flex: 1, minWidth: 0 }}>{children}</div>
+      <div className="flex-1 min-w-0">{children}</div>
     </div>
   );
 }

@@ -82,7 +82,7 @@ export function CourseOverview() {
             setProgramId(e.target.value);
             setPage(1);
           }}
-          className="rounded-md border border-gray-300 px-3 py-1.5 text-sm"
+          className="rounded-md border border-border px-3 py-1.5 text-sm"
         />
         <input
           type="text"
@@ -92,7 +92,7 @@ export function CourseOverview() {
             setAcademicYear(e.target.value);
             setPage(1);
           }}
-          className="rounded-md border border-gray-300 px-3 py-1.5 text-sm"
+          className="rounded-md border border-border px-3 py-1.5 text-sm"
         />
         <select
           value={status}
@@ -100,7 +100,7 @@ export function CourseOverview() {
             setStatus(e.target.value as CourseOverviewStatusFilter | "");
             setPage(1);
           }}
-          className="rounded-md border border-gray-300 px-3 py-1.5 text-sm"
+          className="rounded-md border border-border px-3 py-1.5 text-sm"
         >
           <option value="">All Statuses</option>
           <option value="active">Active</option>
@@ -111,7 +111,7 @@ export function CourseOverview() {
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value as CourseOverviewSortField)}
-          className="rounded-md border border-gray-300 px-3 py-1.5 text-sm"
+          className="rounded-md border border-border px-3 py-1.5 text-sm"
         >
           <option value="name">Sort by Name</option>
           <option value="fulfills_coverage_pct">Sort by Coverage %</option>
@@ -120,7 +120,7 @@ export function CourseOverview() {
         <button
           type="button"
           onClick={() => setSortDir(sortDir === "asc" ? "desc" : "asc")}
-          className="rounded-md border border-gray-300 px-3 py-1.5 text-sm"
+          className="rounded-md border border-border px-3 py-1.5 text-sm transition-colors hover:bg-parchment"
         >
           {sortDir === "asc" ? "\u2191 Asc" : "\u2193 Desc"}
         </button>
@@ -128,12 +128,12 @@ export function CourseOverview() {
 
       {/* Error state */}
       {error && (
-        <div className="mb-4 rounded-md bg-red-50 p-4">
-          <p className="text-sm text-red-700">{error}</p>
+        <div className="mb-4 rounded-md bg-error/5 p-4">
+          <p className="text-sm text-error">{error}</p>
           <button
             type="button"
             onClick={() => void fetchCourses()}
-            className="mt-2 text-sm font-medium text-red-700 underline"
+            className="mt-2 text-sm font-medium text-error underline"
           >
             Retry
           </button>
@@ -146,7 +146,7 @@ export function CourseOverview() {
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={`skeleton-${String(i)}`}
-              className="h-40 animate-pulse rounded-lg bg-gray-100"
+              className="h-40 animate-pulse rounded-lg bg-parchment"
             />
           ))}
         </div>
@@ -172,18 +172,18 @@ export function CourseOverview() {
                 type="button"
                 disabled={page <= 1}
                 onClick={() => setPage(page - 1)}
-                className="rounded-md border border-gray-300 px-3 py-1.5 text-sm disabled:opacity-50"
+                className="rounded-md border border-border px-3 py-1.5 text-sm transition-colors hover:bg-parchment disabled:opacity-50"
               >
                 Previous
               </button>
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-text-secondary">
                 Page {data.meta.page} of {data.meta.total_pages}
               </span>
               <button
                 type="button"
                 disabled={page >= data.meta.total_pages}
                 onClick={() => setPage(page + 1)}
-                className="rounded-md border border-gray-300 px-3 py-1.5 text-sm disabled:opacity-50"
+                className="rounded-md border border-border px-3 py-1.5 text-sm transition-colors hover:bg-parchment disabled:opacity-50"
               >
                 Next
               </button>
@@ -195,13 +195,13 @@ export function CourseOverview() {
       {/* Empty state */}
       {!loading && !error && data && data.courses.length === 0 && (
         <div className="py-12 text-center">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-text-muted">
             No courses match your filters.
           </p>
           <button
             type="button"
             onClick={resetFilters}
-            className="mt-2 text-sm font-medium text-[#2b71b9] underline"
+            className="mt-2 text-sm font-medium text-blue-mid underline"
           >
             Reset filters
           </button>

@@ -66,7 +66,7 @@ export function SuspendDialog({
       <div className="mx-4 w-full max-w-md rounded-lg bg-white shadow-xl">
         {/* Header */}
         <div className="border-b px-6 py-4">
-          <h2 className="font-serif text-lg font-bold text-[var(--color-primary,#1a1a2e)]">
+          <h2 className="font-serif text-lg font-bold text-text-primary">
             Suspend Institution
           </h2>
         </div>
@@ -76,11 +76,13 @@ export function SuspendDialog({
           {/* Institution Summary */}
           <div className="space-y-1 text-sm">
             <p>
-              <span className="font-medium text-gray-700">Institution:</span>{" "}
+              <span className="font-medium text-text-secondary">
+                Institution:
+              </span>{" "}
               {institution.name}
             </p>
             <p>
-              <span className="font-medium text-gray-700">Domain:</span>{" "}
+              <span className="font-medium text-text-secondary">Domain:</span>{" "}
               {institution.domain}
             </p>
           </div>
@@ -104,9 +106,9 @@ export function SuspendDialog({
           <div>
             <label
               htmlFor="suspend-reason"
-              className="mb-1 block text-sm font-medium text-gray-700"
+              className="mb-1 block text-sm font-medium text-text-secondary"
             >
-              Reason for suspension <span className="text-red-500">*</span>
+              Reason for suspension <span className="text-error">*</span>
             </label>
             <textarea
               id="suspend-reason"
@@ -115,15 +117,15 @@ export function SuspendDialog({
               placeholder="Describe the reason for suspending this institution (min 10 characters)"
               disabled={submitting}
               rows={3}
-              className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
+              className="w-full rounded border border-border px-3 py-2 text-sm focus:border-blue-mid focus:outline-none focus:ring-1 focus:ring-blue-mid disabled:opacity-50"
             />
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-text-muted">
               {trimmedReason.length}/{MIN_REASON_LENGTH} characters minimum
             </p>
           </div>
 
           {/* Error */}
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-error">{error}</p>}
         </div>
 
         {/* Footer */}
@@ -131,14 +133,14 @@ export function SuspendDialog({
           <button
             onClick={onClose}
             disabled={submitting}
-            className="rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+            className="rounded border border-border px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:bg-parchment disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             onClick={handleConfirm}
             disabled={submitting || !isValid}
-            className="rounded bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
+            className="rounded bg-error px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-error/90 disabled:opacity-50"
           >
             {submitting ? "Suspending\u2026" : "Suspend Institution"}
           </button>

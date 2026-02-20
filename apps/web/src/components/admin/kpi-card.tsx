@@ -14,7 +14,7 @@ interface KPICardProps {
 function TrendIndicator({ trend }: { readonly trend: "up" | "down" | "flat" }) {
   if (trend === "up") {
     return (
-      <span className="text-[#69a338]" aria-label="Trending up">
+      <span className="text-green" aria-label="Trending up">
         &#9650;
       </span>
     );
@@ -27,7 +27,7 @@ function TrendIndicator({ trend }: { readonly trend: "up" | "down" | "flat" }) {
     );
   }
   return (
-    <span className="text-gray-500" aria-label="No change">
+    <span className="text-text-muted" aria-label="No change">
       &#8212;
     </span>
   );
@@ -52,19 +52,23 @@ export function KPICard({
   return (
     <div className="rounded-lg bg-white p-6 shadow-sm">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium text-gray-500">{label}</p>
+        <p className="font-mono text-[10px] uppercase tracking-wider text-text-muted">
+          {label}
+        </p>
         <SparklineSVG data={sparkline} />
       </div>
       <div className="mt-2 flex items-baseline gap-2">
-        <p className="text-2xl font-semibold text-gray-900">
+        <p className="font-serif text-2xl font-semibold text-text-primary">
           {value.toLocaleString()}
           {unit ? (
-            <span className="text-sm font-normal text-gray-500">{unit}</span>
+            <span className="text-sm font-normal text-text-secondary">
+              {unit}
+            </span>
           ) : null}
         </p>
         <div className="flex items-center gap-1 text-sm">
           <TrendIndicator trend={trend} />
-          <span className="text-gray-500">{changeLabel}</span>
+          <span className="text-text-muted">{changeLabel}</span>
         </div>
       </div>
     </div>

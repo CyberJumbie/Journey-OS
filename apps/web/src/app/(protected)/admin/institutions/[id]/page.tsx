@@ -12,7 +12,7 @@ export default function InstitutionDetailPage({
   params: { id: string };
 }) {
   return (
-    <div className="min-h-screen bg-[#f5f3ef] p-6">
+    <div className="min-h-screen bg-cream p-6">
       <div className="mx-auto max-w-7xl">
         <InstitutionDetailDashboard institutionId={params.id} />
       </div>

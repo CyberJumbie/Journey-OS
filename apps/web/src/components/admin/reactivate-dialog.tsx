@@ -66,7 +66,7 @@ export function ReactivateDialog({
       <div className="mx-4 w-full max-w-md rounded-lg bg-white shadow-xl">
         {/* Header */}
         <div className="border-b px-6 py-4">
-          <h2 className="font-serif text-lg font-bold text-[var(--color-primary,#1a1a2e)]">
+          <h2 className="font-serif text-lg font-bold text-text-primary">
             Reactivate Institution
           </h2>
         </div>
@@ -76,23 +76,25 @@ export function ReactivateDialog({
           {/* Institution Summary */}
           <div className="space-y-1 text-sm">
             <p>
-              <span className="font-medium text-gray-700">Institution:</span>{" "}
+              <span className="font-medium text-text-secondary">
+                Institution:
+              </span>{" "}
               {institution.name}
             </p>
             <p>
-              <span className="font-medium text-gray-700">Domain:</span>{" "}
+              <span className="font-medium text-text-secondary">Domain:</span>{" "}
               {institution.domain}
             </p>
             <p>
-              <span className="inline-block rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800">
+              <span className="inline-block rounded-full bg-error/10 px-2 py-0.5 text-xs font-medium text-error">
                 Currently Suspended
               </span>
             </p>
           </div>
 
           {/* Info */}
-          <div className="rounded-md bg-green-50 border border-green-200 p-3">
-            <p className="text-sm text-green-800">
+          <div className="rounded-md bg-green/5 border border-green/20 p-3">
+            <p className="text-sm text-green">
               Reactivating will restore access for all users at this
               institution.
             </p>
@@ -102,7 +104,7 @@ export function ReactivateDialog({
           <div>
             <label
               htmlFor="reactivate-reason"
-              className="mb-1 block text-sm font-medium text-gray-700"
+              className="mb-1 block text-sm font-medium text-text-secondary"
             >
               Note (optional)
             </label>
@@ -113,12 +115,12 @@ export function ReactivateDialog({
               placeholder="Add an optional note about this reactivation"
               disabled={submitting}
               rows={2}
-              className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
+              className="w-full rounded border border-border px-3 py-2 text-sm focus:border-blue-mid focus:outline-none focus:ring-1 focus:ring-blue-mid disabled:opacity-50"
             />
           </div>
 
           {/* Error */}
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-error">{error}</p>}
         </div>
 
         {/* Footer */}
@@ -126,14 +128,14 @@ export function ReactivateDialog({
           <button
             onClick={onClose}
             disabled={submitting}
-            className="rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+            className="rounded border border-border px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:bg-parchment disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             onClick={handleConfirm}
             disabled={submitting}
-            className="rounded bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50"
+            className="rounded bg-green px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-green-dark disabled:opacity-50"
           >
             {submitting ? "Reactivating\u2026" : "Reactivate Institution"}
           </button>

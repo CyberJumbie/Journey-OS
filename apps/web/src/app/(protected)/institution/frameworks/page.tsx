@@ -11,10 +11,10 @@ export default function FrameworksPage() {
   return (
     <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-text-primary">
           Educational Frameworks
         </h1>
-        <p className="mt-2 text-sm text-gray-600">
+        <p className="mt-2 text-sm text-text-secondary">
           Browse the educational frameworks used to structure curriculum and
           assessments.
         </p>
@@ -25,7 +25,7 @@ export default function FrameworksPage() {
             {Array.from({ length: 8 }).map((_, i) => (
               <div
                 key={i}
-                className="h-48 animate-pulse rounded-lg border border-gray-200 bg-gray-50"
+                className="h-48 animate-pulse rounded-lg border border-border bg-warm-gray"
               />
             ))}
           </div>

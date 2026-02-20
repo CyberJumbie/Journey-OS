@@ -53,6 +53,8 @@ export {
   DuplicateCourseCodeError,
   InvalidCourseTypeError,
   InvalidCourseStatusError,
+  CourseValidationError,
+  DirectorNotFoundError,
 } from "./course.error";
 export {
   KaizenError,
@@ -102,3 +104,12 @@ export {
   ActivityFeedForbiddenError,
   ActivityFeedValidationError,
 } from "./activity.error";
+export {
+  PreferenceNotFoundError,
+  PreferenceValidationError,
+} from "./preference.error";
+export {
+  UploadNotFoundError,
+  MappingIncompleteError,
+  FileTypeForbiddenError,
+} from "./import-mapping.errors";

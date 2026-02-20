@@ -128,28 +128,28 @@ export function VerificationInterstitial() {
   const isButtonDisabled = state === "sending" || cooldown > 0;
 
   return (
-    <div className="mx-auto w-full max-w-md rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
+    <div className="mx-auto w-full max-w-md rounded-xl border border-border-light bg-white p-8 shadow-sm">
       <div className="mb-6 flex justify-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-50">
-          <Mail className="h-8 w-8 text-blue-600" />
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-mid/5">
+          <Mail className="h-8 w-8 text-blue-mid" />
         </div>
       </div>
 
-      <h1 className="mb-2 text-center text-2xl font-bold text-gray-900">
+      <h1 className="mb-2 text-center font-serif text-2xl font-bold text-text-primary">
         Verify your email
       </h1>
 
-      <p className="mb-2 text-center text-sm text-gray-600">
+      <p className="mb-2 text-center text-sm text-text-secondary">
         We sent a verification link to
       </p>
 
       {email && (
-        <p className="mb-6 text-center text-sm font-medium text-gray-900">
+        <p className="mb-6 text-center text-sm font-medium text-text-primary">
           {email}
         </p>
       )}
 
-      <p className="mb-6 text-center text-sm text-gray-500">
+      <p className="mb-6 text-center text-sm text-text-muted">
         Click the link in the email to verify your account. Check your spam
         folder if you don&apos;t see it.
       </p>
@@ -158,7 +158,7 @@ export function VerificationInterstitial() {
         type="button"
         onClick={handleResend}
         disabled={isButtonDisabled}
-        className="flex w-full items-center justify-center gap-2 rounded-lg border border-green-600 px-4 py-2.5 text-sm font-medium text-green-700 hover:bg-green-50 disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex w-full items-center justify-center gap-2 rounded-lg border border-green px-4 py-2.5 text-sm font-medium text-green transition-colors hover:bg-green/5 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {state === "sending" ? (
           <>
@@ -176,23 +176,26 @@ export function VerificationInterstitial() {
       </button>
 
       {state === "sent" && (
-        <p className="mt-3 text-center text-sm text-green-600">
+        <p className="mt-3 text-center text-sm text-green">
           Verification email sent! Check your inbox.
         </p>
       )}
 
       {state === "rate-limited" && (
-        <p className="mt-3 text-center text-sm text-amber-600">
+        <p className="mt-3 text-center text-sm text-warning">
           Too many requests. Please wait before trying again.
         </p>
       )}
 
       {state === "error" && errorMessage && (
-        <p className="mt-3 text-center text-sm text-red-600">{errorMessage}</p>
+        <p className="mt-3 text-center text-sm text-error">{errorMessage}</p>
       )}
 
       <div className="mt-6 text-center">
-        <a href="/login" className="text-sm text-gray-500 hover:text-gray-700">
+        <a
+          href="/login"
+          className="text-sm text-text-muted transition-colors hover:text-text-secondary"
+        >
           Back to login
         </a>
       </div>

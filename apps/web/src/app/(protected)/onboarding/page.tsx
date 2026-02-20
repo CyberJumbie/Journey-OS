@@ -13,11 +13,11 @@ export const metadata: Metadata = {
  */
 export default function OnboardingPage() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+    <main className="flex min-h-screen items-center justify-center bg-parchment p-4">
       <Suspense
         fallback={
           <div className="flex items-center justify-center">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600" />
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-border-light border-t-blue-mid" />
           </div>
         }
       >

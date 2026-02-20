@@ -29,21 +29,21 @@ function StatusIndicator({
 }) {
   switch (status) {
     case "uploading":
-      return <Loader2 className="h-4 w-4 animate-spin text-blue-500" />;
+      return <Loader2 className="h-4 w-4 animate-spin text-blue-mid" />;
     case "success":
-      return <CheckCircle className="h-4 w-4 text-green-500" />;
+      return <CheckCircle className="h-4 w-4 text-green" />;
     case "error":
       return (
         <span
           className="flex items-center gap-1"
           title={error ?? "Upload failed"}
         >
-          <AlertCircle className="h-4 w-4 text-red-500" />
+          <AlertCircle className="h-4 w-4 text-error" />
         </span>
       );
     case "pending":
     default:
-      return <span className="h-4 w-4 rounded-full border-2 border-gray-300" />;
+      return <span className="h-4 w-4 rounded-full border-2 border-border" />;
   }
 }
 
@@ -57,25 +57,27 @@ export function UploadProgressItem({
   onRemove,
 }: UploadProgressItemProps) {
   return (
-    <div className="flex items-center gap-3 rounded-md border border-gray-200 p-3">
+    <div className="flex items-center gap-3 rounded-md border border-border-light p-3">
       <FileIcon filename={name} />
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between">
-          <p className="truncate text-sm font-medium text-gray-700">{name}</p>
-          <span className="ml-2 shrink-0 text-xs text-gray-400">
+          <p className="truncate text-sm font-medium text-text-secondary">
+            {name}
+          </p>
+          <span className="ml-2 shrink-0 text-xs text-text-muted">
             {formatBytes(size)}
           </span>
         </div>
         {status === "uploading" && (
-          <div className="mt-1.5 h-1.5 w-full rounded-full bg-gray-200">
+          <div className="mt-1.5 h-1.5 w-full rounded-full bg-warm-gray">
             <div
-              className="h-full rounded-full bg-blue-500 transition-all"
+              className="h-full rounded-full bg-blue-mid transition-all"
               style={{ width: `${progress}%` }}
             />
           </div>
         )}
         {status === "error" && error && (
-          <p className="mt-1 text-xs text-red-500">{error}</p>
+          <p className="mt-1 text-xs text-error">{error}</p>
         )}
       </div>
       <StatusIndicator status={status} error={error} />
@@ -83,7 +85,7 @@ export function UploadProgressItem({
         <button
           type="button"
           onClick={() => onRemove(id)}
-          className="shrink-0 rounded p-0.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+          className="shrink-0 rounded p-0.5 text-text-muted transition-colors hover:bg-parchment hover:text-text-secondary"
           aria-label={`Remove ${name}`}
         >
           <X className="h-4 w-4" />

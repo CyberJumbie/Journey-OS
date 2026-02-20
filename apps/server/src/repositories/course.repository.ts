@@ -11,6 +11,8 @@ import type {
   UpdateCourseRequest,
   CourseListQuery,
   CourseListResponse,
+  CourseListItem,
+  CourseListViewResponse,
   CourseType,
   CourseStatus,
 } from "@journey-os/types";
@@ -41,6 +43,13 @@ export class CourseRepository {
         semester: data.semester ?? null,
         credit_hours: data.credit_hours ?? null,
         course_type: data.course_type ?? null,
+        program_id: data.program_id ?? null,
+        max_enrollment: data.max_enrollment ?? null,
+        is_required: data.is_required ?? false,
+        prerequisites: data.prerequisites ?? [],
+        learning_objectives: data.learning_objectives ?? [],
+        tags: data.tags ?? [],
+        ...(data.status ? { status: data.status } : {}),
       })
       .select("*")
       .single();
@@ -112,7 +121,8 @@ export class CourseRepository {
     }
 
     if (query.search) {
-      const term = `%${query.search.trim()}%`;
+      const escaped = this.#escapeSearch(query.search);
+      const term = `%${escaped}%`;
       const filter = `name.ilike.${term},code.ilike.${term}`;
       dataQuery = dataQuery.or(filter);
       countQuery = countQuery.or(filter);
@@ -210,6 +220,190 @@ export class CourseRepository {
       .maybeSingle();
 
     return data !== null;
+  }
+
+  /**
+   * [STORY-F-13] Enriched list with joined program name + director name + counts.
+   */
+  async listEnriched(query: CourseListQuery): Promise<CourseListViewResponse> {
+    const page = Math.max(query.page ?? DEFAULT_PAGE, 1);
+    const limit = Math.min(
+      Math.max(query.limit ?? DEFAULT_LIMIT, 1),
+      MAX_LIMIT,
+    );
+    const offset = (page - 1) * limit;
+
+    let dataQuery = this.#supabaseClient
+      .from(TABLE)
+      .select(
+        "id, code, name, department, program_id, status, academic_year, course_director_id, updated_at, program:programs(name), director:profiles!courses_course_director_id_fkey(full_name)",
+      );
+
+    let countQuery = this.#supabaseClient
+      .from(TABLE)
+      .select("id", { count: "exact", head: true });
+
+    if (query.status) {
+      dataQuery = dataQuery.eq("status", query.status);
+      countQuery = countQuery.eq("status", query.status);
+    }
+
+    if (query.course_type) {
+      dataQuery = dataQuery.eq("course_type", query.course_type);
+      countQuery = countQuery.eq("course_type", query.course_type);
+    }
+
+    if (query.department) {
+      dataQuery = dataQuery.eq("department", query.department);
+      countQuery = countQuery.eq("department", query.department);
+    }
+
+    if (query.search) {
+      const escaped = this.#escapeSearch(query.search);
+      const term = `%${escaped}%`;
+      const filter = `name.ilike.${term},code.ilike.${term}`;
+      dataQuery = dataQuery.or(filter);
+      countQuery = countQuery.or(filter);
+    }
+
+    const [dataResult, countResult] = await Promise.all([
+      dataQuery
+        .order("name", { ascending: true })
+        .range(offset, offset + limit - 1),
+      countQuery,
+    ]);
+
+    if (dataResult.error) {
+      throw new CourseNotFoundError(
+        `Failed to fetch courses: ${dataResult.error.message}`,
+      );
+    }
+
+    const total = countResult.count ?? 0;
+    const totalPages = Math.ceil(total / limit);
+
+    const courseIds = (dataResult.data ?? []).map(
+      (r: Record<string, unknown>) => r.id as string,
+    );
+
+    const [sectionCounts, sessionCounts] =
+      courseIds.length > 0
+        ? await Promise.all([
+            this.#countSectionsByCourseIds(courseIds),
+            this.#countSessionsByCourseIds(courseIds),
+          ])
+        : [new Map<string, number>(), new Map<string, number>()];
+
+    const courses: CourseListItem[] = (dataResult.data ?? []).map(
+      (row: Record<string, unknown>) => {
+        const program = row.program as { name: string } | null;
+        const director = row.director as { full_name: string } | null;
+        const id = row.id as string;
+        return {
+          id,
+          code: row.code as string,
+          name: row.name as string,
+          department: (row.department as string) ?? null,
+          program_id: (row.program_id as string) ?? null,
+          program_name: program?.name ?? null,
+          course_director_id: (row.course_director_id as string) ?? null,
+          course_director_name: director?.full_name ?? null,
+          status: (row.status as CourseStatus) ?? "active",
+          academic_year: (row.academic_year as string) ?? null,
+          section_count: sectionCounts.get(id) ?? 0,
+          session_count: sessionCounts.get(id) ?? 0,
+          updated_at: row.updated_at as string,
+        };
+      },
+    );
+
+    return {
+      courses,
+      meta: { page, limit, total, total_pages: totalPages },
+    };
+  }
+
+  /**
+   * [STORY-F-13] Enriched findById with program name + director info.
+   */
+  async findByIdEnriched(id: string): Promise<{
+    course: Record<string, unknown>;
+    program_name: string | null;
+    director: { id: string; full_name: string; email: string } | null;
+  } | null> {
+    const { data, error } = await this.#supabaseClient
+      .from(TABLE)
+      .select(
+        "*, program:programs(name), director:profiles!courses_course_director_id_fkey(id, full_name, email)",
+      )
+      .eq("id", id)
+      .maybeSingle();
+
+    if (error) {
+      throw new CourseNotFoundError(id);
+    }
+
+    if (!data) return null;
+
+    const row = data as Record<string, unknown>;
+    const program = row.program as { name: string } | null;
+    const director = row.director as {
+      id: string;
+      full_name: string;
+      email: string;
+    } | null;
+
+    return {
+      course: row,
+      program_name: program?.name ?? null,
+      director,
+    };
+  }
+
+  async #countSectionsByCourseIds(
+    courseIds: string[],
+  ): Promise<Map<string, number>> {
+    const { data } = await this.#supabaseClient
+      .from("sections")
+      .select("course_id")
+      .in("course_id", courseIds);
+
+    const counts = new Map<string, number>();
+    for (const row of data ?? []) {
+      const cid = (row as Record<string, unknown>).course_id as string;
+      counts.set(cid, (counts.get(cid) ?? 0) + 1);
+    }
+    return counts;
+  }
+
+  async #countSessionsByCourseIds(
+    courseIds: string[],
+  ): Promise<Map<string, number>> {
+    // Query from sections (which has course_id) and count nested sessions
+    const { data } = await this.#supabaseClient
+      .from("sections")
+      .select("course_id, sessions(id)")
+      .in("course_id", courseIds);
+
+    const counts = new Map<string, number>();
+    for (const row of data ?? []) {
+      const r = row as Record<string, unknown>;
+      const courseId = r.course_id as string;
+      const sessions = r.sessions as unknown[];
+      counts.set(courseId, (counts.get(courseId) ?? 0) + sessions.length);
+    }
+    return counts;
+  }
+
+  /** Escape PostgREST LIKE wildcards and commas/dots in user search input. */
+  #escapeSearch(raw: string): string {
+    return raw
+      .trim()
+      .replace(/\\/g, "\\\\")
+      .replace(/%/g, "\\%")
+      .replace(/_/g, "\\_")
+      .replace(/,/g, "\\,")
+      .replace(/\./g, "\\.");
   }
 
   #toDTO(row: CourseRow): CourseDTO {

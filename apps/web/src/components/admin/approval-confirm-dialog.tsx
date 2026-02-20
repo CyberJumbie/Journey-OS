@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { ApplicationDetail } from "@journey-os/types";
+import { getAuthToken } from "@web/lib/auth/get-auth-token";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
@@ -35,7 +36,7 @@ export function ApprovalConfirmDialog({
     setError("");
 
     try {
-      const token = ""; // TODO: get from auth context
+      const token = await getAuthToken();
       const res = await fetch(
         `${API_URL}/api/v1/admin/applications/${application.id}/approve`,
         {
@@ -72,7 +73,7 @@ export function ApprovalConfirmDialog({
       <div className="mx-4 w-full max-w-md rounded-lg bg-white shadow-xl">
         {/* Header */}
         <div className="border-b px-6 py-4">
-          <h2 className="font-serif text-lg font-bold text-[#002c76]">
+          <h2 className="font-serif text-lg font-bold text-navy-deep">
             Approve Application
           </h2>
         </div>
@@ -82,16 +83,18 @@ export function ApprovalConfirmDialog({
           {/* Application Summary */}
           <div className="space-y-1 text-sm">
             <p>
-              <span className="font-medium text-gray-700">Institution:</span>{" "}
+              <span className="font-medium text-text-secondary">
+                Institution:
+              </span>{" "}
               {application.institution_name}
             </p>
             <p>
-              <span className="font-medium text-gray-700">Type:</span>{" "}
+              <span className="font-medium text-text-secondary">Type:</span>{" "}
               {TYPE_LABELS[application.institution_type] ??
                 application.institution_type}
             </p>
             <p>
-              <span className="font-medium text-gray-700">Contact:</span>{" "}
+              <span className="font-medium text-text-secondary">Contact:</span>{" "}
               {application.contact_name} ({application.contact_email})
             </p>
           </div>
@@ -100,9 +103,9 @@ export function ApprovalConfirmDialog({
           <div>
             <label
               htmlFor="domain-input"
-              className="mb-1 block text-sm font-medium text-gray-700"
+              className="mb-1 block text-sm font-medium text-text-secondary"
             >
-              Institution Domain <span className="text-red-500">*</span>
+              Institution Domain <span className="text-error">*</span>
             </label>
             <input
               id="domain-input"
@@ -111,16 +114,16 @@ export function ApprovalConfirmDialog({
               onChange={(e) => setDomain(e.target.value)}
               placeholder="e.g. msm.edu"
               disabled={submitting}
-              className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-[#2b71b9] focus:outline-none focus:ring-1 focus:ring-[#2b71b9] disabled:opacity-50"
+              className="w-full rounded border border-border px-3 py-2 text-sm focus:border-blue-mid focus:outline-none focus:ring-1 focus:ring-blue-mid disabled:opacity-50"
             />
           </div>
 
           {/* Impact Summary */}
-          <div className="rounded-md bg-blue-50 p-3">
-            <p className="mb-2 text-xs font-medium uppercase text-blue-700">
+          <div className="rounded-md bg-blue-mid/5 p-3">
+            <p className="mb-2 text-xs font-medium uppercase text-blue-mid">
               What will happen
             </p>
-            <ul className="list-inside list-disc space-y-1 text-sm text-blue-800">
+            <ul className="list-inside list-disc space-y-1 text-sm text-blue-mid">
               <li>Institution record will be created</li>
               <li>
                 Invitation email will be sent to {application.contact_email}
@@ -130,7 +133,7 @@ export function ApprovalConfirmDialog({
           </div>
 
           {/* Error */}
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-error">{error}</p>}
         </div>
 
         {/* Footer */}
@@ -138,14 +141,14 @@ export function ApprovalConfirmDialog({
           <button
             onClick={onClose}
             disabled={submitting}
-            className="rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+            className="rounded border border-border px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:bg-parchment disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             onClick={handleConfirm}
             disabled={submitting || domain.trim().length === 0}
-            className="rounded bg-[#69a338] px-4 py-2 text-sm font-medium text-white hover:bg-[#5a8c2f] disabled:opacity-50"
+            className="rounded bg-green px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-green-dark disabled:opacity-50"
           >
             {submitting ? "Approving\u2026" : "Approve & Send Invitation"}
           </button>

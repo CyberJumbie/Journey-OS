@@ -21,10 +21,7 @@ export default function HelpPage() {
     <div>
       {/* Page header */}
       <div className="mb-8">
-        <h1
-          className="font-serif font-bold text-[var(--ink)]"
-          style={{ fontSize: "22px" }}
-        >
+        <h1 className="font-serif text-[1.375rem] font-bold text-[var(--ink)]">
           Help Center
         </h1>
         <p className="mt-1 font-sans text-sm text-[var(--text-secondary)]">
@@ -51,7 +48,6 @@ export default function HelpPage() {
             key={section.id}
             href={`/help/faq?category=${section.category}`}
             className="group rounded-xl border border-[var(--border-light)] bg-white p-6 transition-shadow hover:shadow-[0_4px_16px_rgba(0,44,118,0.05)]"
-            style={{ borderRadius: "12px" }}
           >
             {/* Icon + count badge */}
             <div className="mb-3 flex items-center justify-between">
@@ -64,18 +60,12 @@ export default function HelpPage() {
             </div>
 
             {/* Title */}
-            <h2
-              className="mb-1 font-serif font-bold text-[var(--ink)] group-hover:text-[var(--blue-mid)]"
-              style={{ fontSize: "16px" }}
-            >
+            <h2 className="mb-1 font-serif text-base font-bold text-[var(--ink)] group-hover:text-[var(--blue-mid)]">
               {section.title}
             </h2>
 
             {/* Subtitle */}
-            <p
-              className="mb-3 font-mono uppercase tracking-wider text-[var(--text-muted)]"
-              style={{ fontSize: "10px", fontWeight: 500 }}
-            >
+            <p className="mb-3 font-mono text-[0.625rem] font-medium uppercase tracking-wider text-[var(--text-muted)]">
               {section.description}
             </p>
 

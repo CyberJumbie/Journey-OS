@@ -87,20 +87,16 @@ export function RegistrationWizard() {
   if (wizardState === "success") {
     return (
       <div className="text-center">
-        <h1
-          className="mb-4 text-2xl font-semibold"
-          style={{ fontFamily: "Source Sans 3, sans-serif" }}
-        >
+        <h1 className="mb-4 font-serif text-2xl font-semibold text-navy-deep">
           Check Your Email
         </h1>
-        <p className="mb-6" style={{ color: "#69a338" }}>
+        <p className="mb-6 text-green">
           We&apos;ve sent a verification link to <strong>{email}</strong>.
           Please check your inbox to activate your account.
         </p>
         <a
           href="/login"
-          className="text-sm hover:underline"
-          style={{ color: "#2b71b9" }}
+          className="text-sm font-medium text-blue-mid transition-colors hover:text-navy-deep hover:underline"
         >
           Go to Login
         </a>
@@ -117,27 +113,26 @@ export function RegistrationWizard() {
         {STEPS.map((_, i) => (
           <div key={i} className="flex items-center gap-2">
             <div
-              className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-medium ${
+              className={`flex h-7 w-7 items-center justify-center rounded-full font-mono text-xs font-medium ${
                 i <= currentStep
-                  ? "text-white"
-                  : "border border-gray-300 text-gray-400"
+                  ? "bg-blue-mid text-white"
+                  : "border border-border text-text-muted"
               }`}
-              style={
-                i <= currentStep ? { backgroundColor: "#2b71b9" } : undefined
-              }
             >
               {i + 1}
             </div>
             <span
               className={`hidden text-xs sm:inline ${
-                i <= currentStep ? "font-medium text-gray-800" : "text-gray-400"
+                i <= currentStep
+                  ? "font-medium text-text-primary"
+                  : "text-text-muted"
               }`}
             >
               {STEP_LABELS[i]}
             </span>
             {i < STEPS.length - 1 && (
               <div
-                className={`h-px w-6 ${i < currentStep ? "bg-blue-400" : "bg-gray-200"}`}
+                className={`h-px w-6 ${i < currentStep ? "bg-blue-mid" : "bg-border-light"}`}
               />
             )}
           </div>
@@ -145,7 +140,7 @@ export function RegistrationWizard() {
       </div>
 
       {wizardState === "error" && (
-        <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+        <div className="mb-4 rounded-lg border border-error/20 bg-error/5 p-3 text-sm text-error">
           {errorMessage}
         </div>
       )}
@@ -197,8 +192,7 @@ export function RegistrationWizard() {
         Already have an account?{" "}
         <a
           href="/login"
-          className="hover:underline"
-          style={{ color: "#2b71b9" }}
+          className="font-medium text-blue-mid transition-colors hover:text-navy-deep hover:underline"
         >
           Sign in
         </a>

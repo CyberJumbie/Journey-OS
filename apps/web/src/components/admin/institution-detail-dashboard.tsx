@@ -24,7 +24,7 @@ export function InstitutionDetailDashboard({
       {/* Back button */}
       <button
         onClick={() => router.push("/admin/institutions")}
-        className="text-sm text-[#2b71b9] hover:underline"
+        className="text-sm text-blue-mid hover:underline"
       >
         &larr; Back to Institutions
       </button>
@@ -48,15 +48,15 @@ export function InstitutionDetailDashboard({
       {/* Not found */}
       {status === "not_found" && (
         <div className="rounded-lg bg-white p-8 text-center shadow-sm">
-          <h2 className="font-serif text-xl font-bold text-[#002c76]">
+          <h2 className="font-serif text-xl font-bold text-navy-deep">
             Institution Not Found
           </h2>
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-sm text-text-muted">
             The institution you are looking for does not exist.
           </p>
           <button
             onClick={() => router.push("/admin/institutions")}
-            className="mt-4 rounded bg-[#2b71b9] px-4 py-2 text-sm text-white hover:bg-[#1e5a96]"
+            className="mt-4 rounded bg-blue-mid px-4 py-2 text-sm text-white transition-colors hover:bg-navy-deep"
           >
             Back to Institutions
           </button>
@@ -66,10 +66,10 @@ export function InstitutionDetailDashboard({
       {/* Error */}
       {status === "error" && (
         <div className="rounded-lg bg-white p-8 text-center shadow-sm">
-          <p className="text-red-600">{errorMsg}</p>
+          <p className="text-error">{errorMsg}</p>
           <button
             onClick={refetch}
-            className="mt-4 rounded bg-[#2b71b9] px-4 py-2 text-sm text-white hover:bg-[#1e5a96]"
+            className="mt-4 rounded bg-blue-mid px-4 py-2 text-sm text-white transition-colors hover:bg-navy-deep"
           >
             Retry
           </button>

@@ -3,10 +3,10 @@
 import type { PasswordValidationResult } from "@journey-os/types";
 
 const STRENGTH_COLORS: Record<string, string> = {
-  weak: "#dc2626",
-  fair: "#f59e0b",
-  good: "#2b71b9",
-  strong: "#69a338",
+  weak: "var(--color-error, #dc2626)",
+  fair: "var(--color-warning, #f59e0b)",
+  good: "var(--color-blue-mid, #2b71b9)",
+  strong: "var(--color-green, #69a338)",
 };
 
 const STRENGTH_LABELS: Record<string, string> = {
@@ -60,7 +60,8 @@ export function PasswordStrengthIndicator({
               key={i}
               className="h-1.5 flex-1 rounded-full"
               style={{
-                backgroundColor: i < filled ? color : "#e5e7eb",
+                backgroundColor:
+                  i < filled ? color : "var(--color-warm-gray, #e5e7eb)",
               }}
             />
           ))}
@@ -76,10 +77,18 @@ export function PasswordStrengthIndicator({
           const passed = result.checks[key];
           return (
             <li key={key} className="flex items-center gap-2 text-xs">
-              <span style={{ color: passed ? "#69a338" : "#dc2626" }}>
+              <span
+                style={{
+                  color: passed
+                    ? "var(--color-green, #69a338)"
+                    : "var(--color-error, #dc2626)",
+                }}
+              >
                 {passed ? "\u2713" : "\u2717"}
               </span>
-              <span className={passed ? "text-gray-600" : "text-gray-500"}>
+              <span
+                className={passed ? "text-text-secondary" : "text-text-muted"}
+              >
                 {reqLabel}
               </span>
             </li>

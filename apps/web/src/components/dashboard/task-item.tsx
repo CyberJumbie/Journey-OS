@@ -84,7 +84,7 @@ export function TaskList({ tasks }: TaskListProps) {
             </div>
             <div className="mt-1 flex items-center gap-2">
               <span
-                className="font-mono text-text-muted"
+                className="font-mono uppercase text-text-muted"
                 style={{ fontSize: 9, letterSpacing: "0.04em" }}
               >
                 {t.course}
