@@ -230,9 +230,9 @@ errors:
   - date: 2026-02-20
     story: STORY-IA-12
     error: "Ran npx tsc -b from monorepo root which has no typescript install — got 'this is not the tsc command you are looking for'"
-    rule: "Already documented in CLAUDE.md — run tsc from within the workspace directory"
+    rule: "Already documented in CLAUDE.md — run tsc from within the workspace directory. Exact paths added in SA-9."
     location: "Root CLAUDE.md → Monorepo Conventions"
-    recurrence: 8
+    recurrence: 9
 
   - date: 2026-02-20
     story: STORY-F-2
@@ -372,4 +372,53 @@ errors:
     error: "Tried tsc, npx tsc, pnpm exec tsc before finding ./node_modules/.bin/tsc in workspace. Recurrence of tsc-from-root (now at 8)."
     rule: "Existing rule. Run tsc from within the workspace directory using ./node_modules/.bin/tsc."
     location: "Root CLAUDE.md → Monorepo Conventions"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-10
+    error: "Brief defined NotificationType with different values than existing type (generation_complete vs system) and used 'read' field name but DB column is 'is_read'"
+    rule: "Always read existing types before creating new ones — brief type definitions may be outdated or idealized."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-10
+    error: "Brief asked to create NotificationService but one already existed from STORY-F-2 with REST CRUD methods"
+    rule: "When a brief asks to create a service that already exists, create a prefixed wrapper that composes the existing service. See docs/solutions/socketio-service-layer-pattern.md"
+    location: "Root CLAUDE.md → Things Claude Gets Wrong + docs/solutions/socketio-service-layer-pattern.md"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-SA-9
+    error: "Ran npx tsc -b, pnpm exec tsc, then found packages/types/node_modules/.bin/tsc. Recurrence of tsc-from-root (now at 9)."
+    rule: "Existing rule tightened: added exact binary paths to CLAUDE.md Monorepo Conventions."
+    location: "Root CLAUDE.md → Monorepo Conventions (exact paths added)"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-SA-9
+    error: "Brief assumed courses.institution_id FK exists, but actual path is courses → programs.institution_id. Caught by checking MCP before writing service."
+    rule: "Run list_tables via MCP to verify FK relationships, not just table names. Briefs may assume direct FKs that go through intermediate tables."
+    location: "Root CLAUDE.md → Database Rules (rule expanded)"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-9
+    error: "Used browser File type in packages/types UploadFileState interface — TS2304 because types package has no DOM lib"
+    rule: "No DOM or Node-specific types (File, Blob, Buffer, FormData) in packages/types. Keep browser-only interfaces in apps/web."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong (Uint8Array rule generalized)"
+    recurrence: 1
+
+  - date: 2026-02-20
+    story: STORY-F-9
+    error: "Used npx tsc -b in pnpm workspace — resolved to wrong binary. Recurrence of tsc-from-root (now at 10)."
+    rule: "Existing rule in CLAUDE.md. Use pnpm --filter or workspace-local binary."
+    location: "Root CLAUDE.md → Monorepo Conventions"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-F-9
+    error: "Used require('@journey-os/types') in vitest test — ESM alias can't be loaded via CommonJS require()"
+    rule: "Always use ESM import statements in vitest tests for @journey-os/types. Never require()."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong (new rule)"
     recurrence: 0
