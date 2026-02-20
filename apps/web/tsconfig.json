@@ -19,7 +19,9 @@
       }
     ],
     "paths": {
-      "@web/*": ["./src/*"]
+      "@web/*": ["./src/*"],
+      "@journey-os/types": ["../../packages/types/src"],
+      "@journey-os/types/*": ["../../packages/types/src/*"]
     }
   },
   "include": [
@@ -30,5 +32,6 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "references": [{ "path": "../../packages/types" }]
 }

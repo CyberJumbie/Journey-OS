@@ -23,3 +23,23 @@ export interface RateLimitConfig {
   /** Window duration in milliseconds */
   readonly windowMs: number;
 }
+
+/**
+ * Password strength levels for the visual indicator.
+ */
+export type PasswordStrength = "weak" | "fair" | "good" | "strong";
+
+/**
+ * Result of validating a password against all requirements.
+ */
+export interface PasswordValidationResult {
+  readonly isValid: boolean;
+  readonly strength: PasswordStrength;
+  readonly checks: {
+    readonly minLength: boolean;
+    readonly hasUppercase: boolean;
+    readonly hasLowercase: boolean;
+    readonly hasNumber: boolean;
+    readonly hasSpecial: boolean;
+  };
+}

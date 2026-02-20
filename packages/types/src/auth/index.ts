@@ -27,6 +27,8 @@ export type {
   ForgotPasswordRequest,
   ForgotPasswordResponse,
   RateLimitConfig,
+  PasswordStrength,
+  PasswordValidationResult,
 } from "./password-reset.types";
 export type {
   RegistrationStep,
