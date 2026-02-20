@@ -300,6 +300,10 @@ export function ApplicationReviewQueue() {
             setSelectedApp(null);
             fetchApplications();
           }}
+          onRejected={() => {
+            setSelectedApp(null);
+            fetchApplications();
+          }}
         />
       )}
     </div>

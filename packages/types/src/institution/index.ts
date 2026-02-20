@@ -22,3 +22,7 @@ export type {
   InstitutionApprovalResult,
 } from "./approval.types";
 export type { Invitation, InvitationCreateParams } from "./invitation.types";
+export type {
+  ApplicationRejectionRequest,
+  ApplicationRejectionResult,
+} from "./rejection.types";

@@ -219,3 +219,17 @@ errors:
     rule: "Verify current file state before using replace_all. A prior rename may have already changed the target string."
     location: "Root CLAUDE.md → Things Claude Gets Wrong"
     recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-IA-12
+    error: "Used Partial<Response> return type on test mockResponse helper — TS2322 because chainable .status() return doesn't satisfy full Express Response"
+    rule: "Test mock response helpers should use plain object types, not Partial<Response>. Use { statusCode: number; body: unknown; status: (code: number) => unknown; json: (data: unknown) => unknown } instead."
+    location: "Root CLAUDE.md → Things Claude Gets Wrong"
+    recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-IA-12
+    error: "Ran npx tsc -b from monorepo root which has no typescript install — got 'this is not the tsc command you are looking for'"
+    rule: "Already documented in CLAUDE.md — run tsc from within the workspace directory"
+    location: "Root CLAUDE.md → Monorepo Conventions"
+    recurrence: 1

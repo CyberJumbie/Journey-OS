@@ -25,8 +25,8 @@ lanes:
   superadmin:
     priority: 1
     total: 9        # E-04: 4, E-05: 3, E-07: 2
-    done: 5         # SA-1 (Waitlist Application), SA-2 (Global User Directory), SA-3 (Application Review Queue), SA-4 (User Reassignment), SA-5 (Approval Workflow)
-    ready: 2        # SA-6 (Rejection Workflow), SA-7 (Institution List — unblocked by SA-5)
+    done: 6         # SA-1 (Waitlist Application), SA-2 (Global User Directory), SA-3 (Application Review Queue), SA-4 (User Reassignment), SA-5 (Approval Workflow), SA-6 (Rejection Workflow)
+    ready: 1        # SA-7 (Institution List — unblocked by SA-5)
     blocked: 2      # SA-8 (blocked by SA-7), SA-9 (blocked by SA-7)
   institutional_admin:
     priority: 2
@@ -163,21 +163,27 @@ completed:
     completed: 2026-02-20
     api_tests: 72      # framework-seeders (72): LCME(12) + ACGME(10) + AAMC(8) + UME(10) + EPA(8) + Bloom(8) + Miller(8) + SeedRunner(8)
     e2e_tests: 0
+  - id: STORY-SA-6
+    title: "Rejection Workflow"
+    lane: superadmin
+    completed: 2026-02-20
+    api_tests: 16      # rejection.service (7) + rejection.controller (9)
+    e2e_tests: 0
 
 # Error-to-rule pipeline
 error_pipeline:
-  total_errors_captured: 24
-  total_rules_created: 24
-  recurrence_rate: 4    # 1 recurrence out of 24 = ~4%
+  total_errors_captured: 25
+  total_rules_created: 25
+  recurrence_rate: 4    # 1 recurrence out of 25 = ~4%
 
 # Time allocation tracking
 metrics:
-  stories_completed: 18
+  stories_completed: 19
   stories_total: 166
   avg_story_time_minutes: 0    # not tracked yet
   planning_pct: 0    # target: 40%
   review_pct: 0      # target: 40%
   execution_pct: 0   # target: 10%
   learning_pct: 0    # target: 10%
-  api_tests_total: 465  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33, U-8: 15, U-9: 25, U-10: 38, U-11: 16, U-12: 72, SA-1: 28, SA-2: 22, SA-3: 20, SA-4: 21, SA-5: 17, IA-5: 18
+  api_tests_total: 481  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33, U-8: 15, U-9: 25, U-10: 38, U-11: 16, U-12: 72, SA-1: 28, SA-2: 22, SA-3: 20, SA-4: 21, SA-5: 17, SA-6: 16, IA-5: 18
   e2e_tests_total: 0

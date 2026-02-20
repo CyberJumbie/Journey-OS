@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { ApplicationDetail } from "@journey-os/types";
 import { ApprovalConfirmDialog } from "./approval-confirm-dialog";
+import { RejectionConfirmDialog } from "./rejection-confirm-dialog";
 
 const STATUS_BADGES: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-800",
@@ -24,8 +25,10 @@ export function ApplicationDetailModal({
   application: ApplicationDetail;
   onClose: () => void;
   onApproved?: () => void;
+  onRejected?: () => void;
 }) {
   const [showApprovalDialog, setShowApprovalDialog] = useState(false);
+  const [showRejectionDialog, setShowRejectionDialog] = useState(false);
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
@@ -126,9 +129,9 @@ export function ApplicationDetailModal({
             Approve
           </button>
           <button
-            disabled
-            title="Coming soon (SA-6)"
-            className="rounded bg-red-600 px-4 py-2 text-sm font-medium text-white opacity-50"
+            onClick={() => setShowRejectionDialog(true)}
+            disabled={application.status !== "pending"}
+            className="rounded bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
           >
             Reject
           </button>
@@ -150,6 +153,19 @@ export function ApplicationDetailModal({
             setShowApprovalDialog(false);
             onClose();
             onApproved?.();
+          }}
+        />
+      )}
+
+      {/* Rejection Confirm Dialog */}
+      {showRejectionDialog && (
+        <RejectionConfirmDialog
+          application={application}
+          onClose={() => setShowRejectionDialog(false)}
+          onRejected={() => {
+            setShowRejectionDialog(false);
+            onClose();
+            onRejected?.();
           }}
         />
       )}

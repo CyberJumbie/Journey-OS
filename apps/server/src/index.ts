@@ -34,6 +34,9 @@ import { RejectionController } from "./controllers/institution/rejection.control
 import { RejectionEmailService } from "./services/email/rejection-email.service";
 import { AdminDashboardService } from "./services/admin/admin-dashboard.service";
 import { DashboardController } from "./controllers/admin/dashboard.controller";
+import { CourseRepository } from "./repositories/course.repository";
+import { CourseService } from "./services/course/course.service";
+import { CourseController } from "./controllers/course/course.controller";
 import { LintReportRepository } from "./repositories/lint-report.repository";
 import { LintRuleRegistryService } from "./services/kaizen/lint-rule-registry.service";
 import { LintEngineService } from "./services/kaizen/lint-engine.service";
@@ -247,6 +250,33 @@ app.patch(
   "/api/v1/institution/lint/config/:ruleId",
   rbac.require(AuthRole.INSTITUTIONAL_ADMIN),
   (req, res) => lintController.handleUpdateConfig(req, res),
+);
+
+// Course management — CourseDirector (SuperAdmin, InstitutionalAdmin, Faculty w/ is_course_director)
+const courseRepository = new CourseRepository(supabaseClient);
+const courseService = new CourseService(courseRepository, null);
+const courseController = new CourseController(courseService);
+app.post("/api/v1/courses", rbac.requireCourseDirector(), (req, res) =>
+  courseController.handleCreate(req, res),
+);
+app.get("/api/v1/courses", rbac.requireCourseDirector(), (req, res) =>
+  courseController.handleList(req, res),
+);
+app.get(
+  "/api/v1/courses/code/:code",
+  rbac.requireCourseDirector(),
+  (req, res) => courseController.handleGetByCode(req, res),
+);
+app.get("/api/v1/courses/:id", rbac.requireCourseDirector(), (req, res) =>
+  courseController.handleGetById(req, res),
+);
+app.patch("/api/v1/courses/:id", rbac.requireCourseDirector(), (req, res) =>
+  courseController.handleUpdate(req, res),
+);
+app.patch(
+  "/api/v1/courses/:id/archive",
+  rbac.requireCourseDirector(),
+  (req, res) => courseController.handleArchive(req, res),
 );
 
 app.listen(PORT, () => {
