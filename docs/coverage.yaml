@@ -19,9 +19,9 @@ lanes:
   universal:
     priority: 0
     total: 14       # E-01: 4, E-02: 4, E-03: 2, E-16: 4
-    done: 11        # U-1..U-9, U-10 (Dashboard Routing), U-11 (Password Reset Page)
-    ready: 0
-    blocked: 3
+    done: 12        # U-1..U-9, U-10 (Dashboard Routing), U-11 (Password Reset Page), U-12 (Remaining Framework Seeds)
+    ready: 2        # U-13 (Persona Onboarding), U-14 (Email Verification Gate)
+    blocked: 0
   superadmin:
     priority: 1
     total: 9        # E-04: 4, E-05: 3, E-07: 2
@@ -32,8 +32,8 @@ lanes:
     priority: 2
     total: 44       # E-06: 3, E-09: 3, E-14: 4, E-15: 4, E-17: 4, E-28: 5, E-29: 3, E-30: 3, E-31: 3, E-33: 4, E-36: 4, E-37: 4
     done: 3         # IA-1 (User List & Invitation), IA-4 (ILO Model & Repository), IA-5 (Admin Dashboard)
-    ready: 3        # IA-17 (User Deactivation), IA-18 (Role Assignment), IA-23 (ILO Management UI)
-    blocked: 38
+    ready: 4        # IA-6 (Framework List Page), IA-17 (User Deactivation), IA-18 (Role Assignment), IA-23 (ILO Management UI)
+    blocked: 37
   faculty:
     priority: 3
     total: 75       # E-08: 4, E-10: 3, E-11: 4, E-12: 4, E-13: 3, E-18: 4, E-19: 4, E-20: 4, E-21: 4, E-22: 3, E-23: 4, E-24: 4, E-25: 4, E-26: 4, E-27: 4, E-32: 4, E-34: 4, E-35: 3, E-38: 3, E-39: 4
@@ -157,6 +157,12 @@ completed:
     completed: 2026-02-20
     api_tests: 25      # invitation-acceptance.service (12) + invitation-acceptance.controller (13)
     e2e_tests: 0
+  - id: STORY-U-12
+    title: "Remaining Framework Seeds"
+    lane: universal
+    completed: 2026-02-20
+    api_tests: 72      # framework-seeders (72): LCME(12) + ACGME(10) + AAMC(8) + UME(10) + EPA(8) + Bloom(8) + Miller(8) + SeedRunner(8)
+    e2e_tests: 0
 
 # Error-to-rule pipeline
 error_pipeline:
@@ -166,12 +172,12 @@ error_pipeline:
 
 # Time allocation tracking
 metrics:
-  stories_completed: 17
+  stories_completed: 18
   stories_total: 166
   avg_story_time_minutes: 0    # not tracked yet
   planning_pct: 0    # target: 40%
   review_pct: 0      # target: 40%
   execution_pct: 0   # target: 10%
   learning_pct: 0    # target: 10%
-  api_tests_total: 393  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33, U-8: 15, U-9: 25, U-10: 38, U-11: 16, SA-1: 28, SA-2: 22, SA-3: 20, SA-4: 21, SA-5: 17, IA-5: 18
+  api_tests_total: 465  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33, U-8: 15, U-9: 25, U-10: 38, U-11: 16, U-12: 72, SA-1: 28, SA-2: 22, SA-3: 20, SA-4: 21, SA-5: 17, IA-5: 18
   e2e_tests_total: 0
