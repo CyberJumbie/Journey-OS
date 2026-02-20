@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { LoginForm } from "@web/components/auth/login-form";
+import { LoginScreen } from "@web/components/auth/login-screen";
 
 export const metadata: Metadata = {
   title: "Sign In — Journey OS",
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 
 // Next.js App Router requires default export for pages
 export default function LoginPage() {
-  return <LoginForm />;
+  return <LoginScreen />;
 }

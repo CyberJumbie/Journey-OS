@@ -1,26 +1,93 @@
 @import "tailwindcss";
 
+/* ─── MSM Brand Design Tokens ─────────────────────────────────── */
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #1b232a;
+
+  /* Primary blues */
+  --navy-deep: #002c76;
+  --navy: #003265;
+  --blue: #004ebc;
+  --blue-mid: #2b71b9;
+  --blue-light: #00a8e1;
+  --blue-pale: #a3d9ff;
+
+  /* Education pillar greens */
+  --green-dark: #5d7203;
+  --green: #69a338;
+  --lime: #d8d812;
+
+  /* Neutrals */
+  --ink: #1b232a;
+  --warm-gray: #d7d3c8;
+  --cream: #f5f3ef;
+  --parchment: #faf9f6;
+
+  /* Text */
+  --text-primary: #1b232a;
+  --text-secondary: #4a5568;
+  --text-muted: #718096;
+
+  /* Border */
+  --border: #e2dfd8;
+  --border-light: #edeae4;
+
+  /* Semantic */
+  --error: #c9282d;
+  --warning: #fa9d33;
+
+  /* Fonts */
+  --font-serif: var(--font-lora), Georgia, serif;
+  --font-sans: var(--font-source-sans), "Source Sans Pro", -apple-system, system-ui, sans-serif;
+  --font-mono: var(--font-dm-mono), Menlo, monospace;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  /* Font families */
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+  --font-mono: var(--font-mono);
+
+  /* Brand colors */
+  --color-navy-deep: var(--navy-deep);
+  --color-navy: var(--navy);
+  --color-blue: var(--blue);
+  --color-blue-mid: var(--blue-mid);
+  --color-blue-light: var(--blue-light);
+  --color-blue-pale: var(--blue-pale);
+
+  --color-green-dark: var(--green-dark);
+  --color-green: var(--green);
+  --color-lime: var(--lime);
+
+  --color-ink: var(--ink);
+  --color-warm-gray: var(--warm-gray);
+  --color-cream: var(--cream);
+  --color-parchment: var(--parchment);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  --color-border: var(--border);
+  --color-border-light: var(--border-light);
+
+  --color-error: var(--error);
+  --color-warning: var(--warning);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
 }

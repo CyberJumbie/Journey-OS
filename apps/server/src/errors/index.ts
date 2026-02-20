@@ -28,6 +28,9 @@ export {
   DuplicateInvitationError,
   InvitationExpiredError,
   InvitationLimitError,
+  InvitationNotFoundError,
+  InvitationAlreadyUsedError,
+  InvitationInvalidError,
 } from "./invitation.error";
 export {
   ObjectiveError,

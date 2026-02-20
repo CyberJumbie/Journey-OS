@@ -27,6 +27,10 @@ import { InstitutionUserService } from "./services/user/institution-user.service
 import { InstitutionUserController } from "./controllers/user/institution-user.controller";
 import { UserReassignmentService } from "./services/user/user-reassignment.service";
 import { UserReassignmentController } from "./controllers/user/user-reassignment.controller";
+import { InvitationAcceptanceService } from "./services/auth/invitation-acceptance.service";
+import { InvitationAcceptanceController } from "./controllers/auth/invitation-acceptance.controller";
+import { AdminDashboardService } from "./services/admin/admin-dashboard.service";
+import { DashboardController } from "./controllers/admin/dashboard.controller";
 import { getSupabaseClient } from "./config/supabase.config";
 import { envConfig } from "./config/env.config";
 import { AuthRole } from "@journey-os/types";
@@ -75,6 +79,20 @@ const applicationService = new ApplicationService(supabaseClient);
 const applicationController = new ApplicationController(applicationService);
 app.post("/api/v1/waitlist", createApplicationRateLimiter(), (req, res) =>
   applicationController.handleSubmit(req, res),
+);
+
+// Invitation acceptance — public, no auth required (user has no account yet)
+const invitationAcceptanceService = new InvitationAcceptanceService(
+  supabaseClient,
+);
+const invitationAcceptanceController = new InvitationAcceptanceController(
+  invitationAcceptanceService,
+);
+app.get("/api/v1/invitations/validate", (req, res) =>
+  invitationAcceptanceController.handleValidate(req, res),
+);
+app.post("/api/v1/invitations/accept", (req, res) =>
+  invitationAcceptanceController.handleAccept(req, res),
 );
 
 // All other /api/v1 routes require authentication
@@ -147,6 +165,15 @@ app.post(
   "/api/v1/institution/users/invite",
   rbac.require(AuthRole.INSTITUTIONAL_ADMIN),
   (req, res) => institutionUserController.handleInvite(req, res),
+);
+
+// Institution dashboard — InstitutionalAdmin or SuperAdmin
+const adminDashboardService = new AdminDashboardService(supabaseClient);
+const dashboardController = new DashboardController(adminDashboardService);
+app.get(
+  "/api/v1/institution/dashboard",
+  rbac.require(AuthRole.INSTITUTIONAL_ADMIN, AuthRole.SUPERADMIN),
+  (req, res) => dashboardController.getDashboard(req, res),
 );
 
 app.listen(PORT, () => {

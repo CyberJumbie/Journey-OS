@@ -28,7 +28,7 @@ export default async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Root path: redirect based on auth state
+  // Root path: authenticated users go to dashboard, unauthenticated see landing page
   if (pathname === "/") {
     if (user) {
       const role = user.app_metadata?.role as string | undefined;
@@ -37,9 +37,7 @@ export default async function middleware(request: NextRequest) {
       url.pathname = dashboardPath ?? "/unauthorized";
       return NextResponse.redirect(url);
     }
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
+    return response();
   }
 
   // Public routes: always accessible

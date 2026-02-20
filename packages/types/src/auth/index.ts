@@ -40,3 +40,8 @@ export type {
   RegistrationRequest,
   RegistrationResponse,
 } from "./registration.types";
+export type {
+  InvitationTokenPayload,
+  InvitationAcceptRequest,
+  InvitationAcceptResult,
+} from "./invitation.types";

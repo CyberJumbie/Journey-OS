@@ -184,3 +184,10 @@ errors:
     rule: "Read error class source to verify exact code string before writing test assertions. Don't copy codes across different error classes."
     location: "Root CLAUDE.md → Things Claude Gets Wrong"
     recurrence: 0
+
+  - date: 2026-02-20
+    story: STORY-SA-4
+    error: "Used sequential client-side Supabase queries (profiles.update → course_members.update → audit_log.insert) for a multi-table write. If query 2 fails, query 1 already committed — data left inconsistent."
+    rule: "Multi-table writes that must be atomic must use supabase.rpc() with a Postgres function, never sequential client-side queries. See docs/solutions/supabase-transactional-rpc-pattern.md"
+    location: "Root CLAUDE.md → Database Rules + docs/solutions/supabase-transactional-rpc-pattern.md"
+    recurrence: 0
