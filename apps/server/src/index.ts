@@ -31,14 +31,25 @@ import { InvitationAcceptanceService } from "./services/auth/invitation-acceptan
 import { InvitationAcceptanceController } from "./controllers/auth/invitation-acceptance.controller";
 import { OnboardingService } from "./services/auth/onboarding.service";
 import { OnboardingController } from "./controllers/auth/onboarding.controller";
+import { ResendVerificationService } from "./services/auth/resend-verification.service";
+import { ResendVerificationController } from "./controllers/auth/resend-verification.controller";
+import { createEmailVerificationMiddleware } from "./middleware/email-verification.middleware";
 import { RejectionService } from "./services/institution/rejection.service";
 import { RejectionController } from "./controllers/institution/rejection.controller";
 import { RejectionEmailService } from "./services/email/rejection-email.service";
 import { AdminDashboardService } from "./services/admin/admin-dashboard.service";
 import { DashboardController } from "./controllers/admin/dashboard.controller";
+import { InstitutionMonitoringService } from "./services/admin/institution-monitoring.service";
+import { InstitutionMonitoringController } from "./controllers/admin/institution-monitoring.controller";
+import { NotificationRepository } from "./repositories/notification.repository";
+import { NotificationService } from "./services/notification/notification.service";
+import { NotificationController } from "./controllers/notification/notification.controller";
 import { CourseRepository } from "./repositories/course.repository";
 import { CourseService } from "./services/course/course.service";
 import { CourseController } from "./controllers/course/course.controller";
+import { FrameworkService } from "./services/framework/framework.service";
+import { FrameworkController } from "./controllers/framework/framework.controller";
+import { Neo4jClientConfig } from "./config/neo4j.config";
 import { LintReportRepository } from "./repositories/lint-report.repository";
 import { LintRuleRegistryService } from "./services/kaizen/lint-rule-registry.service";
 import { LintEngineService } from "./services/kaizen/lint-engine.service";
@@ -129,6 +140,18 @@ app.post("/api/v1/onboarding/complete", (req, res) =>
   onboardingController.handleComplete(req, res),
 );
 
+// Resend verification — authenticated, exempt from email verification check (by position)
+const resendVerificationService = new ResendVerificationService(supabaseClient);
+const resendVerificationController = new ResendVerificationController(
+  resendVerificationService,
+);
+app.post("/api/v1/auth/resend-verification", (req, res) =>
+  resendVerificationController.handleResend(req, res),
+);
+
+// Email verification gate — blocks unverified users from all routes below
+app.use("/api/v1", createEmailVerificationMiddleware());
+
 // Protected routes — SuperAdmin only
 const rbac = createRbacMiddleware();
 const globalUserService = new GlobalUserService(supabaseClient);
@@ -176,6 +199,19 @@ app.patch(
   (req, res) => rejectionController.handleReject(req, res),
 );
 
+// Institution monitoring — SuperAdmin only
+const institutionMonitoringService = new InstitutionMonitoringService(
+  supabaseClient,
+);
+const institutionMonitoringController = new InstitutionMonitoringController(
+  institutionMonitoringService,
+);
+app.get(
+  "/api/v1/admin/institutions",
+  rbac.require(AuthRole.SUPERADMIN),
+  (req, res) => institutionMonitoringController.handleList(req, res),
+);
+
 // User reassignment — SuperAdmin only
 const reassignmentEmailService = new ReassignmentEmailService();
 const userReassignmentService = new UserReassignmentService(
@@ -219,6 +255,22 @@ app.get(
   rbac.require(AuthRole.INSTITUTIONAL_ADMIN, AuthRole.SUPERADMIN),
   (req, res) => dashboardController.getDashboard(req, res),
 );
+
+// Framework browser — InstitutionalAdmin or SuperAdmin (requires Neo4j)
+try {
+  const neo4jDriver = Neo4jClientConfig.getInstance().driver;
+  const frameworkService = new FrameworkService(neo4jDriver);
+  const frameworkController = new FrameworkController(frameworkService);
+  app.get(
+    "/api/v1/institution/frameworks",
+    rbac.require(AuthRole.INSTITUTIONAL_ADMIN, AuthRole.SUPERADMIN),
+    (req, res) => frameworkController.listFrameworks(req, res),
+  );
+} catch {
+  console.log(
+    "[server] Neo4j not configured — framework routes not registered",
+  );
+}
 
 // KaizenML Lint Engine — InstitutionalAdmin only
 const lintReportRepository = new LintReportRepository(supabaseClient);
@@ -289,6 +341,24 @@ app.patch(
   "/api/v1/courses/:id/archive",
   rbac.requireCourseDirector(),
   (req, res) => courseController.handleArchive(req, res),
+);
+
+// Notifications — any authenticated user (no RBAC role check)
+// Static routes BEFORE parameterized /:id/read to avoid param capture
+const notificationRepository = new NotificationRepository(supabaseClient);
+const notificationService = new NotificationService(notificationRepository);
+const notificationController = new NotificationController(notificationService);
+app.get("/api/v1/notifications/unread-count", (req, res) =>
+  notificationController.handleUnreadCount(req, res),
+);
+app.post("/api/v1/notifications/mark-all-read", (req, res) =>
+  notificationController.handleMarkAllAsRead(req, res),
+);
+app.get("/api/v1/notifications", (req, res) =>
+  notificationController.handleList(req, res),
+);
+app.patch("/api/v1/notifications/:id/read", (req, res) =>
+  notificationController.handleMarkAsRead(req, res),
 );
 
 app.listen(PORT, () => {

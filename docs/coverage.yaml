@@ -19,8 +19,8 @@ lanes:
   universal:
     priority: 0
     total: 14       # E-01: 4, E-02: 4, E-03: 2, E-16: 4
-    done: 12        # U-1..U-9, U-10 (Dashboard Routing), U-11 (Password Reset Page), U-12 (Remaining Framework Seeds)
-    ready: 2        # U-13 (Persona Onboarding), U-14 (Email Verification Gate)
+    done: 14        # U-1..U-14 — ALL UNIVERSAL STORIES COMPLETE
+    ready: 0
     blocked: 0
   superadmin:
     priority: 1
@@ -31,15 +31,15 @@ lanes:
   institutional_admin:
     priority: 2
     total: 44       # E-06: 3, E-09: 3, E-14: 4, E-15: 4, E-17: 4, E-28: 5, E-29: 3, E-30: 3, E-31: 3, E-33: 4, E-36: 4, E-37: 4
-    done: 4         # IA-1 (User List & Invitation), IA-4 (ILO Model & Repository), IA-5 (Admin Dashboard), IA-12 (KaizenML Lint Rule Engine)
-    ready: 4        # IA-6 (Framework List Page), IA-17 (User Deactivation), IA-18 (Role Assignment), IA-23 (ILO Management UI)
-    blocked: 36
+    done: 5         # IA-1 (User List & Invitation), IA-4 (ILO Model & Repository), IA-5 (Admin Dashboard), IA-6 (Framework List Page), IA-12 (KaizenML Lint Rule Engine)
+    ready: 6        # IA-2 (SLO Model), IA-8 (Course Oversight), IA-17 (User Deactivation), IA-18 (Role Assignment), IA-22 (SLO-to-ILO Linking), IA-23 (ILO Management UI)
+    blocked: 33
   faculty:
     priority: 3
     total: 75       # E-08: 4, E-10: 3, E-11: 4, E-12: 4, E-13: 3, E-18: 4, E-19: 4, E-20: 4, E-21: 4, E-22: 3, E-23: 4, E-24: 4, E-25: 4, E-26: 4, E-27: 4, E-32: 4, E-34: 4, E-35: 3, E-38: 3, E-39: 4
-    done: 0
-    ready: 3        # STORY-F-3 (Import Parser), F-4 (Template Model), F-8 (Help Pages) — zero deps
-    blocked: 72     # rest blocked by upstream dependencies
+    done: 1         # F-1 (Course Model & Repository)
+    ready: 7        # F-2 (Notification Model), F-3 (Import Parser), F-4 (Template Model), F-5 (Profile Page), F-8 (Help Pages), F-9 (Upload Dropzone), F-11 (Course Hierarchy), F-12 (Course Cards), F-13 (Course List)
+    blocked: 67     # rest blocked by upstream dependencies
   student:
     priority: 4
     total: 15       # E-40: 4, E-41: 4, E-42: 4, E-43: 3
@@ -175,6 +175,30 @@ completed:
     completed: 2026-02-20
     api_tests: 23      # lint-engine.service (10) + orphan-concepts.rule (3) + dangling-slo.rule (2) + stale-items.rule (3) + lint.controller (5)
     e2e_tests: 0
+  - id: STORY-U-13
+    title: "Persona Onboarding Screens"
+    lane: universal
+    completed: 2026-02-20
+    api_tests: 20      # onboarding.service (11) + onboarding.controller (9)
+    e2e_tests: 0
+  - id: STORY-U-14
+    title: "Email Verification Gate"
+    lane: universal
+    completed: 2026-02-20
+    api_tests: 14      # email-verification.middleware (7) + resend-verification.service (7)
+    e2e_tests: 0
+  - id: STORY-F-1
+    title: "Course Model & Repository"
+    lane: faculty
+    completed: 2026-02-20
+    api_tests: 26      # course.model (5) + course.repository (8) + course.service (15) + course.controller (6) — note: some counted as service tests overlap
+    e2e_tests: 0
+  - id: STORY-IA-6
+    title: "Framework List Page"
+    lane: institutional_admin
+    completed: 2026-02-20
+    api_tests: 15      # framework.service (10) + framework.controller (5)
+    e2e_tests: 0
 
 # Error-to-rule pipeline
 error_pipeline:
@@ -184,12 +208,12 @@ error_pipeline:
 
 # Time allocation tracking
 metrics:
-  stories_completed: 20
+  stories_completed: 24
   stories_total: 166
   avg_story_time_minutes: 0    # not tracked yet
   planning_pct: 0    # target: 40%
   review_pct: 0      # target: 40%
   execution_pct: 0   # target: 10%
   learning_pct: 0    # target: 10%
-  api_tests_total: 504  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33, U-8: 15, U-9: 25, U-10: 38, U-11: 16, U-12: 72, SA-1: 28, SA-2: 22, SA-3: 20, SA-4: 21, SA-5: 17, SA-6: 16, IA-5: 18, IA-12: 23
+  api_tests_total: 579  # U-1: 15, U-2: 39, U-3: 26, U-4: 9, U-5: 19, U-6: 32, U-7: 33, U-8: 15, U-9: 25, U-10: 38, U-11: 16, U-12: 72, U-13: 20, U-14: 14, SA-1: 28, SA-2: 22, SA-3: 20, SA-4: 21, SA-5: 17, SA-6: 16, IA-5: 18, IA-6: 15, IA-12: 23, F-1: 26
   e2e_tests_total: 0

@@ -27,6 +27,10 @@ export type {
   SeedBatch,
   SeedRunReport,
 } from "./seeder.types";
+export type {
+  FrameworkSummary,
+  FrameworkListResponse,
+} from "./framework-summary.types";
 
 import type {
   USMLESystem,

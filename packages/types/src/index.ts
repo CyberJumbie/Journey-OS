@@ -4,5 +4,6 @@ export * from "./course";
 export * from "./frameworks";
 export * from "./institution";
 export * from "./kaizen";
+export * from "./notification";
 export * from "./objective";
 export * from "./user";
