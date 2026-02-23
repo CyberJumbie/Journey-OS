@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useBreakpoint } from "@web/hooks/use-breakpoint";
 import { JourneyLogo } from "@web/components/brand/journey-logo";
 import { navItems } from "@web/components/dashboard/mock-data";
+import { createBrowserClient } from "@web/lib/supabase";
 
 interface DashboardSidebarProps {
   open: boolean;
@@ -16,10 +18,19 @@ export function DashboardSidebar({
   onClose,
   user,
 }: DashboardSidebarProps) {
+  const router = useRouter();
   const bp = useBreakpoint();
   const isDesktop = bp === "desktop";
   const isTablet = bp === "tablet";
   const [activeNav, setActiveNav] = useState("dashboard");
+
+  async function handleLogout() {
+    const supabase = createBrowserClient();
+    await supabase.auth.signOut();
+    if (!isDesktop) onClose();
+    router.push("/login");
+    router.refresh();
+  }
 
   const sidebarWidth = isDesktop ? 240 : isTablet ? 220 : 260;
 
@@ -142,6 +153,38 @@ export function DashboardSidebar({
           >
             <span style={{ fontSize: 14 }}>⚙</span>
             Settings
+          </button>
+          <button
+            onClick={handleLogout}
+            className="font-sans text-text-muted"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              width: "100%",
+              padding: "10px 12px",
+              borderRadius: 6,
+              border: "none",
+              background: "transparent",
+              fontSize: 14,
+              cursor: "pointer",
+            }}
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            Log out
           </button>
 
           <div className="mt-2 flex items-center gap-2.5 px-3 pt-3">
