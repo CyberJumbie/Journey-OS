@@ -6,40 +6,7 @@ import { WovenField } from "@web/components/brand/woven-field";
 import { AscendingSquares } from "@web/components/brand/ascending-squares";
 import { Reveal } from "@web/components/landing/reveal";
 import { C, pillarColors } from "@web/components/landing/landing-data";
-
-function ThreadDivider({
-  color = "#d7d3c8" /* token: --warm-gray */,
-}: {
-  color?: string;
-}) {
-  return (
-    <div
-      className="relative mx-auto overflow-hidden"
-      style={{ height: 20, maxWidth: 200 }}
-    >
-      <svg
-        width="100%"
-        height="20"
-        viewBox="0 0 200 20"
-        preserveAspectRatio="none"
-      >
-        <path
-          d="M0,10 Q25,2 50,10 T100,10 T150,10 T200,10"
-          stroke={color}
-          strokeWidth="1.5"
-          fill="none"
-        />
-        <path
-          d="M0,10 Q25,18 50,10 T100,10 T150,10 T200,10"
-          stroke={color}
-          strokeWidth="1"
-          fill="none"
-          opacity="0.5"
-        />
-      </svg>
-    </div>
-  );
-}
+import { ThreadDivider } from "@web/components/brand/thread-divider";
 
 export function WaitlistSection() {
   const bp = useBreakpoint();
@@ -123,7 +90,7 @@ export function WaitlistSection() {
                 help shape a platform that works for your institution, your
                 faculty, your students.
               </p>
-              <ThreadDivider color="#d7d3c8" /* token: --warm-gray */ />
+              <ThreadDivider />
               <p
                 className="mt-4 italic"
                 style={{

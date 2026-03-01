@@ -6,6 +6,9 @@ interface RoleOption {
   value: SelfRegisterableRole;
   label: string;
   description: string;
+  icon: string;
+  accentColor: string;
+  features: string[];
 }
 
 const ROLE_OPTIONS: RoleOption[] = [
@@ -14,18 +17,39 @@ const ROLE_OPTIONS: RoleOption[] = [
     label: "Faculty",
     description:
       "Create and manage course content, assessments, and curricula.",
+    icon: "\uD83C\uDFEB",
+    accentColor: "var(--blue-mid)",
+    features: [
+      "AI-powered question generation",
+      "Curriculum mapping tools",
+      "Student performance analytics",
+    ],
   },
   {
     value: "student",
     label: "Student",
     description:
       "Access learning paths, practice questions, and track your progress.",
+    icon: "\uD83C\uDF93",
+    accentColor: "var(--green)",
+    features: [
+      "Adaptive practice sessions",
+      "Mastery tracking dashboard",
+      "Exam preparation tools",
+    ],
   },
   {
     value: "advisor",
     label: "Advisor",
     description:
       "Monitor student progress, set alerts, and manage interventions.",
+    icon: "\uD83E\uDDE0",
+    accentColor: "var(--navy-deep)",
+    features: [
+      "Student progress monitoring",
+      "Early alert system",
+      "Intervention management",
+    ],
   },
 ];
 
@@ -46,25 +70,51 @@ export function RoleStep({ selectedRole, onSelect, onNext }: RoleStepProps) {
       </p>
 
       <div className="space-y-3">
-        {ROLE_OPTIONS.map((option) => (
-          <button
-            key={option.value}
-            type="button"
-            onClick={() => onSelect(option.value)}
-            className={`w-full rounded-lg border-2 p-4 text-left transition-colors ${
-              selectedRole === option.value
-                ? "border-blue-mid bg-blue-mid/5"
-                : "border-border-light hover:border-border"
-            }`}
-          >
-            <div className="font-serif font-medium text-text-primary">
-              {option.label}
-            </div>
-            <div className="mt-1 text-sm text-text-secondary">
-              {option.description}
-            </div>
-          </button>
-        ))}
+        {ROLE_OPTIONS.map((option) => {
+          const isSelected = selectedRole === option.value;
+          return (
+            <button
+              key={option.value}
+              type="button"
+              onClick={() => onSelect(option.value)}
+              className={`w-full rounded-lg border-2 p-4 text-left transition-colors ${
+                isSelected
+                  ? "border-blue-mid bg-blue-mid/5"
+                  : "border-border-light hover:border-border"
+              }`}
+              style={{
+                borderLeftWidth: 4,
+                borderLeftColor: isSelected
+                  ? option.accentColor
+                  : "var(--border-light)",
+              }}
+            >
+              <div className="flex items-center gap-2">
+                <span style={{ fontSize: 20 }}>{option.icon}</span>
+                <span className="font-serif font-medium text-text-primary">
+                  {option.label}
+                </span>
+              </div>
+              <div className="mt-1 text-sm text-text-secondary">
+                {option.description}
+              </div>
+              <ul className="mt-2 space-y-1">
+                {option.features.map((feat) => (
+                  <li
+                    key={feat}
+                    className="flex items-center gap-1.5 text-xs text-text-muted"
+                  >
+                    <span
+                      className="inline-block h-1 w-1 shrink-0 rounded-full"
+                      style={{ background: option.accentColor }}
+                    />
+                    {feat}
+                  </li>
+                ))}
+              </ul>
+            </button>
+          );
+        })}
       </div>
 
       <button

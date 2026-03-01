@@ -10,6 +10,7 @@ import type {
 } from "@journey-os/types";
 import { ApplicationDetailModal } from "./application-detail-modal";
 import { getAuthToken } from "@web/lib/auth/get-auth-token";
+import { StatCard } from "@web/components/brand/stat-card";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 const PAGE_SIZE = 20;
@@ -48,10 +49,28 @@ export function ApplicationReviewQueue() {
   );
   const [status, setStatus] = useState<Status>("loading");
   const [errorMsg, setErrorMsg] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedApp, setSelectedApp] = useState<ApplicationDetail | null>(
     null,
   );
   const [detailLoading, setDetailLoading] = useState(false);
+
+  const pendingCount = applications.filter(
+    (a) => a.status === "pending",
+  ).length;
+  const approvedCount = applications.filter(
+    (a) => a.status === "approved",
+  ).length;
+
+  const filteredApplications = searchQuery
+    ? applications.filter(
+        (a) =>
+          a.institution_name
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          a.contact_name.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
+    : applications;
 
   const fetchApplications = useCallback(async () => {
     setStatus("loading");
@@ -140,6 +159,13 @@ export function ApplicationReviewQueue() {
 
   return (
     <div className="space-y-4">
+      {/* Stat Cards */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <StatCard label="Pending" value={pendingCount} />
+        <StatCard label="Approved" value={approvedCount} />
+        <StatCard label="Total" value={total} />
+      </div>
+
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
         <select
@@ -156,6 +182,14 @@ export function ApplicationReviewQueue() {
             </option>
           ))}
         </select>
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search by name or institution..."
+          className="rounded border border-border px-3 py-2 text-sm focus:border-blue-mid focus:outline-none focus:ring-2 focus:ring-blue-mid/15"
+          style={{ minWidth: 220 }}
+        />
         <span className="text-sm text-text-muted">
           {total} application{total !== 1 ? "s" : ""}
         </span>
@@ -200,7 +234,7 @@ export function ApplicationReviewQueue() {
               ))}
 
             {status === "data" &&
-              applications.map((app) => (
+              filteredApplications.map((app) => (
                 <tr
                   key={app.id}
                   className="border-b transition-colors hover:bg-parchment"

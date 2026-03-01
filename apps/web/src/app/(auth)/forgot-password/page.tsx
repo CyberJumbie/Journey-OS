@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ForgotPasswordForm } from "@web/components/auth/forgot-password-form";
+import { AuthLayout } from "@web/components/auth/auth-layout";
 
 export const metadata: Metadata = {
   title: "Forgot Password — Journey OS",
@@ -8,10 +9,11 @@ export const metadata: Metadata = {
 
 export default function ForgotPasswordPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-cream px-4">
-      <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
-        <ForgotPasswordForm />
-      </div>
-    </div>
+    <AuthLayout
+      headline="Reset your password"
+      subheadline="We'll send you a secure link to set a new password."
+    >
+      <ForgotPasswordForm />
+    </AuthLayout>
   );
 }

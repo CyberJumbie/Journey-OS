@@ -7,6 +7,7 @@ import type {
   SortDirection,
 } from "@journey-os/types";
 import { useInstitutionList } from "@web/hooks/use-institution-list";
+import { StatCard } from "@web/components/brand/stat-card";
 
 const STATUS_LABELS: Record<InstitutionMonitoringStatus, string> = {
   active: "Active",
@@ -59,8 +60,22 @@ export function InstitutionListDashboard() {
     retry,
   } = useInstitutionList();
 
+  const activeCount = institutions.filter((i) => i.status === "active").length;
+  const pendingCount = institutions.filter(
+    (i) => i.status === "pending",
+  ).length;
+  const totalUsers = institutions.reduce((sum, i) => sum + i.user_count, 0);
+
   return (
     <div className="space-y-4">
+      {/* Stat Cards */}
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <StatCard label="Total Institutions" value={total} />
+        <StatCard label="Active" value={activeCount} />
+        <StatCard label="Pending" value={pendingCount} />
+        <StatCard label="Total Users" value={totalUsers} />
+      </div>
+
       {/* Header with Add button */}
       <div className="flex items-center justify-between">
         <span className="text-sm text-text-muted">

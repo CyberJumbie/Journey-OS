@@ -86,19 +86,45 @@ export function RegistrationWizard() {
 
   if (wizardState === "success") {
     return (
-      <div className="text-center">
-        <h1 className="mb-4 font-serif text-2xl font-semibold text-navy-deep">
-          Check Your Email
+      <div className="flex flex-col items-center text-center">
+        {/* Email icon */}
+        <div
+          className="mb-5 flex items-center justify-center rounded-full"
+          style={{
+            width: 56,
+            height: 56,
+            background: "rgba(105,163,56,0.1)" /* token: --green @ 10% */,
+          }}
+        >
+          <svg
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#69a338" /* token: --green */
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <rect x="2" y="4" width="20" height="16" rx="2" />
+            <path d="M22 4l-10 8L2 4" />
+          </svg>
+        </div>
+        <h1 className="mb-2 font-serif text-2xl font-semibold text-navy-deep">
+          Check Your Inbox
         </h1>
-        <p className="mb-6 text-green">
-          We&apos;ve sent a verification link to <strong>{email}</strong>.
-          Please check your inbox to activate your account.
+        <p className="mb-1 text-sm text-text-secondary">
+          We&apos;ve sent a verification link to
+        </p>
+        <p className="mb-6 font-mono text-sm font-medium text-navy-deep">
+          {email}
         </p>
         <a
           href="/login"
-          className="text-sm font-medium text-blue-mid transition-colors hover:text-navy-deep hover:underline"
+          className="inline-flex items-center justify-center rounded-lg bg-navy-deep px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue"
+          style={{ textDecoration: "none" }}
         >
-          Go to Login
+          Back to Login
         </a>
       </div>
     );

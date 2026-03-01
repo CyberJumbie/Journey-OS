@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { PasswordToggle } from "@web/components/auth/password-toggle";
 
 interface ProfileStepProps {
   displayName: string;
@@ -34,6 +35,7 @@ export function ProfileStep({
   onBack,
 }: ProfileStepProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showPassword, setShowPassword] = useState(false);
 
   function handleNext() {
     const newErrors: Record<string, string> = {};
@@ -117,14 +119,20 @@ export function ProfileStep({
           >
             Password
           </label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => onPasswordChange(e.target.value)}
-            className={inputClassName}
-            placeholder="Min 8 chars, 1 uppercase, 1 number"
-          />
+          <div className="relative">
+            <input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => onPasswordChange(e.target.value)}
+              className={`${inputClassName} pr-10`}
+              placeholder="Min 8 chars, 1 uppercase, 1 number"
+            />
+            <PasswordToggle
+              show={showPassword}
+              onToggle={() => setShowPassword(!showPassword)}
+            />
+          </div>
           {errors.password && (
             <p className="mt-1 text-sm text-error">{errors.password}</p>
           )}

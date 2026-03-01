@@ -4,6 +4,12 @@ import { useAdminDashboard } from "@web/hooks/use-admin-dashboard";
 import { KPICard } from "./kpi-card";
 import { QuickActionCard } from "./quick-action-card";
 import type { QuickAction } from "@journey-os/types";
+import {
+  mockRecentUsers,
+  mockSystemAlerts,
+  getRoleBadgeClass,
+  getSeverityStyle,
+} from "./admin-mock-data";
 
 const QUICK_ACTIONS: readonly QuickAction[] = [
   {
@@ -192,6 +198,69 @@ export function AdminDashboard() {
               description={action.description}
             />
           ))}
+        </div>
+      </div>
+
+      {/* Recent Users + System Alerts — two-column on desktop */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        {/* Recent Users */}
+        <div className="rounded-lg bg-white p-6 shadow-sm">
+          <h2 className="mb-4 font-serif text-lg font-semibold text-text-primary">
+            Recent Users
+          </h2>
+          <div className="space-y-3">
+            {mockRecentUsers.map((user) => (
+              <div
+                key={user.id}
+                className="flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-parchment"
+              >
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-navy-deep font-mono text-xs font-bold text-white">
+                  {user.initials}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-text-primary">
+                    {user.name}
+                  </p>
+                  <p className="text-xs text-text-muted">
+                    joined {user.joinedAgo}
+                  </p>
+                </div>
+                <span
+                  className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium uppercase ${getRoleBadgeClass(user.role)}`}
+                >
+                  {user.role.replace("_", " ")}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* System Alerts */}
+        <div className="rounded-lg bg-white p-6 shadow-sm">
+          <h2 className="mb-4 font-serif text-lg font-semibold text-text-primary">
+            System Alerts
+          </h2>
+          <div className="space-y-3">
+            {mockSystemAlerts.map((alert) => {
+              const style = getSeverityStyle(alert.severity);
+              return (
+                <div
+                  key={alert.id}
+                  className="flex items-start gap-3 rounded-md border border-border-light px-3 py-3"
+                >
+                  <span className={`mt-0.5 text-base ${style.color}`}>
+                    {style.icon}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm text-text-primary">{alert.message}</p>
+                    <p className="mt-0.5 text-xs text-text-muted">
+                      {alert.timestamp}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

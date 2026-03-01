@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { VerificationInterstitial } from "@web/components/auth/verification-interstitial";
+import { AuthLayout } from "@web/components/auth/auth-layout";
 
 export const metadata: Metadata = {
   title: "Verify Your Email — Journey OS",
@@ -13,7 +14,10 @@ export const metadata: Metadata = {
  */
 export default function VerifyEmailPage() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-parchment p-4">
+    <AuthLayout
+      headline="Check your inbox"
+      subheadline="We sent a verification link to your email address."
+    >
       <Suspense
         fallback={
           <div className="flex items-center justify-center">
@@ -23,6 +27,6 @@ export default function VerifyEmailPage() {
       >
         <VerificationInterstitial />
       </Suspense>
-    </main>
+    </AuthLayout>
   );
 }

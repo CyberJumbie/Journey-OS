@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { validatePassword } from "@web/lib/auth/password-validation";
 import { PasswordStrengthIndicator } from "@web/components/auth/password-strength-indicator";
+import { PasswordToggle } from "@web/components/auth/password-toggle";
 
 type FlowState =
   | "validating"
@@ -38,6 +39,8 @@ export function InvitationAcceptFlow() {
   const [fullName, setFullName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const validation = validatePassword(password);
   const passwordsMatch = password === confirmPassword;
@@ -239,16 +242,22 @@ export function InvitationAcceptFlow() {
           >
             Password
           </label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            disabled={flowState === "submitting"}
-            className="w-full rounded-lg border border-border bg-parchment px-3 py-2 text-sm text-text-primary focus:border-blue-mid focus:outline-none focus:ring-2 focus:ring-blue-mid/15"
-            placeholder="Enter password"
-            required
-          />
+          <div className="relative">
+            <input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={flowState === "submitting"}
+              className="w-full rounded-lg border border-border bg-parchment px-3 py-2 pr-10 text-sm text-text-primary focus:border-blue-mid focus:outline-none focus:ring-2 focus:ring-blue-mid/15"
+              placeholder="Enter password"
+              required
+            />
+            <PasswordToggle
+              show={showPassword}
+              onToggle={() => setShowPassword(!showPassword)}
+            />
+          </div>
           {password.length > 0 && (
             <div className="mt-2">
               <PasswordStrengthIndicator result={validation} />
@@ -264,16 +273,22 @@ export function InvitationAcceptFlow() {
           >
             Confirm Password
           </label>
-          <input
-            id="confirm-password"
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            disabled={flowState === "submitting"}
-            className="w-full rounded-lg border border-border bg-parchment px-3 py-2 text-sm text-text-primary focus:border-blue-mid focus:outline-none focus:ring-2 focus:ring-blue-mid/15"
-            placeholder="Confirm password"
-            required
-          />
+          <div className="relative">
+            <input
+              id="confirm-password"
+              type={showConfirm ? "text" : "password"}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              disabled={flowState === "submitting"}
+              className="w-full rounded-lg border border-border bg-parchment px-3 py-2 pr-10 text-sm text-text-primary focus:border-blue-mid focus:outline-none focus:ring-2 focus:ring-blue-mid/15"
+              placeholder="Confirm password"
+              required
+            />
+            <PasswordToggle
+              show={showConfirm}
+              onToggle={() => setShowConfirm(!showConfirm)}
+            />
+          </div>
           {confirmPassword.length > 0 && !passwordsMatch && (
             <p className="mt-1 text-sm text-error">Passwords do not match.</p>
           )}
