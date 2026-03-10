@@ -1,0 +1,86 @@
+# docs/solutions/index.yaml
+# Format: "SOL-NNN: pattern name | first story | layer"
+# Updated by /compound after each story.
+
+SOL-001: dual-write-service-pattern | bootstrap | services
+SOL-002: neo4j-merge-idempotent | bootstrap | repositories
+SOL-003: supabase-rls-policy | bootstrap | database
+SOL-004: voyage-ai-embedding-with-retry | bootstrap | services
+SOL-005: express-layer-skeleton | bootstrap | routes+controllers+services+repositories
+SOL-006: markdown-first-pdf-extraction | P1-010 | services — MSM syllabus parsing; 5 failure modes; LlamaParse vs pdfplumber vs pdf-parse decision tree
+SOL-007: classifier-noise-filter | P1-013 | pipeline — LangGraph node strips admin noise before concept extraction; Haiku routing ~$0.01/syllabus
+- id: SOL-008
+  file: SOL-008-dual-embedding-provider.md
+  title: Dual Embedding Provider (Voyage AI + OpenAI)
+  summary: Two nullable vector columns, two HNSW indexes, Strategy interface. Both providers embed at ingest. Config flag controls search provider. 6-month comparison without re-ingest.
+  stories: [P1-012]
+
+- id: SOL-009
+  title: Inngest Bulk Generation Pattern
+  file: docs/solutions/SOL-009-inngest-bulk.md
+  summary: Concurrency-limited background job for bulk question generation. Uses step.run() for fault-isolated per-item execution, never rethrows within steps, emits Socket.io events on completion.
+  phase: 2
+  stories: [P2-010]
+
+- id: SOL-010
+  title: Socket.io JWT Auth Pattern
+  file: docs/solutions/SOL-010-socketio-auth.md
+  summary: JWT validation in Socket.io handshake middleware. Rooms keyed by user:{userId}. Graceful degradation — frontend polling fallback if socket unavailable.
+  phase: 2
+  stories: [P2-012]
+
+- id: SOL-011
+  title: Self-Correction Retry Loop
+  file: docs/solutions/SOL-011-retry-loop.md
+  summary: LangGraph conditional edge from review_router back to vignette_builder. retryCount in WorkbenchState enforces max=2 at graph entry. Prompt suffix injected per retry with specific failure reason.
+  phase: 2
+  stories: [P2-006]
+
+- id: SOL-012
+  title: UMLS TGT Authentication Pattern
+  file: docs/solutions/SOL-012-umls-auth.md
+  summary: TGT + service ticket pattern for UMLS REST API. TGT cached 8 hours, service ticket single-use. Rate limited to 20 req/s via Inngest throttle.
+  phase: 3
+  stories: [P3-018]
+
+- id: SOL-013
+  title: Inngest 7-Stage Ingestion Pipeline
+  file: docs/solutions/SOL-013-ingestion-pipeline.md
+  summary: Production ingestion via Inngest step functions. Each stage individually retryable. Progress tracked in ingestion_jobs table. Handles PDF and PPTX.
+  phase: 3
+  stories: [P3-001, P3-002]
+
+- id: SOL-014
+  title: SubConcept Deduplication Algorithm
+  file: docs/solutions/SOL-014-subconcept-dedup.md
+  summary: Cosine similarity 0.92 threshold. Canonical = most TEACHES edges. Merges redirect all graph edges before deleting merged node.
+  phase: 3
+  stories: [P3-004]
+
+- id: SOL-015
+  title: LCME Evidence Chain Query
+  file: docs/solutions/SOL-015-lcme-chain.md
+  summary: Full 5-hop Cypher chain: LCME_Element ← ALIGNS_TO ← ILO ← FULFILLS ← SLO ← MAPS_TO ← SubConcept ← TARGETS ← AssessmentItem. Requires OPTIONAL MATCH at every hop.
+  phase: 3
+  stories: [P3-015, P3-016]
+
+- id: SOL-016
+  title: MIP Solver Integration + Greedy Fallback
+  file: docs/context-packets/CP-EPIC-4.2.md
+  summary: Python/PuLP MIP solver on port 8001. Express calls via fetch with 35s timeout. Greedy fallback if unavailable. ±5% tolerance on Bloom/difficulty, ±8% on USMLE system.
+  phase: 4
+  stories: [P4-006]
+
+- id: SOL-017
+  title: Exam Session Scoring (Server-Side)
+  file: docs/context-packets/CP-EPIC-4.2.md
+  summary: Score always calculated server-side in ExamSessionService.submitSession(). Counts correct student_responses. Never trust client-submitted scores.
+  phase: 4
+  stories: [P4-008]
+
+- id: SOL-018
+  title: Dual-Channel Notification Pattern
+  file: docs/context-packets/CP-EPIC-4.3.md
+  summary: Every notification fires both Socket.io (real-time) AND writes to Supabase notifications table (persistent + Realtime). Frontend subscribes to both channels.
+  phase: 4
+  stories: [P4-012]

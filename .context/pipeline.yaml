@@ -1,0 +1,37 @@
+# .context/pipeline.yaml
+# LangGraph.js pipeline nodes. Updated by /compound as nodes are implemented.
+# Format: "node_name: input → output (model used) — status"
+# status: planned | built | tested
+
+# ── Phase 1 — 7-Node Pipeline ─────────────────────────────────────────────────
+init: "WorkbenchState → WorkbenchState+courseContext (no AI, DB reads) — planned"
+context_compiler: "courseContext → retrievedChunks via Graph RAG + Vector RAG + RRF (no AI) — planned"
+vignette_builder: "retrievedChunks → vignette string (Sonnet, STATE_DELTA stream) — planned"
+stem_writer: "vignette → leadInStem string (Sonnet) — planned"
+distractor_generator: "stem+vignette → Option[5] with rationales (Sonnet) — planned"
+validator: "AssessmentItem → ValidationResult; 10 of 30 NBME structural rules (rule-based, no AI) — planned"
+graph_writer: "ValidatedItem → DualWrite to Supabase+Neo4j (no AI) — planned"
+
+# ── Phase 2 Additions (not built yet) ─────────────────────────────────────────
+# tagger: "AssessmentItem → tags[USMLE_System, BloomLevel] (Haiku) — phase2"
+# dedup_detector: "AssessmentItem → dedup score via pgvector 0.85/0.95 threshold (no AI) — phase2"
+# validator_v2: "AssessmentItem → ValidationResult; full 30 NBME rules + Cover The Options — phase2"
+# critic_agent: "AssessmentItem → CriticScore[6 metrics] (Opus ONLY) — phase2"
+# review_router: "CriticScore → auto_approve|pending_review|retry decision — phase2"
+# self_corrector: "AssessmentItem+CriticFeedback → revised item (Sonnet, max 2 loops) — phase2"
+
+# ── Ingestion Pipeline (separate from generation) ─────────────────────────────
+# CRITICAL: Pipeline is Markdown-first. See SOL-006. Raw .txt extraction is wrong.
+pdf_parser: "Upload → ParsedDocument (Markdown via LlamaParse API or pdfplumber) — planned"
+chunker: "ParsedDocument.markdown → ContentChunk[] at 800 tokens, 100 overlap, Markdown-aware split — planned"
+classifier: "ContentChunk[] → { academic[], noise[], borderline[] } (Haiku routing call, ~$0.01/syllabus) — planned"
+embedder: "academic ContentChunk[] → ContentChunkEmbedding[] (Voyage AI voyage-large-2, 1024-dim) — planned"
+concept_extractor: "academic ContentChunk[] → SubConcept[] + TEACHES edges (Haiku) — planned"
+framework_aligner: "SubConcept[] → MAPS_TO edges to USMLE framework (Haiku) — planned"
+
+# Known MSM syllabus failure modes (source: SOL-006):
+# 1. Table collapse — solved by Markdown extraction (table pipes preserved)
+# 2. Temporal marker inconsistency — partially mitigated by Markdown structure
+# 3. Color-coding lost — UNRECOVERABLE from any text extractor. Treat all sessions as required.
+# 4. Broken objective hierarchies — Markdown indentation preserves nesting
+# 5. Administrative noise — solved by classifier node (30-40% of syllabus is noise)

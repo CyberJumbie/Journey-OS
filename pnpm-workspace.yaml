@@ -1,0 +1,6 @@
+packages:
+  - 'frontend'
+  - 'backend'
+  - 'packages/*'
+  - 'seeder'
+  # python/* excluded — standalone virtualenvs, not pnpm workspace

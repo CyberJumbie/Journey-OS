@@ -1,0 +1,26 @@
+@import 'tailwindcss';
+
+:root {
+  --cream: #f5f3ef;
+  --parchment: #faf9f6;
+  --white: #ffffff;
+  --navy: #002c76;
+  --blue: #2b71b9;
+  --green: #69a338;
+  --red: #d32f2f;
+  --amber: #f59e0b;
+  --gray-600: #4b5563;
+  --gray-300: #d1d5db;
+}
+
+body {
+  font-family: var(--font-body), 'Source Sans 3', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading), 'Lora', serif;
+}
+
+code, pre, .font-label {
+  font-family: var(--font-label), 'DM Mono', monospace;
+}

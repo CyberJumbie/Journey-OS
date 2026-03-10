@@ -1,0 +1,43 @@
+# .context/relationships.yaml
+# Source of truth: GRAPH_SCHEMA.md
+# One-liner per relationship. Updated by /compound.
+# Format: "REL_NAME: From → To (cardinality) — when created"
+
+# ── Institutional Hierarchy (source: P1-005 ACs) ──────────────────────────────
+HAS_SCHOOL: "Institution → School (one-to-many) — Layer 1 seed"
+OFFERS_PROGRAM: "School → Program (one-to-many) — Layer 1 seed"
+HAS_TRACK: "Program → ProgramTrack (one-to-many) — Layer 1 seed"
+IN_YEAR: "ProgramTrack → AcademicYear (one-to-many) — Layer 1 seed"
+HAS_PHASE: "AcademicYear → CurricularPhase (one-to-many) — Layer 1 seed"
+CONTAINS_BLOCK: "CurricularPhase → Block (one-to-many) — Layer 1 seed"
+OFFERS_COURSE: "Block → Course (many-to-many) — Layer 1 seed"
+HAS_SECTION: "Course → Section (one-to-many) — Layer 1 seed"
+IN_TERM: "Section → AcademicTerm (many-to-one) — Layer 1 seed"
+HAS_ILO: "Program → ILO (one-to-many) — Layer 1 seed"
+
+# ── Content Relationships (source: GRAPH_SCHEMA.md) ──────────────────────────
+TEACHES: "ContentChunk → SubConcept (many-to-many) — AI-extracted during ingestion (NOT Course→SubConcept)"
+TEACHES_VERIFIED: "ContentChunk → SubConcept (many-to-many) — faculty-confirmed Phase 2"
+MAPS_TO: "SubConcept → USMLE_System|USMLE_Discipline (many-to-many) — AI alignment P1-015"
+
+# ── Assessment Relationships (source: GRAPH_SCHEMA.md) ───────────────────────
+TARGETS: "AssessmentItem → SubConcept (many-to-one) — set at generation time"
+AT_BLOOM: "AssessmentItem → BloomLevel (many-to-one) — set at generation time"
+IN_COURSE: "AssessmentItem → Course (many-to-one) — set at generation time"
+GENERATED_FROM: "AssessmentItem → ContentChunk (many-to-one) — provenance, set at generation"
+
+# ── Framework Internal Relationships (source: P1-006 ACs) ────────────────────
+HAS_TOPIC: "USMLE_System → USMLE_Topic (one-to-many) — Layer 2 seed"
+HAS_ELEMENT: "LCME_Standard → LCME_Element (one-to-many) — Layer 2 seed"
+HAS_SUBDOMAIN: "ACGME_Domain → ACGME_Subdomain | AAMC_Domain → AAMC_Competency — Layer 2 seed"
+HAS_SUBCOMPETENCY: "UME_Competency → UME_Subcompetency (one-to-many) — Layer 2 seed"
+
+# ── ECD Relationships (Phase 2 — source: GRAPH_SCHEMA.md) ────────────────────
+AT_BLOOM_RANGE: "TaskShell → BloomLevel (range) — ECD seed Phase 2"
+MAPPED_TO: "ProficiencyVariable → SubConcept (1:1) — ECD seed Phase 2"
+ASSESSED_BY: "ProficiencyVariable → TaskShell (many-to-many, priority 1-3) — ECD seed Phase 2"
+
+# ── IMPORTANT CORRECTIONS from memory vs actual docs ─────────────────────────
+# ❌ WRONG (do not use): BELONGS_TO, CONTAINS_COURSE, CHUNK_OF, GROUNDED_IN,
+#    SOURCED_FROM, FULFILLS, SATISFIES, PREREQUISITE_OF, RELATED_TO, ALIGNS_WITH
+# ✅ USE instead: the relationships listed above from GRAPH_SCHEMA.md

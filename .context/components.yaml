@@ -1,0 +1,37 @@
+# .context/components.yaml
+# Prototype has 89 components. Track only components WIRED to real backends here.
+# Format: "Name: type [variants] — used_in:ScreenName — status"
+# status: mock (still on setTimeout) | wired (connected to real API) | rewrite (CopilotKit)
+# Updated by /compound as screens are wired.
+
+# ── Auth (P1-024) ─────────────────────────────────────────────────────────────
+# LoginForm: form [] — used_in:LoginPage — mock
+# AuthProvider: context [] — used_in:_app — mock
+
+# ── Course Selection (P1-025) ─────────────────────────────────────────────────
+# CourseCard: display [compact, expanded] — used_in:CourseSelectionPage — mock
+# CourseGrid: layout [] — used_in:CourseSelectionPage — mock
+
+# ── Upload (P1-009) ───────────────────────────────────────────────────────────
+# UploadZone: form [idle, uploading, done, error] — used_in:UploadSyllabusPage — mock
+# ProcessingStatus: display [pending, processing, complete, failed] — used_in:ProcessingStatusPage — mock
+
+# ── Concept Review ────────────────────────────────────────────────────────────
+# ConceptCard: display [pending, approved, rejected] — used_in:ConceptReviewPage — mock
+# ConceptReviewList: list [] — used_in:ConceptReviewPage — mock
+
+# ── QuestWorkbench (P1-026 — REWRITE) ─────────────────────────────────────────
+# QuestWorkbench: REWRITE [chat panel + preview panel] — used_in:WorkbenchPage — rewrite
+# CopilotKitProvider: context [] — used_in:WorkbenchPage — rewrite
+# AgentStatePanel: display [streaming, idle] — used_in:WorkbenchPage — rewrite
+
+# ── Question Preview (P1-027) ─────────────────────────────────────────────────
+# QuestionPreview: display [loading, streaming, complete] — used_in:WorkbenchPage — mock
+# OptionList: display [A-E, with rationale] — used_in:QuestionPreview — mock
+# VignetteBlock: display [streaming] — used_in:QuestionPreview — mock
+
+# ── Question Bank (P1-029) ────────────────────────────────────────────────────
+# ItemBankTable: table [sortable, filterable] — used_in:RepositoryPage — mock
+# ItemStatusBadge: badge [draft|approved|rejected|retired] — used_in:ItemBankTable — mock
+
+# NOTE: Uncomment + change status to "wired" when story implementing it is done.

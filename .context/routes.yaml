@@ -1,0 +1,39 @@
+# .context/routes.yaml
+# One-liner per route. Updated by /compound as routes are added.
+# Format: "METHOD /path — description [auth:role]"
+# MAX 60 lines.
+# Populated incrementally — only routes that have been BUILT appear here.
+# (Session 0 baseline — no routes built yet)
+
+# ── Auth ──────────────────────────────────────────────────────────────────────
+# POST /api/v1/auth/login — Supabase auth, returns JWT + user profile [public]
+# POST /api/v1/auth/logout — Invalidate session [auth:any]
+# GET  /api/v1/auth/me — Current user profile + role [auth:any]
+
+# ── Health ────────────────────────────────────────────────────────────────────
+# GET  /api/health — Server + DB connectivity check, returns version [public]
+
+# ── Courses ───────────────────────────────────────────────────────────────────
+# GET  /api/v1/courses — List courses for current user's institution [auth:faculty|admin]
+# GET  /api/v1/courses/:id — Single course with sections [auth:faculty|admin]
+
+# ── Uploads ───────────────────────────────────────────────────────────────────
+# POST /api/v1/uploads — Upload file to Supabase Storage, create Upload record [auth:faculty]
+# GET  /api/v1/uploads/:id — Upload status + processing progress [auth:faculty]
+# GET  /api/v1/uploads — List uploads for a course [auth:faculty]
+
+# ── Content Chunks ────────────────────────────────────────────────────────────
+# GET  /api/v1/chunks?courseId=X — List chunks for a course [auth:faculty|admin]
+# GET  /api/v1/chunks/:id — Single chunk with embedding metadata [auth:faculty|admin]
+
+# ── Assessment Items ──────────────────────────────────────────────────────────
+# POST /api/v1/items — Generate item via pipeline (streams via SSE) [auth:faculty]
+# GET  /api/v1/items/:id — Single item with options [auth:faculty|admin]
+# PATCH /api/v1/items/:id — Update status (approved|rejected|retired) [auth:faculty]
+# GET  /api/v1/items?courseId=X&status=Y — Item bank query [auth:faculty|admin]
+
+# ── Generation Pipeline ───────────────────────────────────────────────────────
+# POST /api/v1/generate — Start pipeline, returns SSE stream [auth:faculty]
+
+# NOTE: Add lines as routes are implemented (remove # prefix)
+# Routes stay commented out until the story implementing them is in § Done

@@ -1,0 +1,59 @@
+# .context/entities.yaml
+# Source of truth: GRAPH_SCHEMA.md (node labels + categories) + DATA_LAYER.md (Supabase tables)
+# One-liner per entity. Updated by /compound when new entities are created.
+# MAX 60 lines. Split by domain if exceeded.
+
+# ── Supabase Tables (source: 03_STORY_BACKLOG_PHASE1.md P1-004) ──────────────
+institutions: "Top-level org; id uuid, name, slug, created_at, updated_at"
+user_profiles: "Auth user; role ENUM(faculty|institutional_admin|student|advisor|superadmin), institution_id FK, is_course_director bool"
+courses: "Academic offering; code TEXT (e.g. MEDI-531), title, description, academic_year, phase, institution_id FK"
+uploads: "File record; status ENUM(pending|processing|completed|failed), storage_path, mime_type, file_size_bytes bigint"
+content_chunks: "Semantic chunk; content TEXT, chunk_index int, source_type ENUM(syllabus|lecture_slide|textbook|other), source_page int, metadata JSONB, neo4j_node_id, sync_status ENUM(pending|synced|failed|orphaned)"
+content_chunk_embeddings: "Vector store; chunk_id FK UNIQUE, embedding vector(1024), model_name DEFAULT voyage-large-2"
+assessment_items: "NBME question; vignette TEXT, stem TEXT, explanation TEXT, bloom_level INT, usmle_system TEXT, usmle_discipline TEXT, difficulty_estimate FLOAT, status ENUM(draft|pending_review|approved|rejected|retired), toulmin JSONB, generation_log_id FK, neo4j_node_id, sync_status ENUM(pending|synced|failed|orphaned) — options are a SEPARATE table"
+options: "Answer choice (separate table); label CHAR(1) A-E, option_text TEXT, is_correct bool, distractor_rationale TEXT, misconception_targeted TEXT"
+generation_logs: "Pipeline run; mode ENUM(single|bulk|review), input_message TEXT, pipeline_state JSONB, model_calls JSONB, total_tokens_in INT, total_tokens_out INT, total_cost_usd DECIMAL(10,6), duration_ms INT, status ENUM(running|completed|failed|cancelled)"
+
+# ── Neo4j Institutional Nodes (PascalCase — source: GRAPH_SCHEMA.md) ─────────
+Institution: "Top-level org; uuid, name (skinny)"
+School: "Academic school within Institution"
+Program: "Degree program e.g. MD"
+ProgramTrack: "Track within program e.g. Research Track"
+AcademicYear: "Year 1–4 of MD program"
+CurricularPhase: "Pre-clinical or Clinical"
+Block: "Named curriculum block e.g. Foundations of Medicine"
+Course: "uuid + code only (skinny mirror of Supabase)"
+Section: "Course section with term and enrollment cap"
+AcademicTerm: "Semester with start/end dates"
+ILO: "Institutional Learning Outcome — program-level goal"
+
+# ── Neo4j Content Nodes (PascalCase — source: GRAPH_SCHEMA.md) ───────────────
+SubConcept: "Dual-hub node 1 — what MSM teaches; uuid + name only (skinny)"
+ContentChunk: "uuid + source_type only (skinny mirror of Supabase chunk)"
+AssessmentItem: "uuid + status + bloom_level only (skinny mirror)"
+StandardTerm: "Standardized medical term node (for vocabulary alignment)"
+
+# ── Neo4j ECD Nodes (PascalCase — source: GRAPH_SCHEMA.md) ──────────────────
+TaskShell: "ECD template; uuid, shellId, name, bloomMin, bloomMax, vignetteRequired, optionCount, distractorStrategy (Phase 2)"
+ProficiencyVariable: "ECD measurable outcome; uuid, name, subConceptUuid (Phase 2)"
+
+# ── Neo4j Framework Nodes (SCREAMING_SNAKE — source: GRAPH_SCHEMA.md) ────────
+USMLE_System: "One of 16 organ systems e.g. Cardiovascular"
+USMLE_Discipline: "One of 7 disciplines e.g. Pathophysiology"
+USMLE_Task: "One of 4 physician tasks e.g. Diagnosis"
+USMLE_Topic: "~200 specific topics under USMLE_System"
+LCME_Standard: "One of 12 LCME accreditation standards"
+LCME_Element: "One of 93 LCME elements under a Standard"
+ACGME_Domain: "One of 6 ACGME competency domains"
+ACGME_Subdomain: "One of 21 ACGME subdomains"
+AAMC_Domain: "One of 6 AAMC competency domains"
+AAMC_Competency: "One of 49 AAMC competencies"
+UME_Competency: "One of 6 MSM undergraduate medical education competencies"
+UME_Subcompetency: "One of 49 MSM UME subcompetencies"
+EPA: "One of 13 Entrustable Professional Activities"
+BloomLevel: "One of 6 Bloom levels; level int (1–6) property required for ordering"
+MillerLevel: "One of 4 Miller's pyramid levels"
+
+# ── Neo4j People Nodes (Phase 5 — source: GRAPH_SCHEMA.md) ──────────────────
+LearningObjective: "Dual-hub node 2 — what students should DO; Bloom-tagged (Phase 2+)"
+# StudentMastery, FacultyMember, Student, Advisor → Phase 5

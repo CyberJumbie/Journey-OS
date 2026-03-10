@@ -1,0 +1,165 @@
+# .context/stack.yaml
+# Source of truth: TECHNICAL_CONTEXT.md + DESIGN_SYSTEM.md + 03_STORY_BACKLOG_PHASE1.md
+# Load once per session for orientation.
+
+monorepo:
+  tool: "Turborepo + pnpm workspaces"
+  workspaces: ["frontend", "backend", "packages/*", "seeder"]
+  packages:
+    - "packages/shared-types — importable as @journey-os/shared-types"
+    - "packages/ui — shared React components (Phase 3+, empty initially)"
+  commands:
+    dev: "pnpm dev — starts frontend:3000 + backend:3001 concurrently"
+    build: "pnpm build — turbo build"
+    lint: "pnpm lint — turbo lint"
+    typecheck: "pnpm run typecheck — TypeScript strict"
+    test: "pnpm test -- <path>"
+    ci: "turbo lint type-check build"
+
+env_files:
+  backend: "backend/.env.local"
+  frontend: "frontend/.env.local"
+  backend_vars: [NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, ANTHROPIC_API_KEY, VOYAGE_API_KEY, LLAMAPARSE_API_KEY]
+  # NOTE: NEO4J_USER not NEO4J_USERNAME
+  frontend_vars: [NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, NEXT_PUBLIC_API_URL]
+  config_file: "backend/src/config/config.ts (Zod-validated Singleton)"
+
+frontend:
+  root: "frontend/"
+  framework: "Next.js 15 App Router exclusively (no Pages Router)"
+  react: "React 19"
+  typescript: "strict mode — no any, no unknown without assertion"
+  styling: "Tailwind 4 CSS-first config (@import 'tailwindcss' in globals.css)"
+  components: "shadcn/ui New York style (npx shadcn@latest init)"
+  ai_ui: "CopilotKit (@copilotkit/react-core + @copilotkit/react-ui)"
+  server_state: "TanStack Query v5 — all API calls go through frontend/src/hooks/ using useQuery/useMutation"
+  forms: "React Hook Form + Zod validation"
+  icons: "Lucide React"
+  local_state: "React useState/useReducer — NO localStorage/sessionStorage"
+
+  atomic_design:
+    atoms:     "frontend/src/components/atoms/     — no data fetching, no state, pure UI"
+    molecules: "frontend/src/components/molecules/  — local state ok, no API calls"
+    organisms: "frontend/src/components/organisms/  — fetch via hooks only, own domain layout"
+    templates: "frontend/src/components/templates/  — layout shells, no data"
+    pages:     "frontend/src/app/(group)/page.tsx   — one template + route params"
+    ui:        "frontend/src/components/ui/         — shadcn primitives (never edit)"
+    rule: "File > 150 lines = God Component. Split it."
+
+  hooks:    "frontend/src/hooks/   — all TanStack Query hooks (useAuth, useCourses, useItems, etc.)"
+  lib:      "frontend/src/lib/     — supabase.ts (anon), api-client.ts, query-client.ts"
+  sidebar:  "collapsible 72px → 240px"
+  max_width: "1200px centered"
+
+backend:
+  root: "backend/"
+  framework: "Express.js + TypeScript (express + cors + helmet + compression)"
+  hot_reload: "ts-node-dev"
+  pipeline: "LangGraph.js (@langchain/langgraph)"
+  ai_runtime: "CopilotKit Runtime (@copilotkit/runtime) — mounted at POST /api/copilotkit"
+  validation: "Zod — all request/response shapes + env config"
+  layer_order: "Routes → Controllers → Services → Repositories → lib/"
+
+  oop_patterns:
+    singleton:   "backend/src/lib/ — Neo4jClient, SupabaseClient, AnthropicClient. Never new'd outside lib/."
+    factory:     "backend/src/ingestion/PdfParserFactory.ts — returns IPdfParser based on config"
+    strategy:    "backend/src/ingestion/parsers/ — IPdfParser interface, 3 implementations"
+    repository:  "backend/src/repositories/ — one class per entity, all DB queries here only"
+    interface:   "PipelineNode.interface.ts, IPdfParser.interface.ts"
+    builder:     "WorkbenchStateBuilder in InitNode — no object literal construction of WorkbenchState"
+    observer:    "LangGraph STATE_DELTA → CopilotKit listeners"
+
+databases:
+  postgres: "Supabase PostgreSQL — source of truth for content, auth, embeddings, transactional data"
+  graph: "Neo4j Aura — source of truth for relationships, graph structure, traversals"
+  vectors: "pgvector on Supabase — vector(1024) HNSW (m=16, ef_construction=64) cosine via <=>"
+  embeddings: "Voyage AI voyage-large-2 — 1024 dimensions"
+  dual_write: "Supabase first → Neo4j second → sync_status update. Neo4j fail = non-fatal."
+  reconcile_endpoint: "POST /api/v1/admin/reconcile — retries sync_status='failed' records"
+
+auth:
+  provider: "Supabase Auth — email/password"
+  jwt_claims: "role, institution_id, is_course_director (set via DB trigger on user_profiles)"
+  roles: "faculty | institutional_admin | student | advisor | superadmin"
+
+ai_models:
+  haiku: "claude-haiku-* — concept extraction, tagging, cheap ops"
+  sonnet: "claude-sonnet-* — vignette generation, stem, distractors"
+  opus: "claude-opus-* — Critic Agent ONLY, Phase 2+, NEVER Phase 1"
+
+streaming:
+  protocol: "AG-UI over SSE"
+  events: "STATE_DELTA (partial state) + TEXT_MESSAGE (text tokens)"
+  hook: "useCoAgent in React to consume STATE_DELTA"
+  rule: "ALL pipeline output streams — never batch-return from generation endpoints"
+
+design_workflow:
+  tool: "Figma → Next.js"
+  export_dir: "design/figma-exports/screens/<screen-name>/"
+  adapt_to: "frontend/src/components/{atoms|molecules|organisms}/<ComponentName>.tsx"
+  tokens: "design/tokens/tokens.json → frontend/src/styles/globals.css"
+  wiring: "TanStack Query useQuery/useMutation — NOT bare fetch() in useEffect"
+  rule: "Never build UI from scratch. Adapt from Figma export. Match 06_SCREEN_BACKEND_MAP.md exactly."
+
+python_services:
+  mip_solver:
+    path: "python/mip-solver/"
+    runtime: "Python 3.11+ / FastAPI / PuLP"
+    port: 8001
+    story: "P4-006 — Phase 4"
+    local_start: "cd python/mip-solver && uvicorn app.main:app --reload --port 8001"
+  irt_service:
+    path: "python/irt-service/"
+    runtime: "Python 3.11+ / FastAPI"
+    port: 8002
+    story: "P5-012 — Phase 5"
+    local_start: "cd python/irt-service && uvicorn app.main:app --reload --port 8002"
+  pdf_parser:
+    path: "python/pdf-parser/"
+    runtime: "Python 3.11+ / FastAPI / pdfplumber"
+    port: 8003
+    story: "P1-010 optional — use LlamaParse API first (SOL-006)"
+    local_start: "cd python/pdf-parser && uvicorn app.main:app --reload --port 8003"
+  note: "Python services are NOT in pnpm workspace. Standalone venvs. Deploy on Railway independently."
+
+seeder:
+  path: "seeder/"
+  runtime: "Node.js TypeScript (NOT a live service — run once or via CI)"
+  run: "cd seeder && npx ts-node src/seed-layer1.ts"
+
+environments:
+  local:
+    url: "http://localhost:3000 (web) + http://localhost:3001 (server)"
+    trigger: "pnpm dev — every story during /implement and /verify"
+  dev:
+    url: "journey-os-dev.vercel.app (Vercel Preview)"
+    trigger: "Auto-deploy on push to dev branch via CI/CD"
+    when: "After story/epic approved via /review and merged to dev"
+  production:
+    url: "journey-os.vercel.app"
+    trigger: "Auto-deploy (CD) on push to main branch"
+    when: "After epic exit criteria validated on dev — merge dev → main"
+  cream: "#f5f3ef — bg-cream — page background"
+  parchment: "#faf9f6 — bg-parchment — cards, sidebar"
+  white: "#ffffff — bg-white — reading areas, modals"
+  navy: "#002c76 — bg-navy — hero, max 1 per page (inverted surface)"
+  blue: "#2b71b9"
+  green: "#69a338"
+  red: "#d32f2f"
+  amber: "#f59e0b"
+  gray_600: "#4b5563 — secondary text"
+  gray_300: "#d1d5db — borders"
+  heading_font: "Lora 600 — font-heading"
+  body_font: "Source Sans 3 400 — font-body"
+  label_font: "DM Mono 400 uppercase — font-label"
+  rule: "NEVER raw hex in components. Use design tokens."
+
+naming:
+  neo4j_institutional: "PascalCase (Institution, Course, SubConcept)"
+  neo4j_framework: "SCREAMING_SNAKE (USMLE_System, LCME_Element)"
+  neo4j_rels: "SCREAMING_SNAKE (TEACHES, MAPS_TO, TARGETS, GENERATED_FROM)"
+  typescript: "PascalCase types, camelCase vars, SCREAMING_SNAKE constants"
+  files: "kebab-case"
+  react: "PascalCase components"
+  supabase: "snake_case"
+  api: "/api/v1/{plural-resource}"
