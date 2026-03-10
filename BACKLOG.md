@@ -12,7 +12,6 @@ Exit gate: Neo4j ~560 nodes. Supabase 9 tables + RLS. CopilotKit STATE_DELTA ren
 
 | Rank | Story | Title | Priority | Score | Status |
 |------|-------|-------|---------|-------|--------|
-| 2 | P1-002 | Provision Neo4j Aura + Supabase + Vercel | P0 | 97% | ready |
 | 3 | P1-003 | Environment config (.env + Zod validation + CI skeleton) | P0 | 95% | ready |
 | 4 | P1-007 | shared-types package (Zod schemas + WorkbenchState) | P0 | 93% | ready |
 | 5 | P1-004 | Supabase DDL Phase 1 (9 tables + RLS + pgvector HNSW) | P0 | 92% | ready |
@@ -94,6 +93,7 @@ Activate only after all Phase 1 P0 stories are done.
 ## § Done
 | Story | Title | Version | PR | Deployed |
 |-------|-------|---------|-----|---------|
+| P1-002 | Provision Infrastructure (config + singletons + health) | v0.1.1 | pending | local |
 | P1-001 | Monorepo scaffold (Turborepo + pnpm workspaces) | v0.1.0 | — | local |
 
 ---
@@ -113,9 +113,9 @@ Activate only after all Phase 1 P0 stories are done.
 ## Stats
 ```
 Phase 1 total:   29 stories (25 P0 + 4 P1)
-Ready now:        7 stories (Epic 1.1 — P1-002 next)
+Ready now:        6 stories (Epic 1.1 — P1-003 next)
 Blocked:         21 stories (waiting on Epic 1.1 gates)
-Done:             1 stories (P1-001)
+Done:             2 stories (P1-001, P1-002)
 In progress:      0 stories
 Phase 2+:        ~75 stories (epic-level, not yet decomposed)
 ```

@@ -11,7 +11,7 @@
 # GET  /api/v1/auth/me — Current user profile + role [auth:any]
 
 # ── Health ────────────────────────────────────────────────────────────────────
-GET  /api/health — Server health check, returns { status: "ok" } [public]
+GET  /api/v1/health — DB connectivity check, returns { status, neo4j, supabase, version, timestamp } [public]
 
 # ── Courses ───────────────────────────────────────────────────────────────────
 # GET  /api/v1/courses — List courses for current user's institution [auth:faculty|admin]
