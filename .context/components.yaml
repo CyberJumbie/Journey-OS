@@ -4,6 +4,15 @@
 # status: mock (still on setTimeout) | wired (connected to real API) | rewrite (CopilotKit)
 # Updated by /compound as screens are wired.
 
+# ── Scaffold (P1-001) ────────────────────────────────────────────────────────
+ImageWithFallback: atom [] — used_in:Sidebar — wired
+Sidebar: organism [faculty nav, collapsible] — used_in:DashboardTemplate — wired
+AdminSidebar: organism [admin nav] — used_in:AdminDashboardTemplate — wired
+TopBar: organism [search, breadcrumb, avatar] — used_in:DashboardTemplate — wired
+TopNavigation: organism [top nav bar] — used_in:pages — wired
+DashboardTemplate: template [sidebar+topbar+main] — used_in:faculty pages — wired
+AdminDashboardTemplate: template [admin sidebar+main] — used_in:admin pages — wired
+
 # ── Auth (P1-024) ─────────────────────────────────────────────────────────────
 # LoginForm: form [] — used_in:LoginPage — mock
 # AuthProvider: context [] — used_in:_app — mock
