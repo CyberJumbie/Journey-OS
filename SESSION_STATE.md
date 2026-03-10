@@ -3,20 +3,21 @@
 
 ## Current Story
 **ID:** P1-001 — Monorepo Scaffold
-**Status:** complete — needs /verify + /review + /compound
+**Status:** complete — /verify passed, needs /review → /compound → /commit
 **Branch:** main
 
 ## Last 3 Completed Stories
 - (none yet — P1-001 is first)
 
 ## Work Done This Session
-- Completed P1-001: all 7 ACs pass (turbo, frontend, backend, shared-types, ui, scripts, pnpm dev)
-- Imported + adapted 51 Figma Make components into Atomic Design structure
-- Fixed 3 package version mismatches (calendar, resizable, chart)
-- Installed 30+ Radix UI / shadcn dependencies
+- Completed all P1-001 ACs: turbo, frontend, backend, shared-types, ui, scripts
+- Imported 51 Figma Make components → Atomic Design (46 ui, 1 atom, 4 organisms, 2 templates)
+- Wired routes: /, /dashboard, /courses, /admin with templates
+- Added ESLint flat configs (ESLint 10) for backend + frontend
+- /verify passed: typecheck 0 errors, lint 0 errors, build exits 0, health endpoint OK
 
 ## Next Ready Queue
-1. P1-001 — run /verify → /review → /compound to close
+1. P1-001 — run /review → /compound → /commit to close
 2. P1-002 — Provision Infrastructure — 97%
 3. P1-003 — Environment Config + CI — 95%
 
@@ -25,4 +26,4 @@
 
 ## To Resume
   1. Read SESSION_STATE.md
-  2. /story P1-001 → /verify → /review → /compound → /commit → /clear
+  2. /story P1-001 → /review → /compound → /commit → /clear
