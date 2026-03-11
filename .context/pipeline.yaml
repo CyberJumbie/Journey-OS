@@ -22,12 +22,12 @@ graph_writer: "ValidatedItem → DualWrite to Supabase+Neo4j (no AI) — planned
 
 # ── Ingestion Pipeline (separate from generation) ─────────────────────────────
 # CRITICAL: Pipeline is Markdown-first. See SOL-006. Raw .txt extraction is wrong.
-pdf_parser: "Upload → ParsedDocument (Markdown via LlamaParse API or pdfplumber) — planned"
-chunker: "ParsedDocument.markdown → ContentChunk[] at 800 tokens, 100 overlap, Markdown-aware split — planned"
-classifier: "ContentChunk[] → { academic[], noise[], borderline[] } (Haiku routing call, ~$0.01/syllabus) — planned"
-embedder: "academic ContentChunk[] → ContentChunkEmbedding[] (Voyage AI voyage-large-2, 1024-dim) — planned"
-concept_extractor: "academic ContentChunk[] → SubConcept[] + TEACHES edges (Haiku) — planned"
-framework_aligner: "SubConcept[] → MAPS_TO edges to USMLE framework (Haiku) — planned"
+pdf_parser: "Upload → ParsedDocument (Markdown via LlamaParse API or pdfplumber, FallbackParser chain) — built"
+chunker: "ParsedDocument.markdown → ContentChunk[] at 800 tokens, Markdown-aware split, table-safe — built"
+classifier: "ContentChunk[] → { academic[], noise[], borderline[] } (Haiku routing call, ~$0.01/syllabus) — built"
+embedder: "academic ContentChunk[] → dual embeddings (Voyage 1024-dim + OpenAI 1536-dim, two separate tables) — built"
+concept_extractor: "academic ContentChunk[] → SubConcept[] + TEACHES edges via DualWriteService (Haiku) — built"
+framework_aligner: "SubConcept[] → MAPS_TO edges to USMLE_System/USMLE_Discipline (fuzzy match, no AI) — built"
 
 # Known MSM syllabus failure modes (source: SOL-006):
 # 1. Table collapse — solved by Markdown extraction (table pipes preserved)

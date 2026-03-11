@@ -18,9 +18,9 @@ GET  /api/v1/health — DB connectivity check, returns { status, neo4j, supabase
 # GET  /api/v1/courses/:id — Single course with sections [auth:faculty|admin]
 
 # ── Uploads ───────────────────────────────────────────────────────────────────
-# POST /api/v1/uploads — Upload file to Supabase Storage, create Upload record [auth:faculty]
-# GET  /api/v1/uploads/:id — Upload status + processing progress [auth:faculty]
-# GET  /api/v1/uploads — List uploads for a course [auth:faculty]
+POST /api/v1/uploads — Upload PDF to Supabase Storage, create Upload record [auth:faculty] (multer, 50MB, PDF only)
+POST /api/v1/uploads/:id/parse — Trigger full ingestion pipeline (parse→chunk→classify→embed→extract→align) [auth:faculty]
+GET  /api/v1/uploads/:id — Upload status + processing progress [auth:faculty]
 
 # ── Content Chunks ────────────────────────────────────────────────────────────
 # GET  /api/v1/chunks?courseId=X — List chunks for a course [auth:faculty|admin]

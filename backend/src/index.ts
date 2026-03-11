@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import { config } from './config/config';
 import healthRouter from './routes/health.routes';
+import uploadRouter from './routes/upload.routes';
 import Neo4jClient from './lib/Neo4jClient';
 import { handleCopilotKit } from './copilotkit/runtime';
 
@@ -13,6 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/v1/health', healthRouter);
+app.use('/api/v1/uploads', uploadRouter);
 
 // CopilotKit Runtime endpoint (P1-008)
 // Handles AG-UI streaming: TEXT_MESSAGE + STATE_DELTA
