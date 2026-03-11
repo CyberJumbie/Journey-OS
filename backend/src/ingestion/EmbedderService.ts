@@ -102,6 +102,16 @@ export class EmbedderService {
     }
   }
 
+  /**
+   * Embed a single stem string using the configured search provider.
+   * Returns the raw embedding vector for use by DedupDetectorNode.
+   */
+  async embedStem(stem: string): Promise<number[]> {
+    const provider = EmbeddingProviderFactory.getSearchProvider(config);
+    const [embedding] = await provider.embed([stem]);
+    return embedding;
+  }
+
   private getProviderByName(name: string): IEmbeddingProvider {
     const providers = EmbeddingProviderFactory.getIngestProviders(config);
     const provider = providers.find((p) => p.name === name);

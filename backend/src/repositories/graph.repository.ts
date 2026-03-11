@@ -224,6 +224,42 @@ export class GraphRepository {
   }
 
   /**
+   * Update the status property on an AssessmentItem node in Neo4j.
+   * Skinny node: only updates the status field (Rule 4).
+   * Uses MERGE for idempotency (Rule 3).
+   */
+  async setItemStatus(neo4jNodeId: string, status: string): Promise<void> {
+    const session = this.driver.session();
+    try {
+      await session.run(
+        `MATCH (ai:AssessmentItem)
+         WHERE elementId(ai) = $nodeId
+         SET ai.status = $status`,
+        { nodeId: neo4jNodeId, status },
+      );
+    } finally {
+      await session.close();
+    }
+  }
+
+  /**
+   * Update taxonomy tags on an AssessmentItem node (skinny: bloom_level + difficulty only).
+   * Called by TaggerNode after Supabase write (DualWrite pattern).
+   */
+  async updateAssessmentItemTags(itemId: string, bloomLevel: number, difficulty: number): Promise<void> {
+    const session = this.driver.session();
+    try {
+      await session.run(
+        `MATCH (ai:AssessmentItem {uuid: $itemId})
+         SET ai.bloom_level = $bloomLevel, ai.difficulty = $difficulty`,
+        { itemId, bloomLevel, difficulty },
+      );
+    } finally {
+      await session.close();
+    }
+  }
+
+  /**
    * MERGE an AssessmentItem node with all required relationships.
    * Skinny node: only uuid + bloom_level + status + created_at (Rule 4).
    * Full text (vignette, stem, rationale) stays in Supabase only.

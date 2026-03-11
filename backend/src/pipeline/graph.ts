@@ -1,11 +1,14 @@
 /**
- * P1-016: LangGraph StateGraph — 7-node generation pipeline scaffold.
+ * LangGraph StateGraph — generation pipeline.
  *
- * Linear pipeline: init → context_compiler → vignette_builder → stem_writer
- *   → distractor_generator → validator → graph_writer
+ * Full 12-node pipeline:
+ *   init → context_compiler → vignette_builder → stem_writer
+ *   → distractor_generator → dedup_detector → validator → graph_writer
+ *   → critic_agent → tagger → toulmin_generator → review_router
  *
- * Each node implements IPipelineNode. Currently all are pass-through stubs
- * that will be fleshed out in P1-017 through P1-023.
+ * review_router has a conditional edge:
+ *   - retry → vignette_builder (self-correction loop, max 2 retries)
+ *   - finish → END
  *
  * Agent ID: journey_generation
  * Served by `langgraph dev` at localhost:2024. CopilotKit connects
@@ -13,7 +16,14 @@
  */
 
 import { StateGraph, Annotation, MessagesAnnotation, END, START } from '@langchain/langgraph';
-import type { WorkbenchState, PipelineStatus } from '@journey-os/shared-types';
+import type {
+  WorkbenchState,
+  PipelineStatus,
+  ItemTags,
+  CriticScore,
+  ToulminArgument,
+  AutoRoute,
+} from '@journey-os/shared-types';
 import { InitNode } from './nodes/InitNode.js';
 import { ContextCompilerNode } from './nodes/ContextCompilerNode.js';
 import { VignetteBuilderNode } from './nodes/VignetteBuilderNode.js';
@@ -21,6 +31,11 @@ import { StemWriterNode } from './nodes/StemWriterNode.js';
 import { DistractorGeneratorNode } from './nodes/DistractorGeneratorNode.js';
 import { ValidatorNode } from './nodes/ValidatorNode.js';
 import { GraphWriterNode } from './nodes/GraphWriterNode.js';
+import { TaggerNode } from './nodes/TaggerNode.js';
+import { DedupDetectorNode } from './nodes/DedupDetectorNode.js';
+import { CriticAgentNode } from './nodes/CriticAgentNode.js';
+import { ToulminGeneratorNode } from './nodes/ToulminGeneratorNode.js';
+import { ReviewRouterNode } from './nodes/ReviewRouterNode.js';
 
 // ── State Annotation ────────────────────────────────────────────────────────────
 // Extends MessagesAnnotation to include the messages channel required by
@@ -83,6 +98,48 @@ export const WorkbenchAnnotation = Annotation.Root({
     reducer: (_prev, next) => next,
     default: () => [],
   }),
+
+  // Phase 2 state channels
+  tags: Annotation<ItemTags | null>({
+    reducer: (_prev, next) => next,
+    default: () => null,
+  }),
+  criticScores: Annotation<CriticScore[] | null>({
+    reducer: (_prev, next) => next,
+    default: () => null,
+  }),
+  criticComposite: Annotation<number | null>({
+    reducer: (_prev, next) => next,
+    default: () => null,
+  }),
+  toulmin: Annotation<ToulminArgument | null>({
+    reducer: (_prev, next) => next,
+    default: () => null,
+  }),
+  autoRoute: Annotation<AutoRoute | null>({
+    reducer: (_prev, next) => next,
+    default: () => null,
+  }),
+  retryCount: Annotation<number>({
+    reducer: (_prev, next) => next,
+    default: () => 0,
+  }),
+  isDuplicate: Annotation<boolean>({
+    reducer: (_prev, next) => next,
+    default: () => false,
+  }),
+  dupSimilarity: Annotation<number | null>({
+    reducer: (_prev, next) => next,
+    default: () => null,
+  }),
+  dupItemId: Annotation<string | null>({
+    reducer: (_prev, next) => next,
+    default: () => null,
+  }),
+  taskShellId: Annotation<string | null>({
+    reducer: (_prev, next) => next,
+    default: () => null,
+  }),
 });
 
 // ── Type alias for the annotated state ──────────────────────────────────────────
@@ -97,6 +154,11 @@ const stemWriterNode = new StemWriterNode();
 const distractorGeneratorNode = new DistractorGeneratorNode();
 const validatorNode = new ValidatorNode();
 const graphWriterNode = new GraphWriterNode();
+const taggerNode = new TaggerNode();
+const dedupDetectorNode = new DedupDetectorNode();
+const criticAgentNode = new CriticAgentNode();
+const toulminGeneratorNode = new ToulminGeneratorNode();
+const reviewRouterNode = new ReviewRouterNode();
 
 // ── Node wrapper functions ──────────────────────────────────────────────────────
 // LangGraph expects plain functions (state) => Partial<state>.
@@ -130,9 +192,47 @@ async function graphWriter(state: GraphState): Promise<Partial<GraphState>> {
   return graphWriterNode.execute(state);
 }
 
+async function dedupDetector(state: GraphState): Promise<Partial<GraphState>> {
+  return dedupDetectorNode.execute(state);
+}
+
+async function criticAgent(state: GraphState): Promise<Partial<GraphState>> {
+  return criticAgentNode.execute(state);
+}
+
+async function tagger(state: GraphState): Promise<Partial<GraphState>> {
+  return taggerNode.execute(state);
+}
+
+async function toulminGenerator(state: GraphState): Promise<Partial<GraphState>> {
+  return toulminGeneratorNode.execute(state);
+}
+
+async function reviewRouter(state: GraphState): Promise<Partial<GraphState>> {
+  return reviewRouterNode.execute(state);
+}
+
+// ── Conditional edge function (self-correction loop) ────────────────────────────
+// After review_router runs, check if it signaled a retry (autoRoute = null)
+// or a final decision (autoRoute is set to a route string).
+
+function retryOrFinish(state: GraphState): 'retry' | 'finish' {
+  // If autoRoute is null, review_router wants a retry loop
+  if (state.autoRoute === null || state.autoRoute === undefined) {
+    return 'retry';
+  }
+  // Otherwise, a final route was determined — pipeline is done
+  return 'finish';
+}
+
 // ── Graph construction ──────────────────────────────────────────────────────────
-// Linear pipeline: START → init → context_compiler → vignette_builder →
-//   stem_writer → distractor_generator → validator → graph_writer → END
+// Pipeline: START → init → context_compiler → vignette_builder →
+//   stem_writer → distractor_generator → dedup_detector → validator →
+//   graph_writer → critic_agent → tagger → toulmin_generator → review_router
+//
+// review_router conditional edge:
+//   retry → vignette_builder (self-correction loop)
+//   finish → END
 
 const graphBuilder = new StateGraph(WorkbenchAnnotation)
   .addNode('init', init)
@@ -140,16 +240,29 @@ const graphBuilder = new StateGraph(WorkbenchAnnotation)
   .addNode('vignette_builder', vignetteBuilder)
   .addNode('stem_writer', stemWriter)
   .addNode('distractor_generator', distractorGenerator)
+  .addNode('dedup_detector', dedupDetector)
   .addNode('validator', validator)
   .addNode('graph_writer', graphWriter)
+  .addNode('critic_agent', criticAgent)
+  .addNode('tagger', tagger)
+  .addNode('toulmin_generator', toulminGenerator)
+  .addNode('review_router', reviewRouter)
   .addEdge(START, 'init')
   .addEdge('init', 'context_compiler')
   .addEdge('context_compiler', 'vignette_builder')
   .addEdge('vignette_builder', 'stem_writer')
   .addEdge('stem_writer', 'distractor_generator')
-  .addEdge('distractor_generator', 'validator')
+  .addEdge('distractor_generator', 'dedup_detector')
+  .addEdge('dedup_detector', 'validator')
   .addEdge('validator', 'graph_writer')
-  .addEdge('graph_writer', END);
+  .addEdge('graph_writer', 'critic_agent')
+  .addEdge('critic_agent', 'tagger')
+  .addEdge('tagger', 'toulmin_generator')
+  .addEdge('toulmin_generator', 'review_router')
+  .addConditionalEdges('review_router', retryOrFinish, {
+    retry: 'vignette_builder',
+    finish: END,
+  });
 
 /**
  * Compiled graph — exported for langgraph.json.

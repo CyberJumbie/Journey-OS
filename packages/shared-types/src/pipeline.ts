@@ -15,8 +15,13 @@ export const PipelineNodeSchema = z.enum([
   'vignette_builder',
   'stem_writer',
   'distractor_generator',
+  'dedup_detector',
   'validator',
   'graph_writer',
+  'critic_agent',
+  'tagger',
+  'toulmin_generator',
+  'review_router',
 ]);
 export type PipelineNode = z.infer<typeof PipelineNodeSchema>;
 
@@ -41,9 +46,51 @@ export const ValidationResultSchema = z.object({
 });
 export type ValidationResult = z.infer<typeof ValidationResultSchema>;
 
+// ── Phase 2 Data Shapes ──────────────────────────────────────────────────────
+
+export const CriticMetricSchema = z.enum([
+  'clinical_accuracy',
+  'vignette_realism',
+  'distractor_quality',
+  'bloom_alignment',
+  'nbme_compliance',
+  'educational_value',
+]);
+export type CriticMetric = z.infer<typeof CriticMetricSchema>;
+
+export const CriticScoreSchema = z.object({
+  metric: CriticMetricSchema,
+  score: z.number().min(1).max(5),
+});
+export type CriticScore = z.infer<typeof CriticScoreSchema>;
+
+export const ItemTagsSchema = z.object({
+  bloom_level: z.number().int().min(1).max(6),
+  usmle_system: z.string(),
+  usmle_discipline: z.string(),
+  difficulty: z.number().int().min(1).max(5),
+  acgme_domain: z.string().nullable(),
+  epa_number: z.string().nullable(),
+});
+export type ItemTags = z.infer<typeof ItemTagsSchema>;
+
+export const ToulminArgumentSchema = z.object({
+  claim: z.string(),
+  data: z.string(),
+  warrant: z.string(),
+  backing: z.string(),
+  rebuttal: z.string(),
+  qualifier: z.string(),
+});
+export type ToulminArgument = z.infer<typeof ToulminArgumentSchema>;
+
+export const AutoRouteSchema = z.enum(['auto_approve', 'auto_reject', 'faculty_review']);
+export type AutoRoute = z.infer<typeof AutoRouteSchema>;
+
 // ── WorkbenchState (AG-UI streaming contract) ──────────────────────────────────
 
 export const WorkbenchStateSchema = z.object({
+  // Phase 1 fields
   mode: GenerationModeSchema,
   courseId: z.string(),
   userMessage: z.string(),
@@ -57,6 +104,18 @@ export const WorkbenchStateSchema = z.object({
   generationLogId: z.string(),
   itemId: z.string(),
   sourceChunkIds: z.array(z.string()),
+
+  // Phase 2 fields
+  tags: ItemTagsSchema.nullable(),
+  criticScores: z.array(CriticScoreSchema).nullable(),
+  criticComposite: z.number().nullable(),
+  toulmin: ToulminArgumentSchema.nullable(),
+  autoRoute: AutoRouteSchema.nullable(),
+  retryCount: z.number().int(),
+  isDuplicate: z.boolean(),
+  dupSimilarity: z.number().nullable(),
+  dupItemId: z.string().nullable(),
+  taskShellId: z.string().nullable(),
 });
 export type WorkbenchState = z.infer<typeof WorkbenchStateSchema>;
 

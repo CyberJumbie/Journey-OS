@@ -26,6 +26,17 @@ const INITIAL_STATE: WorkbenchState = {
   generationLogId: '',
   itemId: '',
   sourceChunkIds: [],
+  // Phase 2 fields
+  tags: null,
+  criticScores: null,
+  criticComposite: null,
+  toulmin: null,
+  autoRoute: null,
+  retryCount: 0,
+  isDuplicate: false,
+  dupSimilarity: null,
+  dupItemId: null,
+  taskShellId: null,
 };
 
 function QuestWorkbenchInner() {
