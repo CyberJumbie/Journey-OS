@@ -247,3 +247,35 @@ export const GenerationLogInsertSchema = z.object({
   input_message: z.string().optional(),
 });
 export type GenerationLogInsert = z.infer<typeof GenerationLogInsertSchema>;
+
+// ── Bulk Batch ────────────────────────────────────────────────────────────────
+
+export const BulkBatchStatusSchema = z.enum(['pending', 'running', 'completed', 'failed']);
+export type BulkBatchStatus = z.infer<typeof BulkBatchStatusSchema>;
+
+export const BulkBatchRowSchema = z.object({
+  id: z.string().uuid(),
+  course_id: z.string().uuid(),
+  user_id: z.string().uuid(),
+  total_count: z.number().int(),
+  completed_count: z.number().int(),
+  failed_count: z.number().int(),
+  status: BulkBatchStatusSchema,
+  estimated_cost: z.number().nullable(),
+  created_at: z.string(),
+  completed_at: z.string().nullable(),
+});
+export type BulkBatchRow = z.infer<typeof BulkBatchRowSchema>;
+
+export const BulkBatchItemStatusSchema = z.enum(['pending', 'running', 'completed', 'failed']);
+export type BulkBatchItemStatus = z.infer<typeof BulkBatchItemStatusSchema>;
+
+export const BulkBatchItemRowSchema = z.object({
+  id: z.string().uuid(),
+  batch_id: z.string().uuid(),
+  item_id: z.string().uuid().nullable(),
+  status: BulkBatchItemStatusSchema,
+  error_message: z.string().nullable(),
+  created_at: z.string(),
+});
+export type BulkBatchItemRow = z.infer<typeof BulkBatchItemRowSchema>;

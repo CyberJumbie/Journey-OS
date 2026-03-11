@@ -20,6 +20,7 @@ import type { IPipelineNode } from '../PipelineNode.interface.js';
 import { WorkbenchStateBuilder } from '../WorkbenchStateBuilder.js';
 import { ItemRepository } from '../../repositories/item.repository.js';
 import { GraphRepository } from '../../repositories/graph.repository.js';
+import SocketServer from '../../lib/SocketServer.js';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -120,6 +121,11 @@ export class ReviewRouterNode implements IPipelineNode {
 
     // ── 4. DualWrite route decision: Supabase first, Neo4j second ──────────
     await this.writeRouteToDb(state.itemId, route, rejectionReason);
+
+    // ── 4b. Emit socket event for faculty_review route (P2-012) ─────────
+    if (route === 'faculty_review' && state.itemId) {
+      await this.emitReviewNeeded(state.itemId, criticComposite);
+    }
 
     // ── 5. Build state update ───────────────────────────────────────────────
     const builder = new WorkbenchStateBuilder()
@@ -266,6 +272,30 @@ export class ReviewRouterNode implements IPipelineNode {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
       console.error(`[${this.name}] Neo4j status sync failed (non-blocking): ${errorMessage}`);
+    }
+  }
+
+  /** Emit review:needed socket event to the item's creator (P2-012). */
+  private async emitReviewNeeded(
+    itemId: string,
+    criticComposite: number | null,
+  ): Promise<void> {
+    try {
+      const itemRepo = new ItemRepository();
+      const item = await itemRepo.findById(itemId);
+      if (!item?.created_by) return;
+
+      const reason = criticComposite !== null
+        ? `Composite score ${criticComposite.toFixed(1)}/5.0 — needs faculty judgment`
+        : 'Item needs faculty review';
+
+      SocketServer.emitToUser(item.created_by, 'review:needed', {
+        itemId,
+        reason,
+      });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.warn(`[${this.name}] review:needed socket emit failed (non-blocking): ${msg}`);
     }
   }
 

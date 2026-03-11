@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { AssessmentItemRow, ItemStatus, OptionRow } from '@journey-os/shared-types';
+import type { AssessmentItemRow, ItemStatus, OptionRow, GeneratedOption } from '@journey-os/shared-types';
 import SupabaseClientSingleton from '../lib/SupabaseClient';
 
 /** Filter parameters for querying assessment items. */
@@ -14,6 +14,28 @@ export interface ItemFilters {
 /** An assessment item with its options joined. */
 export interface ItemWithOptions extends AssessmentItemRow {
   options: OptionRow[];
+}
+
+/** Insert shape for assessment_item_versions table. */
+export interface ItemVersionInsert {
+  item_id: string;
+  vignette: string | null;
+  stem: string | null;
+  options: GeneratedOption[];
+  edit_instruction: string | null;
+  edited_by: string | null;
+}
+
+/** Row shape for assessment_item_versions table. */
+export interface ItemVersionRow {
+  id: string;
+  item_id: string;
+  vignette: string | null;
+  stem: string | null;
+  options: GeneratedOption[];
+  edit_instruction: string | null;
+  edited_by: string | null;
+  created_at: string;
 }
 
 /**
@@ -192,5 +214,124 @@ export class ItemRepository {
     if (error) {
       throw new Error(`Failed to update route for item ${id}: ${error.message}`);
     }
+  }
+
+  /**
+   * Find an assessment item by ID with its options joined.
+   * Returns null if not found.
+   */
+  async findByIdWithOptions(id: string): Promise<ItemWithOptions | null> {
+    const { data, error } = await this.supabase
+      .from('assessment_items')
+      .select('*, options:options(*)')
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') return null;
+      throw new Error(`Failed to fetch item with options ${id}: ${error.message}`);
+    }
+
+    return data as ItemWithOptions;
+  }
+
+  /**
+   * Create a version snapshot of an assessment item before editing.
+   * Rule 27: Item editor always versions.
+   * Creates a row in assessment_item_versions BEFORE modifying the item.
+   */
+  async createVersion(version: ItemVersionInsert): Promise<ItemVersionRow> {
+    const { data, error } = await this.supabase
+      .from('assessment_item_versions')
+      .insert({
+        item_id: version.item_id,
+        vignette: version.vignette,
+        stem: version.stem,
+        options: version.options,
+        edit_instruction: version.edit_instruction,
+        edited_by: version.edited_by,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      throw new Error(`Failed to create item version for ${version.item_id}: ${error.message}`);
+    }
+
+    return data as ItemVersionRow;
+  }
+
+  /**
+   * Update the vignette, stem, and options of an assessment item after editing.
+   * Used by the review mode pipeline after apply_edit.
+   */
+  async updateContent(id: string, data: {
+    vignette: string;
+    stem: string;
+  }): Promise<void> {
+    const { error } = await this.supabase
+      .from('assessment_items')
+      .update({
+        vignette: data.vignette,
+        stem: data.stem,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id);
+
+    if (error) {
+      throw new Error(`Failed to update item content ${id}: ${error.message}`);
+    }
+  }
+
+  /**
+   * Replace all options for an assessment item.
+   * Deletes existing options and inserts new ones.
+   */
+  async replaceOptions(itemId: string, options: GeneratedOption[]): Promise<void> {
+    // Delete existing options
+    const { error: deleteError } = await this.supabase
+      .from('options')
+      .delete()
+      .eq('item_id', itemId);
+
+    if (deleteError) {
+      throw new Error(`Failed to delete existing options for ${itemId}: ${deleteError.message}`);
+    }
+
+    // Insert new options
+    const optionInserts = options.map((opt) => ({
+      item_id: itemId,
+      label: opt.label,
+      option_text: opt.text,
+      is_correct: opt.is_correct,
+      distractor_rationale: opt.rationale,
+      misconception_targeted: opt.misconception_targeted ?? undefined,
+    }));
+
+    const { error: insertError } = await this.supabase
+      .from('options')
+      .insert(optionInserts);
+
+    if (insertError) {
+      throw new Error(`Failed to insert new options for ${itemId}: ${insertError.message}`);
+    }
+  }
+
+  /**
+   * Find all version snapshots for an assessment item, ordered by created_at DESC.
+   * Used by the review mode version history panel.
+   */
+  async findVersionsByItemId(itemId: string): Promise<ItemVersionRow[]> {
+    const { data, error } = await this.supabase
+      .from('assessment_item_versions')
+      .select('*')
+      .eq('item_id', itemId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      throw new Error(`Failed to fetch versions for item ${itemId}: ${error.message}`);
+    }
+
+    return (data ?? []) as ItemVersionRow[];
   }
 }

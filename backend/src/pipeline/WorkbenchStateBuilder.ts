@@ -14,6 +14,7 @@ import type {
   CriticScore,
   ToulminArgument,
   AutoRoute,
+  RefinementTarget,
 } from '@journey-os/shared-types';
 
 export class WorkbenchStateBuilder {
@@ -110,6 +111,30 @@ export class WorkbenchStateBuilder {
 
   withTaskShellId(taskShellId: string | null): this {
     this.state.taskShellId = taskShellId;
+    return this;
+  }
+
+  // ── Review mode builder methods (P2-007) ─────────────────────────────────────
+
+  withReviewItemId(reviewItemId: string | null): this {
+    this.state.reviewItemId = reviewItemId;
+    return this;
+  }
+
+  withEditInstruction(editInstruction: string | null): this {
+    this.state.editInstruction = editInstruction;
+    return this;
+  }
+
+  withEditedSections(editedSections: string[]): this {
+    this.state.editedSections = editedSections;
+    return this;
+  }
+
+  // ── Refinement routing (P2-009) ───────────────────────────────────────────────
+
+  withRefinementTarget(target: RefinementTarget | null): this {
+    this.state.refinementTarget = target;
     return this;
   }
 

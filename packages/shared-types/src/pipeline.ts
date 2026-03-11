@@ -22,11 +22,29 @@ export const PipelineNodeSchema = z.enum([
   'tagger',
   'toulmin_generator',
   'review_router',
+  'load_review_question',
+  'apply_edit',
+  'revalidate',
 ]);
 export type PipelineNode = z.infer<typeof PipelineNodeSchema>;
 
 export const PipelineStatusSchema = z.enum(['idle', 'running', 'completed', 'failed']);
 export type PipelineStatus = z.infer<typeof PipelineStatusSchema>;
+
+/**
+ * RefinementTarget — identifies which section(s) of an assessment item
+ * the faculty's edit instruction targets. Determined by keyword matching
+ * in ApplyEditNode (P2-009). No LLM call needed.
+ */
+export const RefinementTargetSchema = z.enum([
+  'vignette_only',
+  'stem_only',
+  'distractor_only',
+  'answer_change',
+  'full_regeneration',
+  'targeted_edit',
+]);
+export type RefinementTarget = z.infer<typeof RefinementTargetSchema>;
 
 // ── Pipeline Data Shapes ───────────────────────────────────────────────────────
 
@@ -116,6 +134,14 @@ export const WorkbenchStateSchema = z.object({
   dupSimilarity: z.number().nullable(),
   dupItemId: z.string().nullable(),
   taskShellId: z.string().nullable(),
+
+  // Review mode fields (P2-007)
+  reviewItemId: z.string().nullable(),
+  editInstruction: z.string().nullable(),
+  editedSections: z.array(z.string()),
+
+  // Refinement routing (P2-009)
+  refinementTarget: RefinementTargetSchema.nullable(),
 });
 export type WorkbenchState = z.infer<typeof WorkbenchStateSchema>;
 

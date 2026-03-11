@@ -659,3 +659,55 @@
 @utility bg-white {
   background-color: #ffffff;
 }
+
+/* ===== COPILOTKIT CHAT PANEL OVERRIDES (P1-026) ===== */
+.copilot-chat-wrapper .copilotKitChat {
+  background-color: var(--cream);
+  font-family: var(--font-sans);
+  height: 100%;
+}
+
+.copilot-chat-wrapper .copilotKitMessages {
+  background-color: var(--cream);
+}
+
+.copilot-chat-wrapper .copilotKitMessage {
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+}
+
+.copilot-chat-wrapper .copilotKitAssistantMessage {
+  background-color: var(--parchment);
+  border: 1px solid var(--border-light);
+  color: var(--text-primary);
+}
+
+.copilot-chat-wrapper .copilotKitUserMessage {
+  background-color: var(--navy);
+  color: var(--white);
+}
+
+.copilot-chat-wrapper .copilotKitInput textarea {
+  font-family: var(--font-sans);
+  background-color: var(--white);
+  border-color: var(--border-default);
+  color: var(--text-primary);
+}
+
+.copilot-chat-wrapper .copilotKitInput textarea:focus {
+  border-color: var(--border-focus);
+  box-shadow: var(--shadow-focus);
+}
+
+.copilot-chat-wrapper .copilotKitHeader {
+  display: none;
+}
+
+.copilot-chat-wrapper .copilotKitButton {
+  background-color: var(--navy);
+  color: var(--white);
+}
+
+.copilot-chat-wrapper .copilotKitButton:hover {
+  background-color: var(--blue);
+}

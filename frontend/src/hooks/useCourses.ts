@@ -1,24 +1,27 @@
 import { useQuery } from '@tanstack/react-query';
-import { createClient } from '@/lib/supabase';
-import type { CourseRow } from '@journey-os/shared-types';
+import { apiClient } from '@/lib/api-client';
 
 /**
- * Fetch courses for the current user's institution.
- * Uses Supabase browser client with RLS — automatically scoped to the user's institution.
+ * Course list item returned by GET /api/v1/courses.
+ * Includes subconcept + item counts enriched from Neo4j + Supabase.
+ */
+export interface CourseListItem {
+  id: string;
+  code: string;
+  title: string;
+  term: string;
+  subconcept_count: number;
+  item_count: number;
+}
+
+/**
+ * Fetch courses for the current user's institution via backend API.
+ * Uses TanStack Query — no bare fetch() in components.
  */
 export function useCourses() {
   return useQuery({
     queryKey: ['courses'],
-    queryFn: async (): Promise<CourseRow[]> => {
-      const supabase = createClient();
-      const { data, error } = await supabase
-        .from('courses')
-        .select('*')
-        .order('code', { ascending: true });
-
-      if (error) throw error;
-      return data as CourseRow[];
-    },
+    queryFn: () => apiClient.get<CourseListItem[]>('/api/v1/courses'),
     staleTime: 5 * 60 * 1000, // 5 min
   });
 }

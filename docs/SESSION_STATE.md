@@ -2,32 +2,28 @@
 *Updated: 2026-03-11*
 
 ## Current Epic
-**ID:** Epic 1.4 | **Status:** COMPLETE | **Phase:** COMPOUND
+**ID:** Epic 2.2 | **Status:** COMPLETE | **Phase:** REVIEW
 
 ## Stories Completed This Session
-- P1-024 — Auth Flow (backend middleware + routes + register page) — 2026-03-11
-- P1-025 — Course Selection (GET /courses + useCourses wiring) — 2026-03-11
-- P1-026 — QuestWorkbench Chat Panel (CopilotChat + useCopilotReadable) — 2026-03-11
-- P1-027 — Question Preview Panel (useCoAgent + StreamingText + OptionRow) — 2026-03-11
-- P1-028 — Approve/Reject (PATCH /items/:id + DualWrite + ApproveRejectBar) — 2026-03-11
-- P1-029 — Question Bank (GET /items + QuestionTable + pagination) — 2026-03-11
+- P2-007 — Review Mode Pipeline (3 new nodes + graph branching) — 2026-03-11
+- P2-008 — Review Mode UI (version history, edit highlights, save/discard) — 2026-03-11
+- P2-009 — Conversational Refinement (keyword instruction parser, targeted edits) — 2026-03-11
+- P2-010 — Bulk Generation via Inngest (InngestClient, bulk function, MVC stack) — 2026-03-11
+- P2-011 — Bulk Queue UI (batch pages, polling hooks, retry) — 2026-03-11
+- P2-012 — Socket.io Notifications (SocketServer, NotificationBell, real-time events) — 2026-03-11
 
 ## Last 3 Epics Completed
-- Epic 1.1 — Schema + Seed (P1-001 through P1-008)
-- Epic 1.2 — Ingestion Pipeline (P1-009 through P1-015)
-- Epic 1.3 — Generation Pipeline (P1-016 through P1-023)
+- Epic 1.4 — Workbench MVP (P1-024 through P1-029)
+- Epic 2.1 — Pipeline Completion (P2-001 through P2-006)
+- Epic 2.2 — Review Mode + Bulk Generation (P2-007 through P2-012)
 
-## Phase 1 Status
-All 4 epics COMPLETE (P1-001 through P1-029).
-End-to-end flow: login → courses → workbench → generate → approve → question bank.
+## Phase 2 Status
+Epic 2.1 COMPLETE, Epic 2.2 COMPLETE. Next: Epic 2.3.
 
 ## Next Ready
-Phase 2 stories (P2-001+). Check .context/spec/backlog/ for priority order.
+Epic 2.3 stories (P2-013+). Check docs/context-packets/CP-EPIC-2.3.md.
 
-## Solution Docs Written This Session
-- SOL-020: CopilotKit Workbench Wiring Pattern
-- SOL-021: API Client Auth Token Pattern
-
-## Error Patterns Added
-- MUTATION_IN_MOLECULE: mutations in organisms only, pass callbacks to molecules
-- AUTH_SERVICE_DIRECT_DB: services must use repositories, not direct .from() queries
+## New Infrastructure Added
+- Inngest: InngestClient singleton, bulk-generation function, /api/inngest endpoint
+- Socket.io: SocketServer singleton, JWT auth, user:{userId} rooms, frontend client
+- Review pipeline: LoadReviewQuestion → ApplyEdit → Revalidate → existing critic/router

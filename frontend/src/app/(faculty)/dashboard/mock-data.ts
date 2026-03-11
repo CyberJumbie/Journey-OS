@@ -10,9 +10,9 @@ export const MOCK_KPIS = [
 ];
 
 export const MOCK_COURSES = [
-  { id: '1', name: 'Medical Pharmacology I', code: 'PHAR 501', students: 64, coverage: 91, items: 186, status: 'active' as const, color: 'var(--navy-deep)' },
-  { id: '2', name: 'Clinical Pharmacology', code: 'PHAR 602', students: 38, coverage: 74, items: 98, status: 'active' as const, color: 'var(--blue-mid)' },
-  { id: '3', name: 'Pharmacogenomics', code: 'PHAR 710', students: 25, coverage: 62, items: 58, status: 'draft' as const, color: 'var(--green)' },
+  { id: '1', title: 'Medical Pharmacology I', code: 'PHAR 501', term: 'Spring 2026', subconcept_count: 91, item_count: 186 },
+  { id: '2', title: 'Clinical Pharmacology', code: 'PHAR 602', term: 'Spring 2026', subconcept_count: 74, item_count: 98 },
+  { id: '3', title: 'Pharmacogenomics', code: 'PHAR 710', term: 'Fall 2025', subconcept_count: 62, item_count: 58 },
 ];
 
 export const MOCK_MASTERY = [

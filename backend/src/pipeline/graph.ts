@@ -1,13 +1,17 @@
 /**
- * LangGraph StateGraph — generation pipeline.
+ * LangGraph StateGraph — generation + review pipeline.
  *
- * Full 12-node pipeline:
+ * Generation branch (mode: 'single' | 'bulk'):
  *   init → context_compiler → vignette_builder → stem_writer
  *   → distractor_generator → dedup_detector → validator → graph_writer
  *   → critic_agent → tagger → toulmin_generator → review_router
  *
+ * Review branch (mode: 'review', P2-007):
+ *   init → load_review_question → apply_edit → revalidate
+ *   → critic_agent → tagger → toulmin_generator → review_router
+ *
  * review_router has a conditional edge:
- *   - retry → vignette_builder (self-correction loop, max 2 retries)
+ *   - retry → vignette_builder (generation) or apply_edit (review)
  *   - finish → END
  *
  * Agent ID: journey_generation
@@ -23,6 +27,7 @@ import type {
   CriticScore,
   ToulminArgument,
   AutoRoute,
+  RefinementTarget,
 } from '@journey-os/shared-types';
 import { InitNode } from './nodes/InitNode.js';
 import { ContextCompilerNode } from './nodes/ContextCompilerNode.js';
@@ -36,6 +41,9 @@ import { DedupDetectorNode } from './nodes/DedupDetectorNode.js';
 import { CriticAgentNode } from './nodes/CriticAgentNode.js';
 import { ToulminGeneratorNode } from './nodes/ToulminGeneratorNode.js';
 import { ReviewRouterNode } from './nodes/ReviewRouterNode.js';
+import { LoadReviewQuestionNode } from './nodes/LoadReviewQuestionNode.js';
+import { ApplyEditNode } from './nodes/ApplyEditNode.js';
+import { RevalidateNode } from './nodes/RevalidateNode.js';
 
 // ── State Annotation ────────────────────────────────────────────────────────────
 // Extends MessagesAnnotation to include the messages channel required by
@@ -140,6 +148,26 @@ export const WorkbenchAnnotation = Annotation.Root({
     reducer: (_prev, next) => next,
     default: () => null,
   }),
+
+  // Review mode state channels (P2-007)
+  reviewItemId: Annotation<string | null>({
+    reducer: (_prev, next) => next,
+    default: () => null,
+  }),
+  editInstruction: Annotation<string | null>({
+    reducer: (_prev, next) => next,
+    default: () => null,
+  }),
+  editedSections: Annotation<string[]>({
+    reducer: (_prev, next) => next,
+    default: () => [],
+  }),
+
+  // Refinement routing (P2-009)
+  refinementTarget: Annotation<RefinementTarget | null>({
+    reducer: (_prev, next) => next,
+    default: () => null,
+  }),
 });
 
 // ── Type alias for the annotated state ──────────────────────────────────────────
@@ -159,6 +187,9 @@ const dedupDetectorNode = new DedupDetectorNode();
 const criticAgentNode = new CriticAgentNode();
 const toulminGeneratorNode = new ToulminGeneratorNode();
 const reviewRouterNode = new ReviewRouterNode();
+const loadReviewQuestionNode = new LoadReviewQuestionNode();
+const applyEditNode = new ApplyEditNode();
+const revalidateNode = new RevalidateNode();
 
 // ── Node wrapper functions ──────────────────────────────────────────────────────
 // LangGraph expects plain functions (state) => Partial<state>.
@@ -212,6 +243,29 @@ async function reviewRouter(state: GraphState): Promise<Partial<GraphState>> {
   return reviewRouterNode.execute(state);
 }
 
+async function loadReviewQuestion(state: GraphState): Promise<Partial<GraphState>> {
+  return loadReviewQuestionNode.execute(state);
+}
+
+async function applyEdit(state: GraphState): Promise<Partial<GraphState>> {
+  return applyEditNode.execute(state);
+}
+
+async function revalidate(state: GraphState): Promise<Partial<GraphState>> {
+  return revalidateNode.execute(state);
+}
+
+// ── Mode-based routing (P2-007) ─────────────────────────────────────────────────
+// After init, route to the correct pipeline branch based on mode.
+
+function modeRouter(state: GraphState): 'generate' | 'review' {
+  if (state.mode === 'review') {
+    return 'review';
+  }
+  // 'single' and 'bulk' both use the generation pipeline
+  return 'generate';
+}
+
 // ── Conditional edge function (self-correction loop) ────────────────────────────
 // After review_router runs, check if it signaled a retry (autoRoute = null)
 // or a final decision (autoRoute is set to a route string).
@@ -226,16 +280,29 @@ function retryOrFinish(state: GraphState): 'retry' | 'finish' {
 }
 
 // ── Graph construction ──────────────────────────────────────────────────────────
-// Pipeline: START → init → context_compiler → vignette_builder →
-//   stem_writer → distractor_generator → dedup_detector → validator →
-//   graph_writer → critic_agent → tagger → toulmin_generator → review_router
+//
+// Generation branch (mode: 'single' | 'bulk'):
+//   START → init → context_compiler → vignette_builder → stem_writer
+//   → distractor_generator → dedup_detector → validator → graph_writer
+//   → critic_agent → tagger → toulmin_generator → review_router
+//
+// Review branch (mode: 'review', P2-007):
+//   START → init → load_review_question → apply_edit → revalidate
+//   → critic_agent → tagger → toulmin_generator → review_router
 //
 // review_router conditional edge:
-//   retry → vignette_builder (self-correction loop)
+//   retry → vignette_builder (generation) — review retries handled by re-invocation
 //   finish → END
 
 const graphBuilder = new StateGraph(WorkbenchAnnotation)
+  // ── Shared nodes ──────────────────────────────────────────────────────────────
   .addNode('init', init)
+  .addNode('critic_agent', criticAgent)
+  .addNode('tagger', tagger)
+  .addNode('toulmin_generator', toulminGenerator)
+  .addNode('review_router', reviewRouter)
+
+  // ── Generation branch nodes ───────────────────────────────────────────────────
   .addNode('context_compiler', contextCompiler)
   .addNode('vignette_builder', vignetteBuilder)
   .addNode('stem_writer', stemWriter)
@@ -243,12 +310,22 @@ const graphBuilder = new StateGraph(WorkbenchAnnotation)
   .addNode('dedup_detector', dedupDetector)
   .addNode('validator', validator)
   .addNode('graph_writer', graphWriter)
-  .addNode('critic_agent', criticAgent)
-  .addNode('tagger', tagger)
-  .addNode('toulmin_generator', toulminGenerator)
-  .addNode('review_router', reviewRouter)
+
+  // ── Review branch nodes (P2-007) ─────────────────────────────────────────────
+  .addNode('load_review_question', loadReviewQuestion)
+  .addNode('apply_edit', applyEdit)
+  .addNode('revalidate', revalidate)
+
+  // ── Entry ─────────────────────────────────────────────────────────────────────
   .addEdge(START, 'init')
-  .addEdge('init', 'context_compiler')
+
+  // ── Mode-based branching after init ───────────────────────────────────────────
+  .addConditionalEdges('init', modeRouter, {
+    generate: 'context_compiler',
+    review: 'load_review_question',
+  })
+
+  // ── Generation branch edges ───────────────────────────────────────────────────
   .addEdge('context_compiler', 'vignette_builder')
   .addEdge('vignette_builder', 'stem_writer')
   .addEdge('stem_writer', 'distractor_generator')
@@ -256,9 +333,18 @@ const graphBuilder = new StateGraph(WorkbenchAnnotation)
   .addEdge('dedup_detector', 'validator')
   .addEdge('validator', 'graph_writer')
   .addEdge('graph_writer', 'critic_agent')
+
+  // ── Review branch edges (P2-007) ─────────────────────────────────────────────
+  .addEdge('load_review_question', 'apply_edit')
+  .addEdge('apply_edit', 'revalidate')
+  .addEdge('revalidate', 'critic_agent')
+
+  // ── Shared tail: critic → tagger → toulmin → review_router ────────────────────
   .addEdge('critic_agent', 'tagger')
   .addEdge('tagger', 'toulmin_generator')
   .addEdge('toulmin_generator', 'review_router')
+
+  // ── Self-correction loop ──────────────────────────────────────────────────────
   .addConditionalEdges('review_router', retryOrFinish, {
     retry: 'vignette_builder',
     finish: END,

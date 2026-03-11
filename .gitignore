@@ -51,3 +51,4 @@ pnpm-debug.log*
 # Type check cache
 tsconfig.tsbuildinfo
 **/*.tsbuildinfo
+.vercel

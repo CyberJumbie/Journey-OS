@@ -37,6 +37,12 @@ const INITIAL_STATE: WorkbenchState = {
   dupSimilarity: null,
   dupItemId: null,
   taskShellId: null,
+  // Review mode fields (P2-007)
+  reviewItemId: null,
+  editInstruction: null,
+  editedSections: [],
+  // Refinement routing (P2-009)
+  refinementTarget: null,
 };
 
 function QuestWorkbenchInner() {
