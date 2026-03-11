@@ -13,11 +13,16 @@ import batchRouter from './routes/batch.routes';
 import dashboardRouter from './routes/dashboard.routes';
 import invitationRouter from './routes/invitation.routes';
 import onboardingRouter from './routes/onboarding.routes';
+import conceptMappingRouter from './routes/concept-mapping.routes';
+import generationLogRouter from './routes/generation-log.routes';
+import adminRouter from './routes/admin.routes';
 import { authMiddleware } from './middleware/auth.middleware';
 import Neo4jClient from './lib/Neo4jClient';
 import SocketServer from './lib/SocketServer';
 import InngestClientSingleton from './lib/InngestClient';
 import { bulkGenerationFunction } from './inngest/bulk-generation.function';
+import { dataLintFunction } from './inngest/data-lint.function';
+import { goldenRegressionFunction } from './inngest/golden-regression.function';
 import { handleCopilotKit } from './copilotkit/runtime';
 
 const app: Express = express();
@@ -42,7 +47,7 @@ app.use(
   '/api/inngest',
   serve({
     client: InngestClientSingleton.getInstance(),
-    functions: [bulkGenerationFunction],
+    functions: [bulkGenerationFunction, dataLintFunction, goldenRegressionFunction],
   }),
 );
 
@@ -54,6 +59,9 @@ app.use('/api/v1/batches', authMiddleware, batchRouter);
 app.use('/api/v1/dashboard', authMiddleware, dashboardRouter);
 app.use('/api/v1/invitations', invitationRouter);
 app.use('/api/v1/users/me/onboarding', onboardingRouter);
+app.use('/api/v1/generation-logs', authMiddleware, generationLogRouter);
+app.use('/api/v1', authMiddleware, conceptMappingRouter);
+app.use('/api/v1/admin', adminRouter);
 
 // CopilotKit Runtime endpoint (P1-008)
 // Handles AG-UI streaming: TEXT_MESSAGE + STATE_DELTA

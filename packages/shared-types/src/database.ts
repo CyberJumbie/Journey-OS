@@ -276,6 +276,11 @@ export const GenerationLogRowSchema = z.object({
   status: GenerationLogStatusSchema,
   created_at: z.string(),
   completed_at: z.string().nullable(),
+  // Phase 2 columns
+  retry_count: z.number().int().nullable().optional(),
+  critic_input_tokens: z.number().int().nullable().optional(),
+  critic_output_tokens: z.number().int().nullable().optional(),
+  task_shell_id: z.string().uuid().nullable().optional(),
 });
 export type GenerationLogRow = z.infer<typeof GenerationLogRowSchema>;
 

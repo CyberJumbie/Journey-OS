@@ -27,6 +27,16 @@ export interface SyncFailedPayload {
   entityType: string;
 }
 
+export interface LintAlertPayload {
+  runId: string;
+  failedRules: Array<{
+    ruleId: string;
+    count: number;
+    threshold: number;
+  }>;
+  runAt: string;
+}
+
 /**
  * Union of all server-to-client event names.
  */
@@ -34,7 +44,8 @@ export type SocketEventName =
   | 'batch:completed'
   | 'batch:item:completed'
   | 'review:needed'
-  | 'sync:failed';
+  | 'sync:failed'
+  | 'lint:alert';
 
 /**
  * SocketServer — Singleton for Socket.io server instance.
@@ -122,7 +133,7 @@ class SocketServer {
   static emitToUser(
     userId: string,
     event: SocketEventName,
-    payload: BatchCompletedPayload | BatchItemCompletedPayload | ReviewNeededPayload | SyncFailedPayload,
+    payload: BatchCompletedPayload | BatchItemCompletedPayload | ReviewNeededPayload | SyncFailedPayload | LintAlertPayload,
   ): void {
     if (!this.instance) {
       console.warn(`[SocketServer] not initialized — skipping emit ${event} to user ${userId}`);

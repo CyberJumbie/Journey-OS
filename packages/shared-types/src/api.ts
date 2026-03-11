@@ -133,3 +133,53 @@ export const GenerationLogResponseSchema = z.object({
   data: GenerationLogRowSchema,
 });
 export type GenerationLogResponse = z.infer<typeof GenerationLogResponseSchema>;
+
+// ── Generation History (P2-021) ───────────────────────────────────────────────
+
+export const GenerationHistoryRowSchema = z.object({
+  id: z.string().uuid(),
+  courseId: z.string().uuid().nullable(),
+  courseName: z.string().nullable(),
+  userMessage: z.string().nullable(),
+  autoRoute: z.enum(['auto_approve', 'auto_reject', 'faculty_review']).nullable(),
+  criticComposite: z.number().nullable(),
+  retryCount: z.number().int(),
+  durationMs: z.number().int().nullable(),
+  costUsd: z.number().nullable(),
+  createdAt: z.string(),
+  itemStatus: z.enum(['approved', 'rejected', 'draft', 'pending_review', 'retired']).nullable(),
+  itemId: z.string().uuid().nullable(),
+});
+export type GenerationHistoryRow = z.infer<typeof GenerationHistoryRowSchema>;
+
+export const GenerationStatsSchema = z.object({
+  period: z.literal('month'),
+  totalGenerated: z.number().int(),
+  totalApproved: z.number().int(),
+  approvalRate: z.number(),
+  avgCriticScore: z.number().nullable(),
+  avgCostUsd: z.number().nullable(),
+});
+export type GenerationStats = z.infer<typeof GenerationStatsSchema>;
+
+export const GenerationHistoryQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).optional().default(1),
+  limit: z.coerce.number().int().min(1).max(100).optional().default(20),
+  courseId: z.string().uuid().optional(),
+  autoRoute: z.enum(['auto_approve', 'auto_reject', 'faculty_review']).optional(),
+  dateFrom: z.string().optional(),
+  dateTo: z.string().optional(),
+});
+export type GenerationHistoryQuery = z.infer<typeof GenerationHistoryQuerySchema>;
+
+export const GenerationHistoryResponseSchema = z.object({
+  data: z.array(GenerationHistoryRowSchema),
+  pagination: z.object({
+    page: z.number().int(),
+    limit: z.number().int(),
+    total: z.number().int(),
+    totalPages: z.number().int(),
+  }),
+  stats: GenerationStatsSchema,
+});
+export type GenerationHistoryResponse = z.infer<typeof GenerationHistoryResponseSchema>;

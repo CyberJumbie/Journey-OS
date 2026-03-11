@@ -7,9 +7,11 @@
     "seed:layer2": "ts-node src/seed-layer2.ts",
     "seed:layer3": "ts-node src/seed-layer3-taskshells.ts",
     "seed:pv-links": "ts-node src/seed-pv-taskshell-links.ts",
+    "seed:golden": "ts-node src/seed-golden-dataset.ts",
     "seed:all": "pnpm seed:layer1 && pnpm seed:layer2 && pnpm seed:layer3"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
     "neo4j-driver": "^5.24.0",
     "dotenv": "^16.0.0"
   },

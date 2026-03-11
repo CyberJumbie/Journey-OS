@@ -1,7 +1,8 @@
-import { AdminRepository } from '../repositories/admin.repository';
+import { AdminRepository, type KaizenLintRunRow, type GoldenDatasetItemRow } from '../repositories/admin.repository';
 import { AppError } from '../lib/errors';
 import type { AdminPermissions } from '@journey-os/shared-types';
 import { DEFAULT_MAIN_ADMIN_PERMISSIONS } from '@journey-os/shared-types';
+import InngestClientSingleton from '../lib/InngestClient';
 
 export class AdminService {
   constructor(private readonly repo: AdminRepository) {}
@@ -51,5 +52,51 @@ export class AdminService {
     const perms = await this.repo.getPermissions(userId);
     if (!perms) return false;
     return perms[permission] === true;
+  }
+
+  /**
+   * Fetch the latest lint run results.
+   */
+  async getLintResults(limit: number): Promise<KaizenLintRunRow[]> {
+    return this.repo.getLintResults(limit);
+  }
+
+  /**
+   * Manually trigger the data-lint Inngest function by sending the cron event.
+   */
+  async triggerLintRun(): Promise<{ eventId: string }> {
+    const inngest = InngestClientSingleton.getInstance();
+    const result = await inngest.send({
+      name: 'inngest/scheduled.data-lint',
+      data: { manual: true },
+    });
+    return { eventId: result.ids[0] ?? 'sent' };
+  }
+
+  /**
+   * Fetch golden dataset items with their assessment item data
+   * and the latest regression run result.
+   */
+  async getGoldenDataset(): Promise<{
+    items: GoldenDatasetItemRow[];
+    latestRun: KaizenLintRunRow | null;
+  }> {
+    const [items, latestRun] = await Promise.all([
+      this.repo.getGoldenDataset(),
+      this.repo.getLatestGoldenRegressionResult(),
+    ]);
+    return { items, latestRun };
+  }
+
+  /**
+   * Manually trigger the golden regression Inngest function.
+   */
+  async triggerGoldenRun(): Promise<{ eventId: string }> {
+    const inngest = InngestClientSingleton.getInstance();
+    const result = await inngest.send({
+      name: 'inngest/scheduled.golden-regression',
+      data: { manual: true },
+    });
+    return { eventId: result.ids[0] ?? 'sent' };
   }
 }
