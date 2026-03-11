@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { LayoutDashboard, BookOpen, Dumbbell, TrendingUp, BookMarked, TrendingDown, Target, Award, Clock } from "lucide-react";
 import { C, sans, serif, mono } from '@/lib/design-tokens';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 // ═══════════════════════════════════════════════════════════════
 // JOURNEY OS — STUDENT PROGRESS/ANALYTICS (STORY-S-3)
@@ -139,7 +140,8 @@ export default function StudentProgress() {
     { key: "resources", label: "Resources", Icon: BookMarked, path: "/repository" },
   ];
 
-  const user = { name: "John Mitchell", initials: "JM", role: "Student", year: "M2" };
+  const { data: currentUser } = useCurrentUser();
+  const user = { name: currentUser?.displayName ?? "Student", initials: currentUser?.initials ?? "??", role: currentUser?.roleLabel ?? "Student", year: "M2" };
 
   const sidebarCollapsedWidth = 72;
   const sidebarExpandedWidth = 240;

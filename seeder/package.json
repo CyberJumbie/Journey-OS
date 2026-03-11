@@ -5,7 +5,9 @@
   "scripts": {
     "seed:layer1": "ts-node src/seed-layer1.ts",
     "seed:layer2": "ts-node src/seed-layer2.ts",
-    "seed:all": "pnpm seed:layer1 && pnpm seed:layer2"
+    "seed:layer3": "ts-node src/seed-layer3-taskshells.ts",
+    "seed:pv-links": "ts-node src/seed-pv-taskshell-links.ts",
+    "seed:all": "pnpm seed:layer1 && pnpm seed:layer2 && pnpm seed:layer3"
   },
   "dependencies": {
     "neo4j-driver": "^5.24.0",

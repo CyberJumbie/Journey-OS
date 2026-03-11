@@ -1,13 +1,13 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
 import {
   BookOpen, FileText, Users, Plus,
   ClipboardCheck, AlertTriangle, Sparkles,
   CheckCircle2, Award, RefreshCw,
 } from 'lucide-react';
 import { C, sans, serif, mono } from '@/lib/design-tokens';
+import { useFacultyDashboard } from '@/hooks/useDashboard';
 
 interface Course {
   id: string;
@@ -38,42 +38,28 @@ type ActivityItem =
 
 export default function FacultyPortalDashboard() {
   const router = useRouter();
+  const { data, isLoading: loading, error: queryError, refetch } = useFacultyDashboard();
+  const error = !!queryError;
 
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [recentActivity, setRecentActivity] = useState<ActivityItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  // Map API response to local display types
+  const courses: Course[] = (data?.courses ?? []).map((c) => ({
+    id: c.id,
+    code: c.code,
+    name: c.title,
+    term: c.academic_year ?? '',
+    student_count: 0, // enrollment data not yet available
+    question_count: c.item_count,
+    last_activity: '',
+    status: 'active' as const,
+  }));
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
-  const fetchDashboardData = async () => {
-    setLoading(true);
-    setError(false);
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 800));
-      const mockCourses: Course[] = [
-        { id: '1', code: 'PHARM-501', name: 'Pharmacology I', term: 'Spring 2026', student_count: 48, question_count: 156, last_activity: '2026-02-20T08:30:00Z', status: 'active' },
-        { id: '2', code: 'PHARM-502', name: 'Clinical Pharmacology', term: 'Spring 2026', student_count: 42, question_count: 128, last_activity: '2026-02-19T14:20:00Z', status: 'active' },
-        { id: '3', code: 'PHARM-401', name: 'Pharmacology Foundations', term: 'Fall 2025', student_count: 52, question_count: 142, last_activity: '2025-12-15T10:00:00Z', status: 'archived' },
-      ];
-      const mockActivity: ActivityItem[] = [
-        { id: '1', type: 'generated', text: 'Generated 12 questions on Beta Blockers', description: 'Auto-generated from syllabus gap analysis targeting uncovered LOs', course_name: 'Pharmacology I', time: '2 hours ago' },
-        { id: '2', type: 'review', text: 'IRT calibration complete for Exam 2 item pool -- 3 items flagged', description: '3 items below quality threshold; review recommended', course_name: 'Clinical Pharmacology', time: '5 hours ago' },
-        { id: '3', type: 'alert', text: 'Coverage gap detected: Renal Pharmacology below 60% threshold', course_name: 'Pharmacology I', time: '1 day ago' },
-        { id: '4', type: 'student', text: '12 students below mastery threshold in Receptor Pharmacology', description: 'BKT mastery < 0.6 for 12/48 students on this topic', course_name: 'Pharmacology I', time: '1 day ago' },
-        { id: '5', type: 'completed', text: 'Exam 3 blueprint approved and locked', course_name: 'Clinical Pharmacology', time: '2 days ago' },
-        { id: '6', type: 'milestone', text: 'Pharmacology I reached 90% USMLE coverage', description: 'First course to exceed the 90% institutional target', course_name: 'Pharmacology I', time: '3 days ago' },
-      ];
-      setCourses(mockCourses);
-      setRecentActivity(mockActivity);
-    } catch {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const recentActivity: ActivityItem[] = (data?.activity ?? []).map((a) => ({
+    id: a.id,
+    type: 'generated' as const,
+    text: a.stem ?? `Item ${a.status}`,
+    course_name: a.course_code ?? undefined,
+    time: new Date(a.created_at).toLocaleDateString(),
+  }));
 
   const getActivityIcon = (type: ActivityItem['type']) => {
     switch (type) {
@@ -98,8 +84,8 @@ export default function FacultyPortalDashboard() {
   };
 
   const activeCourses = courses.filter((c) => c.status === 'active');
-  const totalStudents = activeCourses.reduce((sum, c) => sum + c.student_count, 0);
-  const totalQuestions = activeCourses.reduce((sum, c) => sum + c.question_count, 0);
+  const totalStudents = data?.metrics.totalStudents ?? activeCourses.reduce((sum, c) => sum + c.student_count, 0);
+  const totalQuestions = data?.metrics.totalQuestions ?? activeCourses.reduce((sum, c) => sum + c.question_count, 0);
 
   if (loading) {
     return (
@@ -130,7 +116,7 @@ export default function FacultyPortalDashboard() {
         </div>
         <h2 style={{ fontFamily: serif, fontSize: 22, fontWeight: 700, color: C.navyDeep, margin: '0 0 8px' }}>Could not load your dashboard.</h2>
         <p style={{ fontFamily: sans, fontSize: 15, color: C.textMuted, margin: '0 0 24px', maxWidth: 400 }}>Please check your connection and try again.</p>
-        <button onClick={fetchDashboardData} style={{ padding: '10px 24px', background: C.navyDeep, border: 'none', borderRadius: 6, fontFamily: sans, fontSize: 14, fontWeight: 600, color: C.white, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
+        <button onClick={() => refetch()} style={{ padding: '10px 24px', background: C.navyDeep, border: 'none', borderRadius: 6, fontFamily: sans, fontSize: 14, fontWeight: 600, color: C.white, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
           <RefreshCw size={16} /> Retry
         </button>
       </div>

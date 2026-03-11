@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createMiddlewareSupabaseClient } from '@/lib/supabase-middleware';
 import type { UserRole } from '@journey-os/shared-types';
 
+// ── Public routes — no session required ──────────────────────────────────────
 const PUBLIC_PATHS = new Set([
   '/',
   '/home',
@@ -9,20 +10,23 @@ const PUBLIC_PATHS = new Set([
   '/institution-application',
   '/login',
   '/register',
-  '/role-selection',
   '/forgot-password',
   '/email-verification',
   '/verify-email',
   '/invitation',
+  '/signup',
+  '/invite',
 ]);
 
 function isPublicPath(pathname: string): boolean {
   if (PUBLIC_PATHS.has(pathname)) return true;
   if (pathname.startsWith('/register/')) return true;
   if (pathname.startsWith('/invitation/')) return true;
+  if (pathname.startsWith('/invite/')) return true;
   return false;
 }
 
+// ── Route prefix → allowed roles ─────────────────────────────────────────────
 interface RoleGuard {
   prefixes: string[];
   roles: UserRole[];
@@ -41,6 +45,8 @@ const ROLE_GUARDS: RoleGuard[] = [
     prefixes: [
       '/dashboard', '/courses', '/generation', '/questions', '/exams',
       '/workbench', '/repository', '/analytics', '/batches', '/history',
+      '/uploads', '/items', '/collaboration', '/communications',
+      '/operations', '/templates',
     ],
     roles: ['faculty', 'superadmin'],
   },
@@ -55,6 +61,25 @@ const ROLE_GUARDS: RoleGuard[] = [
 ];
 
 const SHARED_PATHS = ['/profile', '/settings', '/notifications', '/help'];
+
+// ── Role → home route ────────────────────────────────────────────────────────
+const ROLE_HOME: Record<string, string> = {
+  faculty: '/dashboard',
+  institutional_admin: '/institution/dashboard',
+  superadmin: '/admin',
+  student: '/student-dashboard',
+  advisor: '/advisor/cohort',
+};
+
+// ── Onboarding ───────────────────────────────────────────────────────────────
+// All roles now have onboarding
+const ONBOARDING_ROUTE: Record<string, string> = {
+  faculty: '/onboarding/faculty',
+  institutional_admin: '/onboarding/admin',
+  superadmin: '/onboarding/super-admin',
+  student: '/onboarding/student',
+  advisor: '/onboarding/advisor',
+};
 
 function findRequiredRoles(pathname: string): UserRole[] | 'any_authenticated' | null {
   for (const guard of ROLE_GUARDS) {
@@ -93,7 +118,7 @@ export async function middleware(request: NextRequest) {
     return response();
   }
 
-  // Phase 2: Session check
+  // Phase 2: Session check — read from JWT, no DB query
   const { supabase, response } = createMiddlewareSupabaseClient(request);
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -104,55 +129,62 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // Phase 3: Profile + onboarding gate
+  // Phase 3: Extract role from JWT app_metadata (populated by sync_jwt_claims trigger)
+  const meta = user.app_metadata as Record<string, unknown> | undefined;
+  const role = (meta?.role as UserRole) ?? null;
+  const onboardingCompleted = (meta?.onboarding_completed as boolean) ?? false;
+  const isCourseDirector = (meta?.is_course_director as boolean) ?? false;
+  const additionalRoles = (meta?.additional_roles as UserRole[]) ?? [];
+
+  // No role in JWT means no profile exists yet → send to register
+  if (!role) {
+    const registerUrl = request.nextUrl.clone();
+    registerUrl.pathname = '/register';
+    return NextResponse.redirect(registerUrl);
+  }
+
+  // Phase 4: Onboarding gate — all roles with onboarding routes
+  const onboardingRoute = ONBOARDING_ROUTE[role];
+  if (
+    onboardingRoute &&
+    !onboardingCompleted &&
+    !pathname.startsWith('/onboarding')
+  ) {
+    const onboardingUrl = request.nextUrl.clone();
+    onboardingUrl.pathname = onboardingRoute;
+    return NextResponse.redirect(onboardingUrl);
+  }
+
+  // Already completed onboarding → redirect away from onboarding routes
+  if (onboardingCompleted && pathname.startsWith('/onboarding')) {
+    const homeUrl = request.nextUrl.clone();
+    homeUrl.pathname = ROLE_HOME[role] ?? '/dashboard';
+    return NextResponse.redirect(homeUrl);
+  }
+
+  // Phase 5: Role-path guard
   const requiredRoles = findRequiredRoles(pathname);
+
   if (requiredRoles === null) {
     return response();
   }
 
-  const { data: profile } = await supabase
-    .from('user_profiles')
-    .select('role, is_course_director, onboarding_completed')
-    .eq('id', user.id)
-    .single();
-
-  if (!profile) {
-    const roleUrl = request.nextUrl.clone();
-    roleUrl.pathname = '/role-selection';
-    return NextResponse.redirect(roleUrl);
-  }
-
-  // Onboarding gate — skip if already on onboarding pages
-  if (!profile.onboarding_completed && !pathname.startsWith('/onboarding')) {
-    const onboardingUrl = request.nextUrl.clone();
-    const role = profile.role as UserRole;
-    const onboardingRoutes: Record<string, string> = {
-      faculty: '/onboarding',
-      student: '/onboarding/student',
-      institutional_admin: '/onboarding/admin',
-      superadmin: '/onboarding/admin',
-      advisor: '/onboarding',
-    };
-    onboardingUrl.pathname = onboardingRoutes[role] ?? '/onboarding';
-    return NextResponse.redirect(onboardingUrl);
-  }
-
-  // Phase 4: Role-path guard
   if (requiredRoles === 'any_authenticated') {
     return response();
   }
 
-  const userRole = profile.role as UserRole;
-  const effectiveRoles: UserRole[] = [userRole];
-  if (profile.is_course_director && !effectiveRoles.includes('faculty')) {
+  // Build effective roles: primary + additional + course_director
+  const effectiveRoles: UserRole[] = [role, ...additionalRoles];
+  if (isCourseDirector && !effectiveRoles.includes('faculty')) {
     effectiveRoles.push('faculty');
   }
 
   const hasAccess = requiredRoles.some(r => effectiveRoles.includes(r));
   if (!hasAccess) {
-    const unauthorizedUrl = request.nextUrl.clone();
-    unauthorizedUrl.pathname = '/unauthorized';
-    return NextResponse.redirect(unauthorizedUrl);
+    // Wrong role → redirect to their own home, not a 403
+    const homeUrl = request.nextUrl.clone();
+    homeUrl.pathname = ROLE_HOME[role] ?? '/dashboard';
+    return NextResponse.redirect(homeUrl);
   }
 
   return response();

@@ -1,15 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Users, Database, Shield, FileText, RefreshCw, AlertTriangle } from 'lucide-react';
 import { C, sans, serif, mono, WovenField, AscSquares, Sparkline } from '@/lib/design-tokens';
+import { useAdminDashboard } from '@/hooks/useDashboard';
 
-interface KPI {
-  label: string;
-  value: string;
-  change: string;
-  spark: number[];
+interface DeptStat {
+  dept: string;
+  courses: number;
+  items: number;
+  coverage: number;
+  faculty: number;
 }
 
 interface RecentUser {
@@ -27,62 +28,36 @@ interface SystemAlert {
   priority: string;
 }
 
-interface DeptStat {
-  dept: string;
-  courses: number;
-  items: number;
-  coverage: number;
-  faculty: number;
-}
-
 export default function AdminDashboardPage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-  const [kpis, setKpis] = useState<KPI[]>([]);
-  const [recentUsers, setRecentUsers] = useState<RecentUser[]>([]);
-  const [systemAlerts, setSystemAlerts] = useState<SystemAlert[]>([]);
-  const [courseStats, setCourseStats] = useState<DeptStat[]>([]);
+  const { data, isLoading: loading, error: queryError, refetch } = useAdminDashboard();
+  const error = !!queryError;
 
-  const fetchDashboardData = async () => {
-    setLoading(true);
-    setError(false);
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 800));
-      setKpis([
-        { label: 'Total Users', value: '287', change: '+12 this month', spark: [255, 260, 265, 270, 275, 280, 287] },
-        { label: 'System Health', value: '98%', change: 'all systems operational', spark: [96, 97, 97, 98, 98, 98, 98] },
-        { label: 'Total Questions', value: '18.5k', change: '+420 this week', spark: [17200, 17500, 17800, 18000, 18200, 18300, 18500] },
-        { label: 'Coverage Score', value: '89%', change: 'institutional average', spark: [82, 84, 85, 86, 87, 88, 89] },
-      ]);
-      setRecentUsers([
-        { name: 'Dr. Sarah Johnson', email: 'sarah.johnson@msm.edu', role: 'Faculty', status: 'active', joined: '2 hours ago' },
-        { name: 'John Mitchell', email: 'john.mitchell@msm.edu', role: 'Student', status: 'active', joined: '5 hours ago' },
-        { name: 'Dr. Michael Chen', email: 'michael.chen@msm.edu', role: 'Faculty', status: 'pending', joined: '1 day ago' },
-        { name: 'Emily Rodriguez', email: 'emily.rodriguez@msm.edu', role: 'Student', status: 'active', joined: '1 day ago' },
-      ]);
-      setSystemAlerts([
-        { type: 'warning', text: 'ILO mapping for PHAR 602 incomplete — 15 objectives unmapped', time: '2 hours ago', priority: 'high' },
-        { type: 'info', text: 'Backup completed successfully — 18.2 GB uploaded to secure storage', time: '4 hours ago', priority: 'low' },
-        { type: 'warning', text: '3 faculty members pending approval for question generation access', time: '1 day ago', priority: 'medium' },
-        { type: 'success', text: 'Framework update complete — USMLE Step 1 2026 taxonomy integrated', time: '2 days ago', priority: 'low' },
-      ]);
-      setCourseStats([
-        { dept: 'Pharmacology', courses: 8, items: 4200, coverage: 91, faculty: 12 },
-        { dept: 'Anatomy', courses: 6, items: 3100, coverage: 87, faculty: 9 },
-        { dept: 'Pathophysiology', courses: 5, items: 2800, coverage: 78, faculty: 8 },
-        { dept: 'Clinical Skills', courses: 4, items: 1900, coverage: 65, faculty: 6 },
-      ]);
-    } catch {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Derive display data from API response
+  const kpis = data ? [
+    { label: 'Total Users', value: String(data.kpis.total_users), change: `${data.kpis.total_users} registered`, spark: [0] },
+    { label: 'Total Courses', value: String(data.kpis.total_courses), change: `${data.kpis.total_courses} active`, spark: [0] },
+    { label: 'Total Questions', value: String(data.kpis.total_items), change: `${data.kpis.items_approved} approved`, spark: [0] },
+    { label: 'Coverage Score', value: `${data.kpis.average_coverage}%`, change: 'institutional average', spark: [0] },
+  ] : [];
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
+  const recentUsers = (data?.recentUsers ?? []).map((u) => ({
+    name: u.display_name ?? 'Unknown',
+    email: u.email ?? '',
+    role: u.role,
+    status: 'active' as const,
+    joined: new Date(u.created_at).toLocaleDateString(),
+  }));
+
+  const systemAlerts: { type: 'warning' | 'info' | 'success'; text: string; time: string; priority: string }[] = [];
+
+  const courseStats = (data?.departmentStats ?? []).map((d) => ({
+    dept: d.department,
+    courses: d.course_count,
+    items: d.item_count,
+    coverage: 0,
+    faculty: 0,
+  }));
 
   if (loading) {
     return (
@@ -115,7 +90,7 @@ export default function AdminDashboardPage() {
         <p style={{ fontFamily: sans, fontSize: 15, color: C.textMuted, margin: '0 0 24px', maxWidth: 400 }}>
           Please check your connection and try again.
         </p>
-        <button onClick={fetchDashboardData} style={{ padding: '10px 24px', background: C.navyDeep, border: 'none', borderRadius: 6, fontFamily: sans, fontSize: 14, fontWeight: 600, color: C.white, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
+        <button onClick={() => refetch()} style={{ padding: '10px 24px', background: C.navyDeep, border: 'none', borderRadius: 6, fontFamily: sans, fontSize: 14, fontWeight: 600, color: C.white, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
           <RefreshCw size={16} /> Retry
         </button>
       </div>

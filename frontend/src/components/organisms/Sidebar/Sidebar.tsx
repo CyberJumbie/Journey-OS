@@ -20,6 +20,8 @@ interface SidebarProps {
   isDesktop: boolean;
   user?: SidebarUser;
   navItems?: NavItem[];
+  /** Institution name displayed below the logo */
+  institutionName?: string;
 }
 
 export const SIDEBAR_COLLAPSED_WIDTH = 72;
@@ -33,6 +35,7 @@ export default function Sidebar({
   isDesktop,
   user,
   navItems = [],
+  institutionName,
 }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
@@ -72,7 +75,7 @@ export default function Sidebar({
         className="fixed top-0 left-0 z-50 flex h-screen flex-col border-r border-[var(--gray-300)]/40 bg-white transition-all duration-250"
       >
         <div className={`${isDesktop && !expanded ? 'px-3 py-6' : 'px-4 py-6'}`}>
-          <SidebarLogo showLabels={showLabels} />
+          <SidebarLogo showLabels={showLabels} institutionName={institutionName} />
         </div>
 
         <nav className="flex-1 px-2">

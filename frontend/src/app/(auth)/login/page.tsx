@@ -15,7 +15,6 @@ export default function LoginPage() {
   const isMobile = bp === "mobile";
   const isTablet = bp === "tablet";
 
-  const [activeRole, setActiveRole] = useState("faculty");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -31,13 +30,6 @@ export default function LoginPage() {
     { label: "Assessment", sub: "AI-Generated", bg: C.blue },
     { label: "Measurement", sub: "Student Mastery", bg: C.green },
     { label: "Compliance", sub: "Accreditation", bg: C.blueMid },
-  ];
-
-  const roles = [
-    { key: "faculty", label: "Faculty" },
-    { key: "admin", label: "Admin" },
-    { key: "advisor", label: "Advisor" },
-    { key: "student", label: "Student" },
   ];
 
   const fadeIn = (d = 0) => ({
@@ -73,37 +65,21 @@ export default function LoginPage() {
       if (redirectPath && redirectPath.startsWith('/')) {
         router.push(redirectPath);
       } else {
-        // Fetch profile for role-based redirect
+        // Read role from JWT app_metadata (no DB query, no RLS issues)
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
-          const { data: profile } = await supabase
-            .from('user_profiles')
-            .select('role, onboarding_completed')
-            .eq('id', user.id)
-            .single();
+          const meta = user.app_metadata as Record<string, unknown> | undefined;
+          const role = meta?.role as string | undefined;
+          const onboardingCompleted = (meta?.onboarding_completed as boolean) ?? false;
 
-          if (profile) {
-            if (!profile.onboarding_completed) {
-              const onboardingRoutes: Record<string, string> = {
-                faculty: '/onboarding',
-                student: '/onboarding/student',
-                institutional_admin: '/onboarding/admin',
-                superadmin: '/onboarding/admin',
-                advisor: '/onboarding',
-              };
-              router.push(onboardingRoutes[profile.role] ?? '/onboarding');
-            } else {
-              const dashboardRoutes: Record<string, string> = {
-                faculty: '/dashboard',
-                student: '/student-dashboard',
-                institutional_admin: '/institution/dashboard',
-                superadmin: '/admin',
-                advisor: '/advisor/cohort',
-              };
-              router.push(dashboardRoutes[profile.role] ?? '/dashboard');
-            }
+          const { ONBOARDING_ROUTE, ROLE_HOME, HAS_ONBOARDING } = await import('@journey-os/shared-types');
+
+          if (!role) {
+            router.push('/register');
+          } else if (!onboardingCompleted && HAS_ONBOARDING.has(role as import('@journey-os/shared-types').UserRole)) {
+            router.push(ONBOARDING_ROUTE[role as import('@journey-os/shared-types').UserRole] ?? '/onboarding');
           } else {
-            router.push('/role-selection');
+            router.push(ROLE_HOME[role as import('@journey-os/shared-types').UserRole] ?? '/dashboard');
           }
         } else {
           router.push('/dashboard');
@@ -209,27 +185,8 @@ export default function LoginPage() {
                 Sign In
               </h2>
               <p style={{ fontSize: 14, color: C.textSecondary }}>
-                Choose your role and enter your credentials
+                Enter your credentials to continue
               </p>
-            </div>
-
-            {/* Role tabs */}
-            <div style={{
-              display: "flex", gap: 2, background: C.parchment, border: `1px solid ${C.borderLight}`,
-              borderRadius: 8, padding: 4, marginBottom: 24,
-            }}>
-              {roles.map(r => (
-                <button key={r.key} onClick={() => setActiveRole(r.key)} style={{
-                  flex: 1, padding: "10px 8px", borderRadius: 6, border: "none",
-                  background: activeRole === r.key ? C.white : "transparent",
-                  color: activeRole === r.key ? C.navyDeep : C.textMuted,
-                  fontFamily: sans, fontSize: 13, fontWeight: activeRole === r.key ? 600 : 400,
-                  cursor: "pointer", transition: "all 0.15s",
-                  boxShadow: activeRole === r.key ? "0 1px 3px rgba(0,44,118,0.04)" : "none",
-                }}>
-                  {r.label}
-                </button>
-              ))}
             </div>
 
             {/* Form */}
@@ -339,7 +296,7 @@ export default function LoginPage() {
             }}>
               <p style={{ fontSize: 14, color: C.textSecondary, margin: 0 }}>
                 Don't have an account?{" "}
-                <a href="/role-selection" style={{
+                <a href="/register" style={{
                   color: C.blueMid, fontWeight: 600, textDecoration: "none", transition: "color 0.15s",
                 }}
                   onMouseEnter={e => (e.target as HTMLElement).style.color = C.navyDeep}

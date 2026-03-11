@@ -26,10 +26,19 @@ export type GenerationLogStatus = z.infer<typeof GenerationLogStatusSchema>;
 
 // ── Institution ────────────────────────────────────────────────────────────────
 
+export const InstitutionStatusSchema = z.enum(['inactive', 'pending', 'active', 'suspended']);
+export type InstitutionStatus = z.infer<typeof InstitutionStatusSchema>;
+
 export const InstitutionRowSchema = z.object({
   id: z.string().uuid(),
   name: z.string(),
   slug: z.string(),
+  lcme_member_number: z.string().nullable(),
+  city: z.string().nullable(),
+  state_province: z.string().nullable(),
+  country: z.string(),
+  institution_type: z.string(),
+  status: InstitutionStatusSchema,
   created_at: z.string(),
   updated_at: z.string(),
 });
@@ -38,10 +47,19 @@ export type InstitutionRow = z.infer<typeof InstitutionRowSchema>;
 export const InstitutionInsertSchema = z.object({
   name: z.string(),
   slug: z.string(),
+  lcme_member_number: z.string().optional(),
+  city: z.string().optional(),
+  state_province: z.string().optional(),
+  country: z.string().optional(),
+  institution_type: z.string().optional(),
+  status: InstitutionStatusSchema.optional(),
 });
 export type InstitutionInsert = z.infer<typeof InstitutionInsertSchema>;
 
 // ── User Profile ───────────────────────────────────────────────────────────────
+
+export const UserTypeSchema = z.enum(['institutional', 'independent']);
+export type UserType = z.infer<typeof UserTypeSchema>;
 
 export const UserProfileRowSchema = z.object({
   id: z.string().uuid(),
@@ -50,8 +68,12 @@ export const UserProfileRowSchema = z.object({
   display_name: z.string().nullable(),
   email: z.string().nullable(),
   is_course_director: z.boolean(),
+  is_main_admin: z.boolean(),
+  additional_roles: z.array(UserRoleSchema),
+  user_type: UserTypeSchema,
   onboarding_completed: z.boolean(),
   onboarding_step: z.number().int(),
+  onboarding_data: z.record(z.unknown()),
   created_at: z.string(),
   updated_at: z.string(),
 });
@@ -64,10 +86,28 @@ export const UserProfileInsertSchema = z.object({
   display_name: z.string().optional(),
   email: z.string().optional(),
   is_course_director: z.boolean().optional(),
+  is_main_admin: z.boolean().optional(),
+  additional_roles: z.array(UserRoleSchema).optional(),
+  user_type: UserTypeSchema.optional(),
   onboarding_completed: z.boolean().optional(),
   onboarding_step: z.number().int().optional(),
+  onboarding_data: z.record(z.unknown()).optional(),
 });
 export type UserProfileInsert = z.infer<typeof UserProfileInsertSchema>;
+
+// ── Admin Permissions ─────────────────────────────────────────────────────────
+
+export const AdminPermissionsRowSchema = z.object({
+  user_id: z.string().uuid(),
+  can_manage_super_admins: z.boolean(),
+  can_approve_applications: z.boolean(),
+  can_manage_institutions: z.boolean(),
+  can_manage_frameworks: z.boolean(),
+  can_manage_platform_health: z.boolean(),
+  granted_by: z.string().uuid().nullable(),
+  updated_at: z.string(),
+});
+export type AdminPermissionsRow = z.infer<typeof AdminPermissionsRowSchema>;
 
 // ── Course ─────────────────────────────────────────────────────────────────────
 
@@ -247,3 +287,54 @@ export const GenerationLogInsertSchema = z.object({
   input_message: z.string().optional(),
 });
 export type GenerationLogInsert = z.infer<typeof GenerationLogInsertSchema>;
+
+// ── Bulk Batch ────────────────────────────────────────────────────────────────
+
+export const BulkBatchStatusSchema = z.enum(['pending', 'running', 'completed', 'failed']);
+export type BulkBatchStatus = z.infer<typeof BulkBatchStatusSchema>;
+
+export const BulkBatchRowSchema = z.object({
+  id: z.string().uuid(),
+  course_id: z.string().uuid(),
+  user_id: z.string().uuid(),
+  total_count: z.number().int(),
+  completed_count: z.number().int(),
+  failed_count: z.number().int(),
+  status: BulkBatchStatusSchema,
+  estimated_cost: z.number().nullable(),
+  created_at: z.string(),
+  completed_at: z.string().nullable(),
+});
+export type BulkBatchRow = z.infer<typeof BulkBatchRowSchema>;
+
+export const BulkBatchItemStatusSchema = z.enum(['pending', 'running', 'completed', 'failed']);
+export type BulkBatchItemStatus = z.infer<typeof BulkBatchItemStatusSchema>;
+
+export const BulkBatchItemRowSchema = z.object({
+  id: z.string().uuid(),
+  batch_id: z.string().uuid(),
+  item_id: z.string().uuid().nullable(),
+  status: BulkBatchItemStatusSchema,
+  error_message: z.string().nullable(),
+  created_at: z.string(),
+});
+export type BulkBatchItemRow = z.infer<typeof BulkBatchItemRowSchema>;
+
+// ── Proficiency Variable ──────────────────────────────────────────────────────
+
+export const ProficiencyVariableRowSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  sub_concept_id: z.string().uuid().nullable(),
+  neo4j_node_id: z.string().nullable(),
+  sync_status: SyncStatusSchema,
+  created_at: z.string(),
+});
+export type ProficiencyVariableRow = z.infer<typeof ProficiencyVariableRowSchema>;
+
+export const ProficiencyVariableInsertSchema = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string(),
+  sub_concept_id: z.string().uuid().optional(),
+});
+export type ProficiencyVariableInsert = z.infer<typeof ProficiencyVariableInsertSchema>;

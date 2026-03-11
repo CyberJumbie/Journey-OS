@@ -1,32 +1,31 @@
 # SESSION_STATE.md
-*Session ended: 2026-03-11*
+*Updated: 2026-03-11*
 
 ## Current Story
-**ID:** none
-**Status:** Epic 1.3 complete. GitHub repo + CI/CD set up.
-**Branch:** dev
+**ID:** Epic 2.3 (P2-013 through P2-017) | **Status:** COMPLETE | **Phase:** COMPOUND
 
-## Last 3 Completed Stories
-- Epic 1.3 (P1-016 through P1-023) — Generation Pipeline — 2026-03-10
-- Epic 1.2 (P1-009 through P1-015) — Ingestion Pipeline — 2026-03-10
-- Epic 1.1 (P1-001 through P1-008) — Infrastructure — 2026-03-10
+## Last 3 Completed
+- Epic 2.3 (P2-013 through P2-017) — ECD + TaskShells — 2026-03-11
+- DEMO-001 through DEMO-005 — Demo Institution Data Epic — 2026-03-11
+- Epic 2.2 (P2-007 through P2-012) — Review Mode + Bulk Generation — 2026-03-11
 
 ## Next Ready Queue
-1. P1-024 — Epic 1.4 (end-to-end wiring)
-2. P1-025 — Course selector UI
-3. P1-026 — Question bank UI
+1. Epic 2.4 — Data Quality + Faculty Trust (P2-018 through P2-021)
+2. Epic 3.1 — Multi-Course Ingestion (P3-001 through P3-006)
 
-## Phase 1 Progress
-17/29 stories done | 0 in progress | Epic 1.1 + 1.2 + 1.3 complete
+## Solution Docs Written This Session
+- SOL-023: ECD Sub-Step Pattern (Node-Internal Expansion)
 
-## Infrastructure
-- GitHub: https://github.com/CyberJumbie/Journey-OS (private)
-- Branches: main (protected) + dev (protected)
-- CI/CD: .github/workflows/ci.yml (blocked on GitHub billing)
-- Vercel: linked + GitHub connected (secrets set)
-- Railway: not yet configured
+## Error Patterns Added to CLAUDE.md
+- DUAL_SYSTEM_PROMPT: Loading .txt but also passing inline system string
+- ECD_FALLBACK_REQUIRED: TaskShell/PV lookups can return null — always provide fallback
+
+## Slim Context Updated
+- .context/pipeline.yaml — Phase 2 nodes marked built, toulmin_generator added, context_compiler updated with ECD
+- .context/entities.yaml — proficiency_variables table, task_shell_id on assessment_items
 
 ## To Resume
-  1. Fix GitHub billing (github.com/settings/billing) to unblock CI
-  2. Read SESSION_STATE.md
-  3. /epic 1.4
+1. Read SESSION_STATE.md
+2. Run `pnpm seed:layer3` to seed 12 TaskShell nodes
+3. Run `pnpm seed:pv-links` after ingestion to link PVs to TaskShells
+4. Next epic: Epic 2.4 (Data Quality + Faculty Trust)

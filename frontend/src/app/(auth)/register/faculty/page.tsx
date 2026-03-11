@@ -47,7 +47,33 @@ export default function FacultyRegistration() {
     setIsLoading(true);
     setError("");
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const { createClient } = await import('@/lib/supabase');
+      const supabase = createClient();
+
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            display_name: formData.name,
+            role: 'faculty',
+            title: formData.title,
+            department: formData.department,
+          },
+        },
+      });
+
+      if (signUpError) {
+        setError(signUpError.message);
+        return;
+      }
+
+      // Check for duplicate email (Supabase returns user with empty identities)
+      if (data.user?.identities && data.user.identities.length === 0) {
+        setError("An account with this email already exists.");
+        return;
+      }
+
       setSuccess(true);
     } catch (err: unknown) {
       setError((err instanceof Error ? err.message : null) || "Registration failed. Please try again.");
@@ -136,7 +162,7 @@ export default function FacultyRegistration() {
     }}>
       <div style={{ width: "100%", maxWidth: 540, position: "relative", zIndex: 1 }}>
         {/* Back link */}
-        <Link href="/role-selection" style={{
+        <Link href="/register" style={{
           display: "inline-flex", alignItems: "center", gap: 8,
           fontFamily: sans, fontSize: 13, color: C.textMuted,
           textDecoration: "none", marginBottom: 24,

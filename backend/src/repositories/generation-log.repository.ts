@@ -1,6 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { GenerationLogRow, GenerationLogInsert } from '@journey-os/shared-types';
-import SupabaseClientSingleton from '../lib/SupabaseClient.js';
+import SupabaseClientSingleton from '../lib/SupabaseClient';
 
 /**
  * GenerationLogRepository — all generation_logs Supabase queries.

@@ -7,6 +7,8 @@ import { useState, useEffect } from "react";
 import { BarChart3, Users, Settings, Shield, Activity, Award, TrendingUp, AlertCircle, Clock, CheckCircle2, GitBranch, GraduationCap, Layers, BookOpen, FileText } from "lucide-react";
 import { C, sans, serif, mono } from '@/lib/design-tokens';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
+import { useInstitutionDashboard } from '@/hooks/useDashboard';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 // ═══════════════════════════════════════════════════════════════
 // JOURNEY OS — INSTITUTIONAL ADMIN DASHBOARD (STORY-IA-1)
@@ -47,9 +49,17 @@ export default function InstitutionalAdminDashboard() {
   const [mounted, setMounted] = useState(false);
   const [activeNav, setActiveNav] = useState("dashboard");
 
-  const [_loading, setLoading] = useState(true);
-  const [alerts, setAlerts] = useState<Alert[]>([]);
-  const [stats, setStats] = useState<QuickStat[]>([]);
+  const { data: dashboardData } = useInstitutionDashboard();
+
+  // Derive stats from API response
+  const stats: QuickStat[] = dashboardData ? [
+    { label: "Total Users", value: dashboardData.kpis.total_users, change: `${dashboardData.kpis.total_faculty} faculty`, trend: "up" as const, icon: <Users size={24} />, color: C.blueMid },
+    { label: "Active Courses", value: dashboardData.kpis.total_courses, change: `${dashboardData.kpis.total_students} students`, trend: "up" as const, icon: <BookOpen size={24} />, color: C.green },
+    { label: "Question Bank", value: dashboardData.kpis.total_items, change: `${dashboardData.kpis.items_approved} approved`, trend: "up" as const, icon: <FileText size={24} />, color: C.navyDeep },
+    { label: "Coverage Score", value: `${dashboardData.kpis.average_coverage}%`, change: "institutional average", trend: "up" as const, icon: <Award size={24} />, color: "#fa9d33" },
+  ] : [];
+
+  const alerts: Alert[] = [];
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -66,60 +76,6 @@ export default function InstitutionalAdminDashboard() {
     else if (path.startsWith("/institution/settings")) setActiveNav("settings");
   }, [pathname]);
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
-  const fetchDashboardData = async () => {
-    setLoading(true);
-
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 800));
-
-      const mockAlerts: Alert[] = [
-        {
-          id: "1",
-          type: "warning",
-          title: "LCME Accreditation Review Due",
-          description: "Annual self-study report submission deadline in 14 days",
-          timestamp: "2026-02-20T09:00:00Z",
-          action_label: "View Report",
-          action_href: "/institution/accreditation",
-        },
-        {
-          id: "2",
-          type: "info",
-          title: "New Faculty Pending Approval",
-          description: "3 faculty members are waiting for account activation",
-          timestamp: "2026-02-19T14:30:00Z",
-          action_label: "Review Users",
-          action_href: "/institution/users",
-        },
-        {
-          id: "3",
-          type: "success",
-          title: "Curriculum Mapping Complete",
-          description: "Pharmacology course now has 100% USMLE coverage",
-          timestamp: "2026-02-18T11:15:00Z",
-        },
-      ];
-
-      const mockStats: QuickStat[] = [
-        { label: "Total Users", value: 342, change: "+12 this month", trend: "up", icon: <Users size={24} />, color: C.blueMid },
-        { label: "Active Courses", value: 28, change: "+2 this month", trend: "up", icon: <BookOpen size={24} />, color: C.green },
-        { label: "Question Bank", value: "1,842", change: "+156 this week", trend: "up", icon: <FileText size={24} />, color: C.navyDeep },
-        { label: "Coverage Score", value: "87%", change: "+3% this month", trend: "up", icon: <Award size={24} />, color: "#fa9d33" },
-      ];
-
-      setAlerts(mockAlerts);
-      setStats(mockStats);
-    } catch (err) {
-      console.error("Failed to fetch dashboard data", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const navItems = [
     { key: "dashboard", label: "Dashboard", Icon: BarChart3, path: "/institution/dashboard" },
     { key: "users", label: "User Management", Icon: Users, path: "/institution/users" },
@@ -132,7 +88,10 @@ export default function InstitutionalAdminDashboard() {
     { key: "settings", label: "Settings", Icon: Settings, path: "/institution/settings" },
   ];
 
-  const user = { name: "Dr. Sarah Johnson", initials: "SJ", role: "Institutional Admin", institution: "Morehouse School of Medicine" };
+  const { data: currentUser } = useCurrentUser();
+  const userName = dashboardData?.user.displayName ?? currentUser?.displayName ?? "Admin";
+  const userInitials = currentUser?.initials ?? userName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
+  const user = { name: userName, initials: userInitials, role: currentUser?.roleLabel ?? "Institutional Admin", institution: dashboardData?.user.institutionName ?? "Institution" }; // TODO: replace fallback when institution API is available
 
   const sidebarCollapsedWidth = 72;
   const sidebarExpandedWidth = 240;

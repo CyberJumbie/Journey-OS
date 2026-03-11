@@ -159,6 +159,20 @@ export class ChunkRepository {
   }
 
   /**
+   * Update sync_status and neo4j_node_id after syncing a chunk to Neo4j.
+   */
+  async updateSyncStatus(chunkId: string, neo4jNodeId: string): Promise<void> {
+    const { error } = await this.supabase
+      .from('content_chunks')
+      .update({ sync_status: 'synced', neo4j_node_id: neo4jNodeId })
+      .eq('id', chunkId);
+
+    if (error) {
+      throw new Error(`Failed to update chunk sync status: ${error.message}`);
+    }
+  }
+
+  /**
    * Insert embedding into the OpenAI embeddings table.
    */
   async insertOpenAIEmbedding(chunkId: string, embedding: number[]): Promise<void> {

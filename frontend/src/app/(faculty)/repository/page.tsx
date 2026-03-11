@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { LayoutDashboard, BookOpen, FileText, Settings, Plus, Search, Grid3x3, List, Filter, Star, Download, Eye, TrendingUp } from "lucide-react";
 import { C, sans, serif, mono } from '@/lib/design-tokens';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 // ═══════════════════════════════════════════════════════════════
 // JOURNEY OS — REPOSITORY / QUESTION BANK (STORY-R-1)
@@ -196,7 +197,8 @@ export default function Repository() {
     { key: "settings", label: "Settings", Icon: Settings, path: "/faculty/settings" },
   ];
 
-  const user = { name: "Dr. Sarah Chen", initials: "SC", role: "Faculty", department: "Pharmacology" };
+  const { data: currentUser } = useCurrentUser();
+  const user = { name: currentUser?.displayName ?? "Faculty", initials: currentUser?.initials ?? "??", role: currentUser?.roleLabel ?? "Faculty", department: "Pharmacology" };
 
   const sidebarCollapsedWidth = 72;
   const sidebarExpandedWidth = 240;

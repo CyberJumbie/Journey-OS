@@ -91,3 +91,31 @@ SOL-007: classifier-noise-filter | P1-013 | pipeline — LangGraph node strips a
   summary: IPipelineNode interface, readFileSync prompt loading, AnthropicClient singleton, WorkbenchStateBuilder, AIMessage TEXT_MESSAGE, streaming accumulation. One file per node.
   phase: 1
   stories: [P1-016, P1-017, P1-018, P1-019, P1-020, P1-021, P1-022, P1-023]
+
+- id: SOL-020
+  title: CopilotKit Workbench Wiring Pattern
+  file: docs/solutions/SOL-020-copilotkit-workbench-wiring.md
+  summary: Dynamic import (ssr:false), useCoAgent for state preview, useCopilotReadable for context, append-only StreamingText atom, mutations in organisms not molecules.
+  phase: 1
+  stories: [P1-026, P1-027, P1-028]
+
+- id: SOL-021
+  title: API Client Auth Token Pattern
+  file: docs/solutions/SOL-021-api-client-auth-token.md
+  summary: Frontend reads Supabase session token, attaches as Bearer header to apiClient calls. Backend validates via supabase.auth.getUser(). No localStorage.
+  phase: 1
+  stories: [P1-025]
+
+- id: SOL-022
+  title: Dashboard API Pattern (Mock-to-Live Migration)
+  file: docs/solutions/SOL-022-dashboard-api-pattern.md
+  summary: Full MVC stack for replacing prototype mock data with live API. Seed migration → Repository → Service → Controller → Route → TanStack Query hook → page swap. Preserves JSX, changes data source only.
+  phase: 2
+  stories: [DEMO-001, DEMO-002, DEMO-003, DEMO-004, DEMO-005]
+
+- id: SOL-023
+  title: ECD Sub-Step Pattern (Node-Internal Expansion)
+  file: docs/solutions/SOL-023-ecd-substep-pattern.md
+  summary: Add ECD sub-steps (evidence design, task family selection, instance spec) as private methods within ContextCompilerNode. Fallback chain for missing PVs or TaskShells.
+  phase: 2
+  stories: [P2-016]

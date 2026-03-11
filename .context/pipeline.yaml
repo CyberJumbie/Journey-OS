@@ -5,20 +5,21 @@
 
 # ── Phase 1 — 7-Node Pipeline ─────────────────────────────────────────────────
 init: "WorkbenchState → WorkbenchState+courseContext+generationLogId (no AI, DB reads, Builder pattern) — built"
-context_compiler: "targetConcepts+userMessage → context string via Graph RAG + Vector RAG + RRF + Haiku refiner (4K token budget) — built"
+context_compiler: "targetConcepts+userMessage → context+taskShellId+generationParams via Graph RAG + Vector RAG + RRF + Haiku refiner + ECD sub-steps (4K token budget) — built"
 vignette_builder: "context+targetConcepts → vignette 150-200 word clinical vignette (Sonnet streaming) — built"
 stem_writer: "vignette+context → stem NBME lead-in question (Sonnet streaming) — built"
 distractor_generator: "stem+vignette → Option[5]; TWO-PHASE: reasoning artifact → JSON options (Sonnet, randomized position) — built"
 validator: "vignette+stem+options → ValidationResult[10]; pure functions, no AI (nbme-rules.ts) — built"
-graph_writer: "full state → DualWrite assessment_items+options to Supabase, MERGE AssessmentItem+rels to Neo4j — built"
+graph_writer: "full state → DualWrite assessment_items+options to Supabase, MERGE AssessmentItem+INSTANTIATES→TaskShell to Neo4j — built"
 
-# ── Phase 2 Additions (not built yet) ─────────────────────────────────────────
-# tagger: "AssessmentItem → tags[USMLE_System, BloomLevel] (Haiku) — phase2"
-# dedup_detector: "AssessmentItem → dedup score via pgvector 0.85/0.95 threshold (no AI) — phase2"
-# validator_v2: "AssessmentItem → ValidationResult; full 30 NBME rules + Cover The Options — phase2"
-# critic_agent: "AssessmentItem → CriticScore[6 metrics] (Opus ONLY) — phase2"
-# review_router: "CriticScore → auto_approve|pending_review|retry decision — phase2"
-# self_corrector: "AssessmentItem+CriticFeedback → revised item (Sonnet, max 2 loops) — phase2"
+# ── Phase 2 Additions ─────────────────────────────────────────────────────────
+tagger: "AssessmentItem → tags[USMLE_System, BloomLevel] (Haiku structured JSON) — built"
+toulmin_generator: "AssessmentItem → ToulminArgument{claim,data,warrant,backing,rebuttal,qualifier} JSONB (Sonnet) — built"
+dedup_detector: "AssessmentItem → dedup score via pgvector 0.85/0.95 threshold (no AI) — built"
+validator_v2: "AssessmentItem → ValidationResult; full 30 NBME rules + Cover The Options — built"
+critic_agent: "AssessmentItem → CriticScore[6 metrics] (Opus ONLY, $50/mo cost guard) — built"
+review_router: "CriticScore → auto_approve|pending_review|retry decision (no AI, pure TS) — built"
+self_corrector: "AssessmentItem+CriticFeedback → revised item (Sonnet, max 2 retries) — built"
 
 # ── Ingestion Pipeline (separate from generation) ─────────────────────────────
 # CRITICAL: Pipeline is Markdown-first. See SOL-006. Raw .txt extraction is wrong.
@@ -26,7 +27,7 @@ pdf_parser: "Upload → ParsedDocument (Markdown via LlamaParse API or pdfplumbe
 chunker: "ParsedDocument.markdown → ContentChunk[] at 800 tokens, Markdown-aware split, table-safe — built"
 classifier: "ContentChunk[] → { academic[], noise[], borderline[] } (Haiku routing call, ~$0.01/syllabus) — built"
 embedder: "academic ContentChunk[] → dual embeddings (Voyage 1024-dim + OpenAI 1536-dim, two separate tables) — built"
-concept_extractor: "academic ContentChunk[] → SubConcept[] + TEACHES edges via DualWriteService (Haiku) — built"
+concept_extractor: "academic ContentChunk[] → SubConcept[] + ProficiencyVariable[] + TEACHES + MAPPED_TO + ASSESSED_BY edges via DualWriteService (Haiku) — built"
 framework_aligner: "SubConcept[] → MAPS_TO edges to USMLE_System/USMLE_Discipline (fuzzy match, no AI) — built"
 
 # Known MSM syllabus failure modes (source: SOL-006):

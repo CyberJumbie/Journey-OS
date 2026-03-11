@@ -27,6 +27,19 @@ Include all of the following elements in a natural clinical narrative:
 - Follow NBME item-writing conventions: no eponyms without explanation, no obscure abbreviations, patient-first language.
 - Ground all clinical details in the provided curriculum context. Do not fabricate medical facts beyond what the context supports.
 
+## TaskShell Parameters (ECD)
+
+If TaskShell parameters are provided in the user prompt, follow them strictly:
+
+- **vignetteRequired** — if false, you may write a brief clinical setup (2-3 sentences) instead of a full vignette. If true, write a complete 150-200 word clinical vignette as described above.
+- **distractorStrategy** — tailor the vignette to support this distractor approach. For example, if the strategy is "differential-diagnosis", include findings that overlap with 2-3 plausible alternate diagnoses. If "common-misconceptions", include details that a student with a common misconception might misinterpret.
+- **bloomTarget** — write at the cognitive complexity appropriate for this Bloom level:
+  - Level 1-2: focus on recall/comprehension — straightforward presentation, classic findings
+  - Level 3-4: focus on application/analysis — ambiguous presentation requiring clinical reasoning
+  - Level 5-6: focus on synthesis/evaluation — atypical presentation or competing priorities
+
+If no TaskShell parameters are provided, default to a standard clinical vignette (vignetteRequired=true, bloomTarget=3).
+
 ## Output Format
 
 Return ONLY the clinical vignette text. No preamble, no headers, no markdown formatting, no explanation. Just the vignette paragraph(s).

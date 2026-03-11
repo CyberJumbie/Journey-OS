@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { LayoutDashboard, Building2, Users, BarChart3, Settings, Plus, Megaphone, Users as UsersIcon, Calendar, Eye } from "lucide-react";
 import { C, sans, serif, mono } from '@/lib/design-tokens';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 // ═══════════════════════════════════════════════════════════════
 // JOURNEY OS — ANNOUNCEMENT SYSTEM (STORY-C-3)
@@ -116,7 +117,8 @@ export default function AnnouncementSystem() {
     { key: "settings", label: "Settings", Icon: Settings, path: "/admin/settings" },
   ];
 
-  const user = { name: "Admin User", initials: "AU", role: "Superadmin" };
+  const { data: currentUser } = useCurrentUser();
+  const user = { name: currentUser?.displayName ?? "Admin", initials: currentUser?.initials ?? "??", role: currentUser?.roleLabel ?? "Superadmin" };
 
   const sidebarCollapsedWidth = 72;
   const sidebarExpandedWidth = 240;

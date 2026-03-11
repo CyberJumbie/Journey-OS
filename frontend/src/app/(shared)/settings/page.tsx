@@ -17,8 +17,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from "sonner";
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 export default function Settings() {
+  const { data: currentUser } = useCurrentUser();
   const handleSaveProfile = () => {
     toast.success("Profile updated successfully");
   };
@@ -54,7 +56,7 @@ export default function Settings() {
               <div className="flex items-center gap-6">
                 <Avatar className="h-20 w-20">
                   <AvatarFallback className="bg-primary text-2xl text-primary-foreground">
-                    SJ
+                    {currentUser?.initials ?? '??'}
                   </AvatarFallback>
                 </Avatar>
                 <div>
@@ -70,11 +72,11 @@ export default function Settings() {
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="fullName">Full Name</Label>
-                  <Input id="fullName" defaultValue="Dr. Sarah Johnson" />
+                  <Input id="fullName" defaultValue={currentUser?.displayName ?? ''} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" defaultValue="sarah.johnson@msm.edu" disabled />
+                  <Input id="email" defaultValue={currentUser?.email ?? ''} disabled />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="title">Title/Position</Label>

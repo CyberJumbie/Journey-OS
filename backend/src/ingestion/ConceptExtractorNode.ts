@@ -7,7 +7,7 @@ import type { ContentChunkRow } from '@journey-os/shared-types';
 import { DualWriteService } from '../services/dual-write.service';
 import { GraphRepository } from '../repositories/graph.repository';
 import { ChunkRepository } from '../repositories/chunk.repository';
-import SupabaseClientSingleton from '../lib/SupabaseClient';
+import { ProficiencyVariableRepository } from '../repositories/proficiency-variable.repository';
 
 /**
  * ConceptExtractorNode — Stage 2 of concept extraction pipeline.
@@ -45,12 +45,14 @@ export class ConceptExtractorNode {
   private readonly dualWriteService: DualWriteService;
   private readonly graphRepository: GraphRepository;
   private readonly chunkRepository: ChunkRepository;
+  private readonly pvRepository: ProficiencyVariableRepository;
 
   constructor() {
     this.client = AnthropicClient.getInstance();
     this.dualWriteService = new DualWriteService();
     this.graphRepository = new GraphRepository();
     this.chunkRepository = new ChunkRepository();
+    this.pvRepository = new ProficiencyVariableRepository();
   }
 
   /**
@@ -139,12 +141,8 @@ export class ConceptExtractorNode {
         chunk.chunk_index ?? 0,
       );
 
-      // Update sync_status in Supabase directly since chunk already exists
-      const supabase = SupabaseClientSingleton.getInstance();
-      await supabase
-        .from('content_chunks')
-        .update({ sync_status: 'synced', neo4j_node_id: nodeId })
-        .eq('id', chunk.id);
+      // Update sync_status via repository (Rule: no direct DB in services/nodes)
+      await this.chunkRepository.updateSyncStatus(chunk.id, nodeId);
     } catch (err) {
       console.error(`[ConceptExtractorNode] Failed to sync ContentChunk ${chunk.id} to Neo4j:`, err);
     }
@@ -154,6 +152,9 @@ export class ConceptExtractorNode {
    * Persist a SubConcept: MERGE node in Neo4j, create TEACHES edge.
    * SubConcepts are merged by name (not upload_id) so the same concept
    * from different syllabi maps to the same node.
+   *
+   * Also creates a ProficiencyVariable (1:1 with SubConcept) via DualWriteService
+   * and links it to matching TaskShells via ASSESSED_BY.
    */
   private async persistConcept(
     concept: ExtractedConcept,
@@ -165,10 +166,58 @@ export class ConceptExtractorNode {
 
       // Create TEACHES edge: ContentChunk -> SubConcept
       await this.graphRepository.mergeTeachesEdge(chunk.id, concept.name);
+
+      // Create ProficiencyVariable (1:1 with SubConcept) via DualWriteService
+      await this.createProficiencyVariable(concept);
     } catch (err) {
       console.error(
         `[ConceptExtractorNode] Failed to persist concept "${concept.name}" ` +
           `for chunk ${chunk.id}:`,
+        err,
+      );
+    }
+  }
+
+  /**
+   * Create a ProficiencyVariable for a SubConcept using DualWriteService.
+   * Supabase first (source of truth), then Neo4j (MERGE for idempotency).
+   * After creation, links to matching TaskShells via ASSESSED_BY.
+   * Bloom default: 3 if bloom_level_guess is unavailable.
+   */
+  private async createProficiencyVariable(concept: ExtractedConcept): Promise<void> {
+    const pvUuid = randomUUID();
+    const pvName = `pv_${concept.name}`;
+    const bloomGuess = concept.bloom_level_guess ?? 3;
+
+    try {
+      await this.dualWriteService.dualWrite(
+        // Step 1: Write Supabase (source of truth)
+        async () => {
+          const result = await this.pvRepository.upsertProficiencyVariable({
+            id: pvUuid,
+            name: pvName,
+            sub_concept_id: concept.uuid,
+          });
+          return result;
+        },
+        // Step 2: Write Neo4j (MERGE — idempotent)
+        async () => {
+          const nodeId = await this.graphRepository.mergeProficiencyVariable(
+            pvUuid,
+            pvName,
+            concept.uuid,
+          );
+          return nodeId;
+        },
+        'proficiency_variables',
+      );
+
+      // Step 3: Link to TaskShells (ASSESSED_BY with priority)
+      await this.graphRepository.linkAssessedBy(pvUuid, bloomGuess);
+    } catch (err) {
+      // PV creation failure should not block concept extraction
+      console.error(
+        `[ConceptExtractorNode] Failed to create ProficiencyVariable for "${concept.name}":`,
         err,
       );
     }

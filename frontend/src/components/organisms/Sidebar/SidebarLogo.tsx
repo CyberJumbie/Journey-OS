@@ -2,9 +2,11 @@
 
 interface SidebarLogoProps {
   showLabels: boolean;
+  /** Institution name displayed below the logo. Falls back to "JOURNEY OS" if not provided. */
+  institutionName?: string;
 }
 
-export default function SidebarLogo({ showLabels }: SidebarLogoProps) {
+export default function SidebarLogo({ showLabels, institutionName }: SidebarLogoProps) {
   if (showLabels) {
     return (
       <div className="overflow-hidden whitespace-nowrap">
@@ -17,7 +19,7 @@ export default function SidebarLogo({ showLabels }: SidebarLogoProps) {
           </span>
         </div>
         <div className="font-[family-name:var(--font-label)] text-[9px] tracking-wider text-[var(--gray-600)] px-2 mb-5">
-          MOREHOUSE SCHOOL OF MEDICINE
+          {institutionName?.toUpperCase() ?? 'JOURNEY OS'}
         </div>
       </div>
     );

@@ -137,7 +137,7 @@ Web (.env.local): NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, NEXT_
 - seeder/data/ — JSON seed files
 
 ## Workflow
-ALWAYS: /story → /plan → /implement → /verify → /review → /compound → /commit → /clear
+ALWAYS: /story → /plan → /implement → /verify → /review → /compound → /commit → /end
 NEVER: code without an approved plan. NEVER: rebuild prototype screens.
 
 ## Slim Context Layer
@@ -151,7 +151,7 @@ If a pattern exists in docs/solutions/, apply it. Do not reinvent.
 Current solutions: SOL-001 (dual-write), SOL-002 (neo4j-merge), SOL-003 (rls-policy), SOL-004 (voyage-retry), SOL-005 (express-mvc), SOL-008 (dual-embedding-provider)
 
 ## Session State
-SESSION_STATE.md — max 40 lines, written by /compound and /clear.
+SESSION_STATE.md — max 40 lines, written by /compound and /end.
 Contains: current story + PIVC phase + last 3 done + next-ready queue. Never grows.
 On new session: read SESSION_STATE.md first, then /story [ID].
 
@@ -185,6 +185,10 @@ By story 20, expect 3× story 1 speed.
 - STORAGE_API: Using localStorage or sessionStorage. Not supported — use useState or TanStack Query cache.
 - COPILOTKIT_SSR: CopilotKit hooks (useCoAgent, CopilotChat) fail during Next.js static prerendering. Use `dynamic(() => import('./component'), { ssr: false })` for any page with CopilotKit.
 - RAW_OBJECT_RETURN: Returning raw `{ field: value }` from pipeline nodes. Use WorkbenchStateBuilder, spread with `messages` array: `return { ...builder.build(), messages }`.
+- MUTATION_IN_MOLECULE: Putting useMutation/useQuery in a molecule component. Molecules are pure presentational — lift mutations to parent organism and pass callbacks as props.
+- AUTH_SERVICE_DIRECT_DB: AuthService (or any service) querying `.from('table')` directly. Always route through a repository class, even for user_profiles.
+- DUAL_SYSTEM_PROMPT: Loading a prompt from .txt file BUT also passing a separate inline `system:` string to Anthropic. Use the loaded template as the complete prompt — never split across inline + file.
+- ECD_FALLBACK_REQUIRED: TaskShell selection and PV lookup can return null. Always provide fallback: TS-001 for missing TaskShell, Bloom 3 for missing bloom_level_guess.
 
 ---
 

@@ -1,21 +1,7 @@
 import { redirect } from 'next/navigation';
 import { createServerSupabaseClient } from './supabase-server';
 import type { UserRole } from '@journey-os/shared-types';
-
-const SMOKE_TEST_PROFILE: UserProfile = {
-  id: 'smoke-test-user',
-  role: 'superadmin',
-  institution_id: null,
-  display_name: 'Smoke Test',
-  email: 'smoke@test.local',
-  is_course_director: true,
-  onboarding_completed: true,
-  onboarding_step: 99,
-};
-
-function isSmokeTest(): boolean {
-  return process.env.SMOKE_TEST === 'true';
-}
+import { ROLE_HOME, ONBOARDING_ROUTE, HAS_ONBOARDING } from '@journey-os/shared-types';
 
 export interface UserProfile {
   id: string;
@@ -24,88 +10,63 @@ export interface UserProfile {
   display_name: string | null;
   email: string | null;
   is_course_director: boolean;
+  is_main_admin: boolean;
+  additional_roles: UserRole[];
+  user_type: string;
   onboarding_completed: boolean;
   onboarding_step: number;
 }
 
-export async function requireRole(allowedRoles: UserRole[]): Promise<UserProfile> {
-  if (isSmokeTest()) return SMOKE_TEST_PROFILE;
-  const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
+const SMOKE_TEST_PROFILE: UserProfile = {
+  id: 'smoke-test-user',
+  role: 'superadmin',
+  institution_id: null,
+  display_name: 'Smoke Test',
+  email: 'smoke@test.local',
+  is_course_director: true,
+  is_main_admin: true,
+  additional_roles: [],
+  user_type: 'institutional',
+  onboarding_completed: true,
+  onboarding_step: 99,
+};
 
-  if (!user) {
-    redirect('/login');
-  }
-
-  const { data: profile } = await supabase
-    .from('user_profiles')
-    .select('id, role, institution_id, display_name, email, is_course_director, onboarding_completed, onboarding_step')
-    .eq('id', user.id)
-    .single();
-
-  if (!profile) {
-    redirect('/role-selection');
-  }
-
-  const typedProfile: UserProfile = {
-    id: profile.id,
-    role: profile.role as UserRole,
-    institution_id: profile.institution_id,
-    display_name: profile.display_name,
-    email: profile.email ?? user.email ?? null,
-    is_course_director: profile.is_course_director ?? false,
-    onboarding_completed: profile.onboarding_completed ?? false,
-    onboarding_step: profile.onboarding_step ?? 0,
-  };
-
-  if (!allowedRoles.includes(typedProfile.role)) {
-    redirect('/unauthorized');
-  }
-
-  return typedProfile;
+function isSmokeTest(): boolean {
+  return process.env.SMOKE_TEST === 'true';
 }
 
-export async function requireAuth(): Promise<UserProfile> {
-  if (isSmokeTest()) return SMOKE_TEST_PROFILE;
-  const supabase = await createServerSupabaseClient();
+/**
+ * Extract UserProfile from Supabase auth user.
+ * Primary source: JWT app_metadata (populated by sync_jwt_claims trigger).
+ * Fallback: query user_profiles table (for users whose JWT hasn't refreshed yet).
+ */
+async function resolveProfile(supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>): Promise<UserProfile | null> {
   const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect('/login');
-  }
-
-  const { data: profile } = await supabase
-    .from('user_profiles')
-    .select('id, role, institution_id, display_name, email, is_course_director, onboarding_completed, onboarding_step')
-    .eq('id', user.id)
-    .single();
-
-  if (!profile) {
-    redirect('/role-selection');
-  }
-
-  return {
-    id: profile.id,
-    role: profile.role as UserRole,
-    institution_id: profile.institution_id,
-    display_name: profile.display_name,
-    email: profile.email ?? user.email ?? null,
-    is_course_director: profile.is_course_director ?? false,
-    onboarding_completed: profile.onboarding_completed ?? false,
-    onboarding_step: profile.onboarding_step ?? 0,
-  };
-}
-
-export async function getCurrentUser(): Promise<UserProfile | null> {
-  if (isSmokeTest()) return SMOKE_TEST_PROFILE;
-  const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
   if (!user) return null;
 
+  const meta = user.app_metadata as Record<string, unknown> | undefined;
+
+  // Primary path: read from JWT claims (no DB query, no RLS issues)
+  if (meta?.role) {
+    return {
+      id: user.id,
+      role: meta.role as UserRole,
+      institution_id: (meta.institution_id as string) ?? null,
+      display_name: (meta.display_name as string) ?? null,
+      email: user.email ?? null,
+      is_course_director: (meta.is_course_director as boolean) ?? false,
+      is_main_admin: (meta.is_main_admin as boolean) ?? false,
+      additional_roles: (meta.additional_roles as UserRole[]) ?? [],
+      user_type: (meta.user_type as string) ?? 'institutional',
+      onboarding_completed: (meta.onboarding_completed as boolean) ?? false,
+      onboarding_step: (meta.onboarding_step as number) ?? 0,
+    };
+  }
+
+  // Fallback: query DB (for users created before JWT trigger was added)
   const { data: profile } = await supabase
     .from('user_profiles')
-    .select('id, role, institution_id, display_name, email, is_course_director, onboarding_completed, onboarding_step')
+    .select('id, role, institution_id, display_name, email, is_course_director, is_main_admin, additional_roles, user_type, onboarding_completed, onboarding_step')
     .eq('id', user.id)
     .single();
 
@@ -118,32 +79,57 @@ export async function getCurrentUser(): Promise<UserProfile | null> {
     display_name: profile.display_name,
     email: profile.email ?? user.email ?? null,
     is_course_director: profile.is_course_director ?? false,
+    is_main_admin: profile.is_main_admin ?? false,
+    additional_roles: (profile.additional_roles as UserRole[]) ?? [],
+    user_type: (profile.user_type as string) ?? 'institutional',
     onboarding_completed: profile.onboarding_completed ?? false,
     onboarding_step: profile.onboarding_step ?? 0,
   };
 }
 
-const POST_LOGIN_REDIRECTS: Record<UserRole, string> = {
-  student: '/student-dashboard',
-  faculty: '/dashboard',
-  institutional_admin: '/institution/dashboard',
-  superadmin: '/admin',
-  advisor: '/advisor/cohort',
-};
+export async function requireRole(allowedRoles: UserRole[]): Promise<UserProfile> {
+  if (isSmokeTest()) return SMOKE_TEST_PROFILE;
 
-export function getPostLoginRedirect(profile: UserProfile): string {
-  if (!profile.onboarding_completed) {
-    const onboardingRoutes: Record<UserRole, string> = {
-      faculty: '/onboarding',
-      student: '/onboarding/student',
-      institutional_admin: '/onboarding/admin',
-      superadmin: '/onboarding/admin',
-      advisor: '/onboarding',
-    };
-    return onboardingRoutes[profile.role] ?? '/onboarding';
+  const supabase = await createServerSupabaseClient();
+  const profile = await resolveProfile(supabase);
+
+  if (!profile) {
+    redirect('/login');
   }
 
-  return POST_LOGIN_REDIRECTS[profile.role] ?? '/dashboard';
+  if (!allowedRoles.includes(profile.role)) {
+    redirect('/unauthorized');
+  }
+
+  return profile;
+}
+
+export async function requireAuth(): Promise<UserProfile> {
+  if (isSmokeTest()) return SMOKE_TEST_PROFILE;
+
+  const supabase = await createServerSupabaseClient();
+  const profile = await resolveProfile(supabase);
+
+  if (!profile) {
+    redirect('/login');
+  }
+
+  return profile;
+}
+
+export async function getCurrentUser(): Promise<UserProfile | null> {
+  if (isSmokeTest()) return SMOKE_TEST_PROFILE;
+
+  const supabase = await createServerSupabaseClient();
+  return resolveProfile(supabase);
+}
+
+export function getPostLoginRedirect(profile: UserProfile): string {
+  if (!profile.onboarding_completed && HAS_ONBOARDING.has(profile.role)) {
+    return ONBOARDING_ROUTE[profile.role] ?? '/onboarding';
+  }
+
+  return ROLE_HOME[profile.role] ?? '/dashboard';
 }
 
 export function getInitials(name: string | null): string {
