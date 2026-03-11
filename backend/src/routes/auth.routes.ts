@@ -14,4 +14,7 @@ router.post('/register', (req, res) => controller.register(req, res));
 // GET /api/v1/auth/me — get current user profile (requires auth)
 router.get('/me', authMiddleware, (req, res) => controller.me(req, res));
 
+// POST /api/v1/auth/register/independent — independent student self-registration
+router.post('/register/independent', (req, res) => controller.registerIndependent(req, res));
+
 export default router;

@@ -11,6 +11,8 @@ import courseRouter from './routes/course.routes';
 import itemRouter from './routes/item.routes';
 import batchRouter from './routes/batch.routes';
 import dashboardRouter from './routes/dashboard.routes';
+import invitationRouter from './routes/invitation.routes';
+import onboardingRouter from './routes/onboarding.routes';
 import { authMiddleware } from './middleware/auth.middleware';
 import Neo4jClient from './lib/Neo4jClient';
 import SocketServer from './lib/SocketServer';
@@ -50,6 +52,8 @@ app.use('/api/v1/courses', authMiddleware, courseRouter);
 app.use('/api/v1/items', authMiddleware, itemRouter);
 app.use('/api/v1/batches', authMiddleware, batchRouter);
 app.use('/api/v1/dashboard', authMiddleware, dashboardRouter);
+app.use('/api/v1/invitations', invitationRouter);
+app.use('/api/v1/users/me/onboarding', onboardingRouter);
 
 // CopilotKit Runtime endpoint (P1-008)
 // Handles AG-UI streaming: TEXT_MESSAGE + STATE_DELTA

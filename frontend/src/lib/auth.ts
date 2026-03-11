@@ -10,6 +10,9 @@ export interface UserProfile {
   display_name: string | null;
   email: string | null;
   is_course_director: boolean;
+  is_main_admin: boolean;
+  additional_roles: UserRole[];
+  user_type: string;
   onboarding_completed: boolean;
   onboarding_step: number;
 }
@@ -21,6 +24,9 @@ const SMOKE_TEST_PROFILE: UserProfile = {
   display_name: 'Smoke Test',
   email: 'smoke@test.local',
   is_course_director: true,
+  is_main_admin: true,
+  additional_roles: [],
+  user_type: 'institutional',
   onboarding_completed: true,
   onboarding_step: 99,
 };
@@ -49,6 +55,9 @@ async function resolveProfile(supabase: Awaited<ReturnType<typeof createServerSu
       display_name: (meta.display_name as string) ?? null,
       email: user.email ?? null,
       is_course_director: (meta.is_course_director as boolean) ?? false,
+      is_main_admin: (meta.is_main_admin as boolean) ?? false,
+      additional_roles: (meta.additional_roles as UserRole[]) ?? [],
+      user_type: (meta.user_type as string) ?? 'institutional',
       onboarding_completed: (meta.onboarding_completed as boolean) ?? false,
       onboarding_step: (meta.onboarding_step as number) ?? 0,
     };
@@ -57,7 +66,7 @@ async function resolveProfile(supabase: Awaited<ReturnType<typeof createServerSu
   // Fallback: query DB (for users created before JWT trigger was added)
   const { data: profile } = await supabase
     .from('user_profiles')
-    .select('id, role, institution_id, display_name, email, is_course_director, onboarding_completed, onboarding_step')
+    .select('id, role, institution_id, display_name, email, is_course_director, is_main_admin, additional_roles, user_type, onboarding_completed, onboarding_step')
     .eq('id', user.id)
     .single();
 
@@ -70,6 +79,9 @@ async function resolveProfile(supabase: Awaited<ReturnType<typeof createServerSu
     display_name: profile.display_name,
     email: profile.email ?? user.email ?? null,
     is_course_director: profile.is_course_director ?? false,
+    is_main_admin: profile.is_main_admin ?? false,
+    additional_roles: (profile.additional_roles as UserRole[]) ?? [],
+    user_type: (profile.user_type as string) ?? 'institutional',
     onboarding_completed: profile.onboarding_completed ?? false,
     onboarding_step: profile.onboarding_step ?? 0,
   };

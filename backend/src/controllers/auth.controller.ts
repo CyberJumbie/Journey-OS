@@ -13,6 +13,12 @@ const RegisterSchema = z.object({
   displayName: z.string().min(1, 'Display name is required'),
 });
 
+const IndependentRegisterSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+  name: z.string().min(1, 'Name is required'),
+});
+
 export class AuthController {
   private readonly authService: AuthService;
 
@@ -77,6 +83,34 @@ export class AuthController {
         return;
       }
       console.error('Registration failed:', err);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+
+  /**
+   * POST /api/v1/auth/register/independent
+   * Body: { email, password, name }
+   * Creates an independent student (no institution).
+   */
+  async registerIndependent(req: Request, res: Response): Promise<void> {
+    try {
+      const body = IndependentRegisterSchema.parse(req.body);
+      const result = await this.authService.registerIndependent(
+        body.email,
+        body.password,
+        body.name,
+      );
+      res.status(201).json(result);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        res.status(400).json({ error: 'Validation failed', details: err.errors });
+        return;
+      }
+      if (err instanceof AuthServiceError) {
+        res.status(err.statusCode).json({ error: err.message });
+        return;
+      }
+      console.error('Independent registration failed:', err);
       res.status(500).json({ error: 'Internal server error' });
     }
   }

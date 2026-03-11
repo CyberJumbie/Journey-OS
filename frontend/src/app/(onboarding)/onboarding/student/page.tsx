@@ -1,8 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-
-
 import { useState } from "react";
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -10,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
 import { ChevronRight, ChevronLeft } from "lucide-react";
+import { useOnboarding } from '@/hooks/useOnboarding';
 
 const STUDY_GOALS = [
   "Prepare for USMLE Step 1",
@@ -42,9 +40,9 @@ const STUDY_TIME = [
 ];
 
 export default function StudentOnboarding() {
-  const router = useRouter();
-  const [step, setStep] = useState(1);
   const totalSteps = 3;
+  const { currentStep, nextStep, prevStep, complete, saving, error, isFirst, isLast } = useOnboarding({ totalSteps, role: 'student' });
+  const step = currentStep + 1;
 
   const [formData, setFormData] = useState({
     studyGoals: [] as string[],
@@ -68,11 +66,6 @@ export default function StudentOnboarding() {
         ? formData.subjectInterests.filter((s) => s !== subject)
         : [...formData.subjectInterests, subject],
     });
-  };
-
-  const handleComplete = () => {
-    // Save preferences and navigate to student dashboard
-    router.push("/student-dashboard");
   };
 
   const progress = (step / totalSteps) * 100;
@@ -206,11 +199,13 @@ export default function StudentOnboarding() {
             )}
 
             {/* Navigation Buttons */}
+            {error && <p className="text-sm text-red-600 mt-4">{error}</p>}
             <div className="flex items-center justify-between mt-8 pt-6 border-t">
-              {step > 1 ? (
+              {!isFirst ? (
                 <Button
                   variant="outline"
-                  onClick={() => setStep(step - 1)}
+                  onClick={prevStep}
+                  disabled={saving}
                 >
                   <ChevronLeft className="size-4 mr-2" />
                   Back
@@ -219,14 +214,14 @@ export default function StudentOnboarding() {
                 <div />
               )}
 
-              {step < totalSteps ? (
-                <Button onClick={() => setStep(step + 1)}>
+              {!isLast ? (
+                <Button onClick={() => nextStep()} disabled={saving}>
                   Next
                   <ChevronRight className="size-4 ml-2" />
                 </Button>
               ) : (
-                <Button onClick={handleComplete}>
-                  Complete Setup
+                <Button onClick={() => complete(formData)} disabled={saving}>
+                  {saving ? 'Saving...' : 'Complete Setup'}
                   <ChevronRight className="size-4 ml-2" />
                 </Button>
               )}
@@ -237,8 +232,9 @@ export default function StudentOnboarding() {
         {/* Skip Option */}
         <div className="text-center mt-6">
           <button
-            onClick={() => router.push("/student-dashboard")}
+            onClick={() => complete()}
             className="text-sm text-muted-foreground hover:text-foreground"
+            disabled={saving}
           >
             Skip for now
           </button>

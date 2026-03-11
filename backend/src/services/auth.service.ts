@@ -141,6 +141,56 @@ export class AuthService {
     };
   }
 
+  async registerIndependent(
+    email: string,
+    password: string,
+    name: string,
+  ): Promise<{ message: string; redirect: string }> {
+    const { data, error } = await this.supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          display_name: name,
+          role: 'student',
+          user_type: 'independent',
+        },
+      },
+    });
+
+    if (error) {
+      throw new AuthServiceError(error.message, 400);
+    }
+
+    if (!data.user) {
+      throw new AuthServiceError('Registration failed', 400);
+    }
+
+    if (data.user.identities && data.user.identities.length === 0) {
+      throw new AuthServiceError('An account with this email already exists', 409);
+    }
+
+    await this.profileRepo.upsert({
+      id: data.user.id,
+      email,
+      display_name: name,
+      role: 'student',
+      is_course_director: false,
+      is_main_admin: false,
+      additional_roles: [],
+      user_type: 'independent',
+      institution_id: null,
+      onboarding_completed: false,
+      onboarding_step: 0,
+      onboarding_data: {},
+    });
+
+    return {
+      message: 'Registration successful. Please check your email to confirm.',
+      redirect: '/email-verification',
+    };
+  }
+
   async getMe(userId: string, email: string): Promise<MeResponse> {
     const profile = await this.profileRepo.findById(userId);
     if (!profile) {

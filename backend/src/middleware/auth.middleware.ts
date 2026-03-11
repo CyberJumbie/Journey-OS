@@ -11,6 +11,9 @@ export interface AuthUser {
   role: UserRole;
   institutionId: string | null;
   isCourseDirector: boolean;
+  isMainAdmin: boolean;
+  additionalRoles: UserRole[];
+  userType: string;
 }
 
 // Augment Express Request to include user
@@ -59,6 +62,9 @@ export async function authMiddleware(
         role: meta.role as UserRole,
         institutionId: (meta.institution_id as string) ?? null,
         isCourseDirector: (meta.is_course_director as boolean) ?? false,
+        isMainAdmin: (meta.is_main_admin as boolean) ?? false,
+        additionalRoles: (meta.additional_roles as UserRole[]) ?? [],
+        userType: (meta.user_type as string) ?? 'institutional',
       };
       next();
       return;
@@ -67,7 +73,7 @@ export async function authMiddleware(
     // Fallback: query DB (for users created before JWT trigger)
     const { data: profile, error: profileError } = await supabase
       .from('user_profiles')
-      .select('id, role, institution_id, is_course_director')
+      .select('id, role, institution_id, is_course_director, is_main_admin, additional_roles, user_type')
       .eq('id', user.id)
       .single();
 
@@ -82,6 +88,9 @@ export async function authMiddleware(
       role: profile.role as UserRole,
       institutionId: (profile.institution_id as string) ?? null,
       isCourseDirector: (profile.is_course_director as boolean) ?? false,
+      isMainAdmin: (profile.is_main_admin as boolean) ?? false,
+      additionalRoles: (profile.additional_roles as UserRole[]) ?? [],
+      userType: (profile.user_type as string) ?? 'institutional',
     };
 
     next();

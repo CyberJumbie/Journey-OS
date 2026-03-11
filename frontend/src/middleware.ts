@@ -14,12 +14,15 @@ const PUBLIC_PATHS = new Set([
   '/email-verification',
   '/verify-email',
   '/invitation',
+  '/signup',
+  '/invite',
 ]);
 
 function isPublicPath(pathname: string): boolean {
   if (PUBLIC_PATHS.has(pathname)) return true;
   if (pathname.startsWith('/register/')) return true;
   if (pathname.startsWith('/invitation/')) return true;
+  if (pathname.startsWith('/invite/')) return true;
   return false;
 }
 
@@ -69,11 +72,13 @@ const ROLE_HOME: Record<string, string> = {
 };
 
 // ── Onboarding ───────────────────────────────────────────────────────────────
-const HAS_ONBOARDING = new Set(['faculty', 'institutional_admin', 'student']);
+// All roles now have onboarding
 const ONBOARDING_ROUTE: Record<string, string> = {
-  faculty: '/onboarding',
+  faculty: '/onboarding/faculty',
   institutional_admin: '/onboarding/admin',
+  superadmin: '/onboarding/super-admin',
   student: '/onboarding/student',
+  advisor: '/onboarding/advisor',
 };
 
 function findRequiredRoles(pathname: string): UserRole[] | 'any_authenticated' | null {
@@ -129,6 +134,7 @@ export async function middleware(request: NextRequest) {
   const role = (meta?.role as UserRole) ?? null;
   const onboardingCompleted = (meta?.onboarding_completed as boolean) ?? false;
   const isCourseDirector = (meta?.is_course_director as boolean) ?? false;
+  const additionalRoles = (meta?.additional_roles as UserRole[]) ?? [];
 
   // No role in JWT means no profile exists yet → send to register
   if (!role) {
@@ -137,15 +143,23 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(registerUrl);
   }
 
-  // Phase 4: Onboarding gate
+  // Phase 4: Onboarding gate — all roles with onboarding routes
+  const onboardingRoute = ONBOARDING_ROUTE[role];
   if (
-    HAS_ONBOARDING.has(role) &&
+    onboardingRoute &&
     !onboardingCompleted &&
     !pathname.startsWith('/onboarding')
   ) {
     const onboardingUrl = request.nextUrl.clone();
-    onboardingUrl.pathname = ONBOARDING_ROUTE[role] ?? '/onboarding';
+    onboardingUrl.pathname = onboardingRoute;
     return NextResponse.redirect(onboardingUrl);
+  }
+
+  // Already completed onboarding → redirect away from onboarding routes
+  if (onboardingCompleted && pathname.startsWith('/onboarding')) {
+    const homeUrl = request.nextUrl.clone();
+    homeUrl.pathname = ROLE_HOME[role] ?? '/dashboard';
+    return NextResponse.redirect(homeUrl);
   }
 
   // Phase 5: Role-path guard
@@ -159,7 +173,8 @@ export async function middleware(request: NextRequest) {
     return response();
   }
 
-  const effectiveRoles: UserRole[] = [role];
+  // Build effective roles: primary + additional + course_director
+  const effectiveRoles: UserRole[] = [role, ...additionalRoles];
   if (isCourseDirector && !effectiveRoles.includes('faculty')) {
     effectiveRoles.push('faculty');
   }

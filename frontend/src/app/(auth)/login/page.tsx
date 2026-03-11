@@ -72,26 +72,14 @@ export default function LoginPage() {
           const role = meta?.role as string | undefined;
           const onboardingCompleted = (meta?.onboarding_completed as boolean) ?? false;
 
-          const hasOnboarding = new Set(['faculty', 'institutional_admin', 'student']);
-          const onboardingRoutes: Record<string, string> = {
-            faculty: '/onboarding',
-            student: '/onboarding/student',
-            institutional_admin: '/onboarding/admin',
-          };
-          const dashboardRoutes: Record<string, string> = {
-            faculty: '/dashboard',
-            student: '/student-dashboard',
-            institutional_admin: '/institution/dashboard',
-            superadmin: '/admin',
-            advisor: '/advisor/cohort',
-          };
+          const { ONBOARDING_ROUTE, ROLE_HOME, HAS_ONBOARDING } = await import('@journey-os/shared-types');
 
           if (!role) {
             router.push('/register');
-          } else if (!onboardingCompleted && hasOnboarding.has(role)) {
-            router.push(onboardingRoutes[role] ?? '/onboarding');
+          } else if (!onboardingCompleted && HAS_ONBOARDING.has(role as import('@journey-os/shared-types').UserRole)) {
+            router.push(ONBOARDING_ROUTE[role as import('@journey-os/shared-types').UserRole] ?? '/onboarding');
           } else {
-            router.push(dashboardRoutes[role] ?? '/dashboard');
+            router.push(ROLE_HOME[role as import('@journey-os/shared-types').UserRole] ?? '/dashboard');
           }
         } else {
           router.push('/dashboard');
