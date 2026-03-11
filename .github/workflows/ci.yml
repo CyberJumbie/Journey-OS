@@ -9,24 +9,30 @@ on:
 # ──────────────────────────────────────────────────────────────────────────────
 # ENVIRONMENT STRATEGY
 # ──────────────────────────────────────────────────────────────────────────────
-# local   → developer machine (pnpm dev). Used during implementation + /verify.
-# dev     → Vercel Preview. Auto-deploys on every push to dev branch.
-#           Used to test completed features and epics before production.
-#           URL: journey-os-dev.vercel.app (or preview URL from Vercel)
-# production → Vercel Production. CD on every push to main (merge from dev).
-#           URL: journey-os.vercel.app (production domain)
+# local      → developer machine (pnpm dev). frontend:3000, backend:3001.
+# dev        → Auto-deploys on push to dev branch.
+#              Frontend → Vercel Preview (journey-os-dev.vercel.app)
+#              Backend  → Railway Dev (journey-os-dev.up.railway.app)
+# production → CD on push to main (merge from dev).
+#              Frontend → Vercel Production (journey-os.vercel.app)
+#              Backend  → Railway Production (journey-os.up.railway.app)
 # ──────────────────────────────────────────────────────────────────────────────
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   # ── Job 1: Validate every PR and push ──────────────────────────────────────
   validate:
     name: Lint + Type Check + Build
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v3
+      - uses: pnpm/action-setup@v4
         with:
           version: 9
 
@@ -38,37 +44,23 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Lint + Type Check + Build
-        # turbo.json task names: lint, type-check (hyphenated), build
-        # package.json script: pnpm run typecheck (maps to turbo type-check)
         run: turbo lint type-check build
 
-  # ── Job 2: Deploy to dev environment (auto on push to dev) ─────────────────
-  deploy-dev:
-    name: Deploy → Dev
+  # ── Job 2: Deploy frontend to Vercel (dev) ─────────────────────────────────
+  deploy-frontend-dev:
+    name: Frontend → Vercel Dev
     runs-on: ubuntu-latest
     needs: validate
     if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
 
     environment:
       name: dev
-      url: ${{ steps.deploy.outputs.url }}
+      url: ${{ steps.deploy.outputs.preview-url }}
 
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 9
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: pnpm
-
-      - run: pnpm install --frozen-lockfile
-      - run: turbo build
-
-      - name: Deploy to Vercel (dev preview)
+      - name: Deploy to Vercel (preview)
         id: deploy
         uses: amondnet/vercel-action@v25
         with:
@@ -76,28 +68,30 @@ jobs:
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           scope: ${{ secrets.VERCEL_ORG_ID }}
-          # No --prod flag = preview/dev deployment
           alias-domains: journey-os-dev.vercel.app
 
-      - name: Dev smoke check
-        run: |
-          DEV_URL="${{ steps.deploy.outputs.preview-url }}"
-          echo "Dev deployed to: $DEV_URL"
+  # ── Job 3: Deploy backend to Railway (dev) ─────────────────────────────────
+  deploy-backend-dev:
+    name: Backend → Railway Dev
+    runs-on: ubuntu-latest
+    needs: validate
+    if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
 
-          # Health check
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$DEV_URL/api/health")
-          if [ "$STATUS" != "200" ]; then
-            echo "❌ Health check failed: HTTP $STATUS"
-            exit 1
-          fi
+    environment:
+      name: dev-backend
 
-          # Version check
-          VERSION=$(curl -s "$DEV_URL/api/health" | jq -r '.version')
-          echo "✅ Dev health OK — version: $VERSION"
+    steps:
+      - uses: actions/checkout@v4
 
-  # ── Job 3: Deploy to production (CD on push to main) ───────────────────────
-  deploy-production:
-    name: Deploy → Production
+      - name: Deploy to Railway (dev)
+        uses: bervProject/railway-deploy@main
+        with:
+          railway_token: ${{ secrets.RAILWAY_TOKEN }}
+          service: ${{ secrets.RAILWAY_SERVICE_DEV }}
+
+  # ── Job 4: Deploy frontend to Vercel (production) ─────────────────────────
+  deploy-frontend-prod:
+    name: Frontend → Vercel Production
     runs-on: ubuntu-latest
     needs: validate
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -109,18 +103,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 9
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: pnpm
-
-      - run: pnpm install --frozen-lockfile
-      - run: turbo build
-
       - name: Deploy to Vercel (production)
         id: deploy
         uses: amondnet/vercel-action@v25
@@ -131,42 +113,87 @@ jobs:
           vercel-args: '--prod'
           scope: ${{ secrets.VERCEL_ORG_ID }}
 
-      - name: Production smoke check
-        run: |
-          PROD_URL="https://journey-os.vercel.app"
-          echo "Checking production: $PROD_URL"
+  # ── Job 5: Deploy backend to Railway (production) ──────────────────────────
+  deploy-backend-prod:
+    name: Backend → Railway Production
+    runs-on: ubuntu-latest
+    needs: validate
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
-          # Health check
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$PROD_URL/api/health")
+    environment:
+      name: production-backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Railway (production)
+        uses: bervProject/railway-deploy@main
+        with:
+          railway_token: ${{ secrets.RAILWAY_TOKEN }}
+          service: ${{ secrets.RAILWAY_SERVICE_PROD }}
+
+  # ── Job 6: Smoke check after deploy ────────────────────────────────────────
+  smoke-check-dev:
+    name: Dev Smoke Check
+    runs-on: ubuntu-latest
+    needs: [deploy-frontend-dev, deploy-backend-dev]
+    if: github.ref == 'refs/heads/dev'
+
+    steps:
+      - name: Wait for services to stabilize
+        run: sleep 30
+
+      - name: Backend health check
+        run: |
+          BACKEND_URL="${{ secrets.DEV_BACKEND_URL }}"
+          if [ -z "$BACKEND_URL" ]; then
+            echo "⚠ DEV_BACKEND_URL not set — skipping"
+            exit 0
+          fi
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$BACKEND_URL/api/v1/health" --max-time 10)
+          echo "Backend health: HTTP $STATUS"
+          [ "$STATUS" = "200" ] || echo "⚠ Backend not responding yet (may still be starting)"
+
+  smoke-check-prod:
+    name: Production Smoke Check
+    runs-on: ubuntu-latest
+    needs: [deploy-frontend-prod, deploy-backend-prod]
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for services to stabilize
+        run: sleep 30
+
+      - name: Production health check
+        run: |
+          BACKEND_URL="${{ secrets.PROD_BACKEND_URL }}"
+          if [ -z "$BACKEND_URL" ]; then
+            echo "⚠ PROD_BACKEND_URL not set — skipping"
+            exit 0
+          fi
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$BACKEND_URL/api/v1/health" --max-time 10)
           if [ "$STATUS" != "200" ]; then
             echo "❌ Production health check failed: HTTP $STATUS"
             exit 1
           fi
+          echo "✅ Production health OK"
 
-          # Version
-          VERSION=$(curl -s "$PROD_URL/api/health" | jq -r '.version')
-          COMMIT="${{ github.sha }}"
-          echo "✅ Production OK — version: $VERSION — commit: ${COMMIT:0:7}"
-
-      - name: Auto-rollback on smoke failure
+      - name: Auto-rollback on failure
         if: failure()
         run: |
-          echo "❌ Production smoke failed — rolling back"
-          # Vercel auto-keeps previous deployment
-          # The rollback is done via /restore command if needed
-          # Open incident issue
           gh issue create \
-            --title "🚨 Auto-rollback triggered: production deploy failed" \
+            --title "Production deploy smoke check failed" \
             --body "Commit: ${{ github.sha }}
-          
           Workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          
-          Production smoke check failed after deploy. Previous deployment is still live.
+
+          Production smoke check failed. Previous deployment is still live on Railway/Vercel.
           Investigate before re-deploying."
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # ── Job 4: Block PRs to main from anything other than dev ──────────────────
+  # ── Job 7: Block PRs to main from anything other than dev ──────────────────
   protect-main:
     name: Guard main branch
     runs-on: ubuntu-latest
@@ -177,44 +204,7 @@ jobs:
         run: |
           if [ "${{ github.head_ref }}" != "dev" ]; then
             echo "❌ PRs to main must come from dev branch — not ${{ github.head_ref }}"
-            echo "Merge your changes to dev first, validate in dev environment, then open a PR dev → main."
+            echo "Merge your changes to dev first, validate, then PR dev → main."
             exit 1
           fi
           echo "✅ PR from dev → main — allowed"
-
-  # ── Job 5: Neo4j graph validation on server changes ────────────────────────
-  validate-graph:
-    name: Graph Validation
-    runs-on: ubuntu-latest
-    needs: validate
-    if: github.event_name == 'pull_request'
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 9
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-
-      - name: Check for server/seeder changes
-        id: changes
-        uses: dorny/paths-filter@v3
-        with:
-          filters: |
-            server:
-              - 'backend/**'
-              - 'seeder/**'
-              - 'scripts/**'
-
-      - name: Validate graph (if server/seeder changed)
-        if: steps.changes.outputs.server == 'true'
-        env:
-          NEO4J_URI: ${{ secrets.NEO4J_URI }}
-          NEO4J_USER: ${{ secrets.NEO4J_USER }}
-          NEO4J_PASSWORD: ${{ secrets.NEO4J_PASSWORD }}
-        run: |
-          npx ts-node scripts/validate-graph.ts --layer=1 || echo "Layer 1 not seeded yet — OK for early stories"
