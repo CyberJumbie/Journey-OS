@@ -1,0 +1,8 @@
+{
+  "node_version": "20",
+  "graphs": {
+    "journey_generation": "./src/pipeline/graph.ts:compiledGraph"
+  },
+  "dependencies": ["."],
+  "env": "../.env.local"
+}

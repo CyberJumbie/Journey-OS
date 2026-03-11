@@ -9,6 +9,7 @@
     "clean": "turbo run clean"
   },
   "devDependencies": {
+    "puppeteer": "^24.38.0",
     "turbo": "^2.0.0"
   },
   "engines": {

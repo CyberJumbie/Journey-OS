@@ -1,0 +1,1 @@
+export { AscendingSquares } from './AscendingSquares';

@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "dev": "concurrently -n express,langgraph -c blue,magenta \"ts-node-dev --respawn --transpile-only src/index.ts\" \"npx @langchain/langgraph-cli dev -c langgraph.json --port 2024 --no-browser\"",
+    "dev:express": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "dev:langgraph": "npx @langchain/langgraph-cli dev -c langgraph.json --port 2024 --no-browser",
     "build": "tsc",
     "start": "node dist/index.js",
     "lint": "eslint src --ext .ts",
@@ -13,9 +15,11 @@
     "@anthropic-ai/sdk": "^0.27.0",
     "@copilotkit/runtime": "^1.8.0",
     "@journey-os/shared-types": "workspace:*",
+    "@langchain/core": "^1.1.31",
     "@langchain/langgraph": "^0.2.0",
     "@supabase/supabase-js": "^2.45.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
     "express": "^4.21.0",
     "helmet": "^8.0.0",
     "multer": "^2.1.1",
@@ -23,12 +27,14 @@
     "zod": "^3.23.0"
   },
   "devDependencies": {
+    "@langchain/langgraph-cli": "^1.1.15",
     "@types/cors": "^2",
     "@types/express": "^5",
     "@types/multer": "^2",
     "@types/node": "^20",
     "@typescript-eslint/eslint-plugin": "^8.57.0",
     "@typescript-eslint/parser": "^8.57.0",
+    "concurrently": "^9.2.1",
     "eslint": "^10.0.3",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5"

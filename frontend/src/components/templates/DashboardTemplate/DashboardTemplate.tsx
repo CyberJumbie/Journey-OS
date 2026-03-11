@@ -1,22 +1,10 @@
 'use client';
 
-import { ReactNode, useState, useEffect } from 'react';
-import Sidebar from '@/components/organisms/Sidebar';
+import { ReactNode, useState } from 'react';
+import Sidebar, { SIDEBAR_COLLAPSED_WIDTH, SIDEBAR_EXPANDED_WIDTH } from '@/components/organisms/Sidebar';
 import TopBar from '@/components/organisms/TopBar';
-
-function useBreakpoint() {
-  const [bp, setBp] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
-  useEffect(() => {
-    const check = () => {
-      const w = window.innerWidth;
-      setBp(w < 640 ? 'mobile' : w < 1024 ? 'tablet' : 'desktop');
-    };
-    check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
-  }, []);
-  return bp;
-}
+import { useBreakpoint } from '@/hooks/useBreakpoint';
+import type { NavItem } from '@/config/navigation';
 
 interface DashboardTemplateProps {
   children: ReactNode;
@@ -24,6 +12,7 @@ interface DashboardTemplateProps {
   pageSubtitle?: string;
   showSearch?: boolean;
   user?: { name: string; initials: string; department: string; role: string };
+  navItems?: NavItem[];
 }
 
 export default function DashboardTemplate({
@@ -32,22 +21,34 @@ export default function DashboardTemplate({
   pageSubtitle,
   showSearch = false,
   user = { name: 'Dr. User', initials: 'DU', department: 'Faculty', role: 'Faculty' },
+  navItems,
 }: DashboardTemplateProps) {
   const bp = useBreakpoint();
   const isMobile = bp === 'mobile';
   const isDesktop = bp === 'desktop';
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarExpanded, setSidebarExpanded] = useState(false);
+
+  const sidebarWidth = isDesktop
+    ? (sidebarExpanded ? SIDEBAR_EXPANDED_WIDTH : SIDEBAR_COLLAPSED_WIDTH)
+    : 0;
 
   return (
     <div className="min-h-screen bg-[var(--cream)]">
       <Sidebar
         open={sidebarOpen}
+        expanded={sidebarExpanded}
         onClose={() => setSidebarOpen(false)}
+        onExpandChange={setSidebarExpanded}
         isDesktop={isDesktop}
         user={user}
+        navItems={navItems}
       />
 
-      <div style={{ marginLeft: isDesktop ? 240 : 0 }} className="min-h-screen">
+      <div
+        style={{ marginLeft: sidebarWidth }}
+        className="min-h-screen transition-[margin-left] duration-250"
+      >
         <TopBar
           pageTitle={pageTitle}
           pageSubtitle={pageSubtitle}

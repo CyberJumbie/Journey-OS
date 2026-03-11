@@ -1,4 +1,9 @@
+import { config as dotenvConfig } from 'dotenv';
+import { resolve } from 'path';
 import { z } from 'zod';
+
+// Load .env.local from backend/ directory
+dotenvConfig({ path: resolve(__dirname, '../../.env.local') });
 
 const envSchema = z.object({
   // Neo4j Aura

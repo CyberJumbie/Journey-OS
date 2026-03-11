@@ -1,31 +1,72 @@
-import Link from 'next/link';
+'use client';
+
+import { useState, useEffect } from 'react';
+import { C, sans } from '@/lib/design-tokens';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
+import { LandingNav } from './(public)/landing/LandingNav';
+import { LandingHero } from './(public)/landing/LandingHero';
+import { LandingProblem } from './(public)/landing/LandingProblem';
+import { LandingFeatures } from './(public)/landing/LandingFeatures';
+import { LandingStats } from './(public)/landing/LandingStats';
+import { LandingPersonas } from './(public)/landing/LandingPersonas';
+import { LandingChain } from './(public)/landing/LandingChain';
+import { LandingResearch } from './(public)/landing/LandingResearch';
+import { LandingWaitlist } from './(public)/landing/LandingWaitlist';
+import { LandingFooter } from './(public)/landing/LandingFooter';
 
 export default function HomePage() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-8">
-      <div className="text-center">
-        <h1 className="font-[family-name:var(--font-heading)] text-4xl font-semibold text-[var(--navy)]">
-          Journey OS
-        </h1>
-        <p className="mt-4 text-lg text-[var(--gray-600)]">
-          AI-powered competency-based medical education
-        </p>
-      </div>
+  const bp = useBreakpoint();
+  const isMobile = bp === 'mobile';
+  const isTablet = bp === 'tablet';
+  const isDesktop = bp === 'desktop';
 
-      <div className="flex gap-4">
-        <Link
-          href="/dashboard"
-          className="rounded-md bg-[var(--navy)] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--blue)]"
-        >
-          Faculty Dashboard
-        </Link>
-        <Link
-          href="/admin"
-          className="rounded-md border border-[var(--navy)] px-6 py-3 text-sm font-semibold text-[var(--navy)] transition-colors hover:bg-[var(--parchment)]"
-        >
-          Admin Dashboard
-        </Link>
-      </div>
-    </main>
+  const [scrollY, setScrollY] = useState(0);
+  const [mobileNav, setMobileNav] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    if (isDesktop) setMobileNav(false);
+  }, [isDesktop]);
+
+  const wrap: React.CSSProperties = {
+    maxWidth: 1120,
+    margin: '0 auto',
+    padding: isMobile ? '0 18px' : '0 28px',
+  };
+
+  const sectionPad = isMobile
+    ? '64px 0'
+    : isTablet
+      ? '76px 0'
+      : '90px 0';
+
+  return (
+    <div
+      style={{
+        background: C.white,
+        color: C.textPrimary,
+        fontFamily: sans,
+        minHeight: '100vh',
+        overflowX: 'hidden',
+        lineHeight: 1.72,
+        fontSize: isMobile ? 15 : 16,
+      }}
+    >
+      <LandingNav scrollY={scrollY} isMobile={isMobile} mobileNav={mobileNav} setMobileNav={setMobileNav} wrap={wrap} />
+      <LandingHero isMobile={isMobile} isTablet={isTablet} isDesktop={isDesktop} wrap={wrap} />
+      <LandingProblem isMobile={isMobile} isDesktop={isDesktop} sectionPad={sectionPad} wrap={wrap} />
+      <LandingFeatures isMobile={isMobile} isTablet={isTablet} sectionPad={sectionPad} wrap={wrap} />
+      <LandingStats isMobile={isMobile} wrap={wrap} />
+      <LandingPersonas isMobile={isMobile} isDesktop={isDesktop} sectionPad={sectionPad} wrap={wrap} />
+      <LandingChain isMobile={isMobile} isTablet={isTablet} sectionPad={sectionPad} wrap={wrap} />
+      <LandingResearch isMobile={isMobile} wrap={wrap} />
+      <LandingWaitlist isMobile={isMobile} isDesktop={isDesktop} wrap={wrap} />
+      <LandingFooter isMobile={isMobile} />
+    </div>
   );
 }
