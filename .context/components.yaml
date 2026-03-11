@@ -14,12 +14,13 @@ DashboardTemplate: template [sidebar+topbar+main] — used_in:faculty pages — 
 AdminDashboardTemplate: template [admin sidebar+main] — used_in:admin pages — wired
 
 # ── Auth (P1-024) ─────────────────────────────────────────────────────────────
-# LoginForm: form [] — used_in:LoginPage — mock
-# AuthProvider: context [] — used_in:_app — mock
+LoginPage: page [email+password] — used_in:app/(auth)/login — wired
+RegisterPage: page [faculty registration] — used_in:app/(auth)/register/faculty — wired
+AuthMiddleware: middleware [JWT validate, req.user] — used_in:backend routes — wired
 
 # ── Course Selection (P1-025) ─────────────────────────────────────────────────
-# CourseCard: display [compact, expanded] — used_in:CourseSelectionPage — mock
-# CourseGrid: layout [] — used_in:CourseSelectionPage — mock
+CourseStats: molecule [3 stat cards] — used_in:CoursesPage — wired
+CourseGrid: organism [clickable cards, navigate to workbench] — used_in:CoursesPage — wired
 
 # ── Upload (P1-009) ───────────────────────────────────────────────────────────
 # UploadZone: form [idle, uploading, done, error] — used_in:UploadSyllabusPage — mock
@@ -29,18 +30,22 @@ AdminDashboardTemplate: template [admin sidebar+main] — used_in:admin pages �
 # ConceptCard: display [pending, approved, rejected] — used_in:ConceptReviewPage — mock
 # ConceptReviewList: list [] — used_in:ConceptReviewPage — mock
 
-# ── QuestWorkbench (P1-026 — REWRITE) ─────────────────────────────────────────
-# QuestWorkbench: REWRITE [chat panel + preview panel] — used_in:WorkbenchPage — rewrite
-# CopilotKitProvider: context [] — used_in:WorkbenchPage — rewrite
-# AgentStatePanel: display [streaming, idle] — used_in:WorkbenchPage — rewrite
+# ── QuestWorkbench (P1-026/027 — REWRITE) ────────────────────────────────────
+QuestWorkbench: organism [wires ChatPanel+PreviewPanel] — used_in:WorkbenchPage — wired
+ChatPanel: organism [CopilotChat+useCopilotReadable] — used_in:QuestWorkbench — wired
+QuestionPreviewPanel: organism [useCoAgent streaming state] — used_in:QuestWorkbench — wired
+StreamingText: atom [append-only DOM, no flicker] — used_in:QuestionPreviewPanel — wired
+OptionRow: molecule [label badge+text+rationale] — used_in:QuestionPreviewPanel — wired
+ValidationBadge: atom [pass/fail rule] — used_in:ValidationSummary — wired
+ValidationSummary: molecule [list of ValidationBadges] — used_in:QuestionPreviewPanel — wired
+WorkbenchTemplate: template [45/55 split-pane] — used_in:WorkbenchPage — wired
 
-# ── Question Preview (P1-027) ─────────────────────────────────────────────────
-# QuestionPreview: display [loading, streaming, complete] — used_in:WorkbenchPage — mock
-# OptionList: display [A-E, with rationale] — used_in:QuestionPreview — mock
-# VignetteBlock: display [streaming] — used_in:QuestionPreview — mock
+# ── Approve/Reject (P1-028) ──────────────────────────────────────────────────
+ApproveRejectBar: molecule [approve+reject buttons, callbacks from parent] — used_in:QuestionPreviewPanel — wired
 
 # ── Question Bank (P1-029) ────────────────────────────────────────────────────
-# ItemBankTable: table [sortable, filterable] — used_in:RepositoryPage — mock
-# ItemStatusBadge: badge [draft|approved|rejected|retired] — used_in:ItemBankTable — mock
+QuestionTable: organism [sortable, filterable, paginated] — used_in:ItemsPage — wired
+QuestionRow: molecule [truncated vignette+stem, expandable] — used_in:QuestionTable — wired
+FilterBar: organism [course+status dropdowns] — used_in:QuestionTable — wired
 
 # NOTE: Uncomment + change status to "wired" when story implementing it is done.

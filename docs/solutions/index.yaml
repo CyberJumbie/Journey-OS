@@ -91,3 +91,17 @@ SOL-007: classifier-noise-filter | P1-013 | pipeline — LangGraph node strips a
   summary: IPipelineNode interface, readFileSync prompt loading, AnthropicClient singleton, WorkbenchStateBuilder, AIMessage TEXT_MESSAGE, streaming accumulation. One file per node.
   phase: 1
   stories: [P1-016, P1-017, P1-018, P1-019, P1-020, P1-021, P1-022, P1-023]
+
+- id: SOL-020
+  title: CopilotKit Workbench Wiring Pattern
+  file: docs/solutions/SOL-020-copilotkit-workbench-wiring.md
+  summary: Dynamic import (ssr:false), useCoAgent for state preview, useCopilotReadable for context, append-only StreamingText atom, mutations in organisms not molecules.
+  phase: 1
+  stories: [P1-026, P1-027, P1-028]
+
+- id: SOL-021
+  title: API Client Auth Token Pattern
+  file: docs/solutions/SOL-021-api-client-auth-token.md
+  summary: Frontend reads Supabase session token, attaches as Bearer header to apiClient calls. Backend validates via supabase.auth.getUser(). No localStorage.
+  phase: 1
+  stories: [P1-025]

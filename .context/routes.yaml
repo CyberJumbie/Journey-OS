@@ -6,15 +6,15 @@
 # (Session 0 baseline — no routes built yet)
 
 # ── Auth ──────────────────────────────────────────────────────────────────────
-# POST /api/v1/auth/login — Supabase auth, returns JWT + user profile [public]
-# POST /api/v1/auth/logout — Invalidate session [auth:any]
-# GET  /api/v1/auth/me — Current user profile + role [auth:any]
+POST /api/v1/auth/login — Supabase signInWithPassword, returns JWT + user profile [public]
+POST /api/v1/auth/register — Create faculty user + profile, returns JWT [public]
+GET  /api/v1/auth/me — Current user profile + role [auth:any]
 
 # ── Health ────────────────────────────────────────────────────────────────────
 GET  /api/v1/health — DB connectivity check, returns { status, neo4j, supabase, version, timestamp } [public]
 
 # ── Courses ───────────────────────────────────────────────────────────────────
-# GET  /api/v1/courses — List courses for current user's institution [auth:faculty|admin]
+GET  /api/v1/courses — List courses with subconcept_count + item_count [auth:faculty|admin]
 # GET  /api/v1/courses/:id — Single course with sections [auth:faculty|admin]
 
 # ── Uploads ───────────────────────────────────────────────────────────────────
@@ -29,8 +29,8 @@ GET  /api/v1/uploads/:id — Upload status + processing progress [auth:faculty]
 # ── Assessment Items ──────────────────────────────────────────────────────────
 # POST /api/v1/items — Generate item via pipeline (streams via SSE) [auth:faculty]
 # GET  /api/v1/items/:id — Single item with options [auth:faculty|admin]
-# PATCH /api/v1/items/:id — Update status (approved|rejected|retired) [auth:faculty]
-# GET  /api/v1/items?courseId=X&status=Y — Item bank query [auth:faculty|admin]
+PATCH /api/v1/items/:id — Update status (approved|rejected) via DualWriteService [auth:faculty]
+GET  /api/v1/items?courseId=X&status=Y&page=N&limit=20 — Paginated item bank query [auth:faculty|admin]
 
 # ── Generation Pipeline ───────────────────────────────────────────────────────
 # POST /api/v1/generate — Start pipeline, returns SSE stream [auth:faculty]
