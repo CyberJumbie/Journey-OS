@@ -8,8 +8,8 @@
  */
 
 import type { WorkbenchState } from '@journey-os/shared-types';
-import type { IPipelineNode } from '../PipelineNode.interface.js';
-import { ValidatorNode } from './ValidatorNode.js';
+import type { IPipelineNode } from '../PipelineNode.interface';
+import { ValidatorNode } from './ValidatorNode';
 
 export class RevalidateNode implements IPipelineNode {
   readonly name = 'revalidate';

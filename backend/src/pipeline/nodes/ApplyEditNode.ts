@@ -25,10 +25,10 @@ import path from 'node:path';
 import { z } from 'zod';
 import { AIMessage } from '@langchain/core/messages';
 import type { WorkbenchState, RefinementTarget } from '@journey-os/shared-types';
-import type { IPipelineNode } from '../PipelineNode.interface.js';
-import { WorkbenchStateBuilder } from '../WorkbenchStateBuilder.js';
-import AnthropicClient from '../../lib/AnthropicClient.js';
-import { ItemRepository } from '../../repositories/item.repository.js';
+import type { IPipelineNode } from '../PipelineNode.interface';
+import { WorkbenchStateBuilder } from '../WorkbenchStateBuilder';
+import AnthropicClient from '../../lib/AnthropicClient';
+import { ItemRepository } from '../../repositories/item.repository';
 
 // ── Constants ──────────────────────────────────────────────────────────────────
 

@@ -162,7 +162,7 @@ export default function FacultyRegistration() {
     }}>
       <div style={{ width: "100%", maxWidth: 540, position: "relative", zIndex: 1 }}>
         {/* Back link */}
-        <Link href="/role-selection" style={{
+        <Link href="/register" style={{
           display: "inline-flex", alignItems: "center", gap: 8,
           fontFamily: sans, fontSize: 13, color: C.textMuted,
           textDecoration: "none", marginBottom: 24,

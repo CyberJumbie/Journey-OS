@@ -15,7 +15,7 @@ interface AdminDashboardTemplateProps {
 
 export default function AdminDashboardTemplate({
   children,
-  user = { name: 'Admin User', initials: 'AD', department: 'Administration' },
+  user = { name: 'User', initials: '??', department: '' },
   navItems,
 }: AdminDashboardTemplateProps) {
   const bp = useBreakpoint();

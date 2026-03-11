@@ -14,34 +14,31 @@ export async function GET(request: NextRequest) {
       const { data: { user } } = await supabase.auth.getUser();
 
       if (user) {
-        const { data: profile } = await supabase
-          .from('user_profiles')
-          .select('role, onboarding_completed')
-          .eq('id', user.id)
-          .single();
+        // Read role from JWT app_metadata (populated by sync_jwt_claims trigger)
+        const meta = user.app_metadata as Record<string, unknown> | undefined;
+        const role = meta?.role as string | undefined;
+        const onboardingCompleted = (meta?.onboarding_completed as boolean) ?? false;
 
-        if (profile) {
-          if (!profile.onboarding_completed) {
-            const onboardingRoutes: Record<string, string> = {
-              faculty: '/onboarding',
-              student: '/onboarding/student',
-              institutional_admin: '/onboarding/admin',
-              superadmin: '/onboarding/admin',
-              advisor: '/onboarding',
-            };
-            redirectUrl.pathname = onboardingRoutes[profile.role] ?? '/onboarding';
-          } else {
-            const dashboardRoutes: Record<string, string> = {
-              faculty: '/dashboard',
-              student: '/student-dashboard',
-              institutional_admin: '/institution/dashboard',
-              superadmin: '/admin',
-              advisor: '/advisor/cohort',
-            };
-            redirectUrl.pathname = dashboardRoutes[profile.role] ?? '/dashboard';
-          }
+        const hasOnboarding = new Set(['faculty', 'institutional_admin', 'student']);
+        const onboardingRoutes: Record<string, string> = {
+          faculty: '/onboarding',
+          student: '/onboarding/student',
+          institutional_admin: '/onboarding/admin',
+        };
+        const dashboardRoutes: Record<string, string> = {
+          faculty: '/dashboard',
+          student: '/student-dashboard',
+          institutional_admin: '/institution/dashboard',
+          superadmin: '/admin',
+          advisor: '/advisor/cohort',
+        };
+
+        if (!role) {
+          redirectUrl.pathname = '/register';
+        } else if (!onboardingCompleted && hasOnboarding.has(role)) {
+          redirectUrl.pathname = onboardingRoutes[role] ?? '/onboarding';
         } else {
-          redirectUrl.pathname = '/role-selection';
+          redirectUrl.pathname = dashboardRoutes[role] ?? '/dashboard';
         }
       } else {
         redirectUrl.pathname = '/login';

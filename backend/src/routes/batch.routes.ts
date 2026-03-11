@@ -1,8 +1,12 @@
 import { Router } from 'express';
 import { BatchController } from '../controllers/batch.controller';
+import { authMiddleware, requireRole } from '../middleware/auth.middleware';
 
 const router: Router = Router();
 const controller = new BatchController();
+
+// All batch routes require faculty auth
+router.use(authMiddleware, requireRole(['faculty', 'superadmin']));
 
 // POST /api/v1/batches — create a bulk generation batch
 router.post('/', (req, res) => controller.create(req, res));

@@ -35,5 +35,12 @@ GET  /api/v1/items?courseId=X&status=Y&page=N&limit=20 — Paginated item bank q
 # ── Generation Pipeline ───────────────────────────────────────────────────────
 # POST /api/v1/generate — Start pipeline, returns SSE stream [auth:faculty]
 
+# ── Dashboard ────────────────────────────────────────────────────────────────
+GET  /api/v1/dashboard/admin — Admin KPIs, recent users, dept stats, alerts [auth:superadmin|institutional_admin]
+GET  /api/v1/dashboard/faculty — Faculty courses with counts, activity feed, metrics [auth:faculty]
+GET  /api/v1/dashboard/student — Student courses, KPIs, user info [auth:student]
+GET  /api/v1/dashboard/institution — Institution KPIs, user info [auth:institutional_admin]
+GET  /api/v1/dashboard/institution/coverage — Coverage items by USMLE system/discipline [auth:institutional_admin]
+
 # NOTE: Add lines as routes are implemented (remove # prefix)
 # Routes stay commented out until the story implementing them is in § Done

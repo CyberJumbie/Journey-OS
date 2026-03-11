@@ -8,6 +8,7 @@ import { LayoutDashboard, BookOpen, Dumbbell, TrendingUp, BookMarked, Play, Filt
 
 import { C, sans, serif, mono } from '@/lib/design-tokens';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 // ═══════════════════════════════════════════════════════════════
 // JOURNEY OS — STUDENT PRACTICE MODE (STORY-S-2)
@@ -163,7 +164,8 @@ export default function StudentPractice() {
     { key: "resources", label: "Resources", Icon: BookMarked, path: "/repository" },
   ];
 
-  const user = { name: "John Mitchell", initials: "JM", role: "Student", year: "M2" };
+  const { data: currentUser } = useCurrentUser();
+  const user = { name: currentUser?.displayName ?? "Student", initials: currentUser?.initials ?? "??", role: currentUser?.roleLabel ?? "Student", year: "M2" };
 
   const sidebarCollapsedWidth = 72;
   const sidebarExpandedWidth = 240;

@@ -10,7 +10,7 @@
 
 import { AIMessage } from '@langchain/core/messages';
 import type { WorkbenchState } from '@journey-os/shared-types';
-import type { IPipelineNode } from '../PipelineNode.interface.js';
+import type { IPipelineNode } from '../PipelineNode.interface';
 
 export class ToulminGeneratorNode implements IPipelineNode {
   readonly name = 'toulmin_generator';

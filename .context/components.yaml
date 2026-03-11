@@ -48,4 +48,14 @@ QuestionTable: organism [sortable, filterable, paginated] — used_in:ItemsPage 
 QuestionRow: molecule [truncated vignette+stem, expandable] — used_in:QuestionTable — wired
 FilterBar: organism [course+status dropdowns] — used_in:QuestionTable — wired
 
+# ── Dashboards (DEMO epic) ──────────────────────────────────────────────────
+AdminDashboard: page [KPIs, users, dept stats, alerts] — used_in:app/(admin)/admin — wired
+FacultyDashboard: page [courses, activity, metrics] — used_in:app/(faculty-portal)/faculty/dashboard — wired
+StudentDashboard: page [courses, KPIs, user info] — used_in:app/(student)/student-dashboard — wired
+InstitutionDashboard: page [KPIs, user info] — used_in:app/(institution)/institution/dashboard — wired
+CoverageDashboard: page [USMLE coverage items] — used_in:app/(institution)/institution/coverage — wired
+
+# ── Auth Context ────────────────────────────────────────────────────────────
+useCurrentUser: hook [id, email, displayName, initials, role, institutionId] — used_in:sidebars+navs+pages — wired
+
 # NOTE: Uncomment + change status to "wired" when story implementing it is done.

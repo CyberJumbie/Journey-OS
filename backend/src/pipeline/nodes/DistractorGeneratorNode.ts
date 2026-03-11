@@ -19,10 +19,10 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { AIMessage } from '@langchain/core/messages';
 import type { WorkbenchState, GeneratedOption } from '@journey-os/shared-types';
-import type { IPipelineNode } from '../PipelineNode.interface.js';
-import { WorkbenchStateBuilder } from '../WorkbenchStateBuilder.js';
-import AnthropicClient from '../../lib/AnthropicClient.js';
-import { GenerationLogRepository } from '../../repositories/generation-log.repository.js';
+import type { IPipelineNode } from '../PipelineNode.interface';
+import { WorkbenchStateBuilder } from '../WorkbenchStateBuilder';
+import AnthropicClient from '../../lib/AnthropicClient';
+import { GenerationLogRepository } from '../../repositories/generation-log.repository';
 
 /** Claude Sonnet model ID — both phases use Sonnet (Rule 6). */
 const SONNET_MODEL = 'claude-sonnet-4-5-20250929';

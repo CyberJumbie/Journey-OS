@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { BarChart3, Users, Settings, Shield, Activity, Award, GitBranch, GraduationCap, Layers, ChevronDown, ChevronRight, Download, Search, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { C, sans, serif, mono } from '@/lib/design-tokens';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 // ═══════════════════════════════════════════════════════════════
 // JOURNEY OS — FACULTY USMLE COVERAGE
@@ -230,7 +231,8 @@ export default function FacultyUSMLECoverage() {
     { key: "settings", label: "Settings", Icon: Settings, path: "/institution/settings" },
   ];
 
-  const user = { name: "Dr. Sarah Johnson", initials: "SJ", role: "Institutional Admin", institution: "Morehouse School of Medicine" };
+  const { data: currentUser } = useCurrentUser();
+  const user = { name: currentUser?.displayName ?? "Faculty", initials: currentUser?.initials ?? "??", role: currentUser?.roleLabel ?? "Faculty", institution: "Morehouse School of Medicine" }; // TODO: replace institution with dynamic value when institution API is available
   const sidebarCollapsedWidth = 72;
   const sidebarExpandedWidth = 240;
   const sidebarWidth = isDesktop ? (sidebarExpanded ? sidebarExpandedWidth : sidebarCollapsedWidth) : (isTablet ? 220 : 260);

@@ -14,13 +14,13 @@ import fs from 'fs';
 import path from 'path';
 import { AIMessage } from '@langchain/core/messages';
 import type { WorkbenchState } from '@journey-os/shared-types';
-import type { IPipelineNode } from '../PipelineNode.interface.js';
-import { WorkbenchStateBuilder } from '../WorkbenchStateBuilder.js';
-import { GraphRepository } from '../../repositories/graph.repository.js';
-import { ChunkRepository } from '../../repositories/chunk.repository.js';
-import { EmbeddingProviderFactory } from '../../ingestion/EmbeddingProviderFactory.js';
-import AnthropicClient from '../../lib/AnthropicClient.js';
-import { config } from '../../config/config.js';
+import type { IPipelineNode } from '../PipelineNode.interface';
+import { WorkbenchStateBuilder } from '../WorkbenchStateBuilder';
+import { GraphRepository } from '../../repositories/graph.repository';
+import { ChunkRepository } from '../../repositories/chunk.repository';
+import { EmbeddingProviderFactory } from '../../ingestion/EmbeddingProviderFactory';
+import AnthropicClient from '../../lib/AnthropicClient';
+import { config } from '../../config/config';
 
 /** Maximum token budget for refined context. */
 const CONTEXT_TOKEN_BUDGET = 4000;

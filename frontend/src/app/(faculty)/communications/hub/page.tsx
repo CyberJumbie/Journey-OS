@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { LayoutDashboard, BookOpen, FileText, Settings, Plus, MessageSquare, Send, Paperclip, Users, Search } from "lucide-react";
 import { C, sans, serif, mono } from '@/lib/design-tokens';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 // ═══════════════════════════════════════════════════════════════
 // JOURNEY OS — FACULTY COMMUNICATION HUB (STORY-C-1)
@@ -168,7 +169,8 @@ export default function FacultyCommunicationHub() {
     { key: "settings", label: "Settings", Icon: Settings, path: "/faculty/settings" },
   ];
 
-  const user = { name: "Dr. Sarah Chen", initials: "SC", role: "Faculty", department: "Pharmacology" };
+  const { data: currentUser } = useCurrentUser();
+  const user = { name: currentUser?.displayName ?? "Faculty", initials: currentUser?.initials ?? "??", role: currentUser?.roleLabel ?? "Faculty", department: "Pharmacology" };
 
   const sidebarCollapsedWidth = 72;
   const sidebarExpandedWidth = 240;

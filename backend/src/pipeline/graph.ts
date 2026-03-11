@@ -29,21 +29,21 @@ import type {
   AutoRoute,
   RefinementTarget,
 } from '@journey-os/shared-types';
-import { InitNode } from './nodes/InitNode.js';
-import { ContextCompilerNode } from './nodes/ContextCompilerNode.js';
-import { VignetteBuilderNode } from './nodes/VignetteBuilderNode.js';
-import { StemWriterNode } from './nodes/StemWriterNode.js';
-import { DistractorGeneratorNode } from './nodes/DistractorGeneratorNode.js';
-import { ValidatorNode } from './nodes/ValidatorNode.js';
-import { GraphWriterNode } from './nodes/GraphWriterNode.js';
-import { TaggerNode } from './nodes/TaggerNode.js';
-import { DedupDetectorNode } from './nodes/DedupDetectorNode.js';
-import { CriticAgentNode } from './nodes/CriticAgentNode.js';
-import { ToulminGeneratorNode } from './nodes/ToulminGeneratorNode.js';
-import { ReviewRouterNode } from './nodes/ReviewRouterNode.js';
-import { LoadReviewQuestionNode } from './nodes/LoadReviewQuestionNode.js';
-import { ApplyEditNode } from './nodes/ApplyEditNode.js';
-import { RevalidateNode } from './nodes/RevalidateNode.js';
+import { InitNode } from './nodes/InitNode';
+import { ContextCompilerNode } from './nodes/ContextCompilerNode';
+import { VignetteBuilderNode } from './nodes/VignetteBuilderNode';
+import { StemWriterNode } from './nodes/StemWriterNode';
+import { DistractorGeneratorNode } from './nodes/DistractorGeneratorNode';
+import { ValidatorNode } from './nodes/ValidatorNode';
+import { GraphWriterNode } from './nodes/GraphWriterNode';
+import { TaggerNode } from './nodes/TaggerNode';
+import { DedupDetectorNode } from './nodes/DedupDetectorNode';
+import { CriticAgentNode } from './nodes/CriticAgentNode';
+import { ToulminGeneratorNode } from './nodes/ToulminGeneratorNode';
+import { ReviewRouterNode } from './nodes/ReviewRouterNode';
+import { LoadReviewQuestionNode } from './nodes/LoadReviewQuestionNode';
+import { ApplyEditNode } from './nodes/ApplyEditNode';
+import { RevalidateNode } from './nodes/RevalidateNode';
 
 // ── State Annotation ────────────────────────────────────────────────────────────
 // Extends MessagesAnnotation to include the messages channel required by

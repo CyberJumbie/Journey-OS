@@ -1,5 +1,5 @@
 import type { Driver } from 'neo4j-driver';
-import Neo4jClient from '../lib/Neo4jClient.js';
+import Neo4jClient from '../lib/Neo4jClient';
 
 /** Lightweight course data returned from Neo4j (skinny node). */
 export interface CourseGraphData {

@@ -5,3 +5,5 @@ export * from './pipeline';
 export * from './database';
 export * from './api';
 export * from './graph';
+export * from './auth';
+export * from './dashboard';

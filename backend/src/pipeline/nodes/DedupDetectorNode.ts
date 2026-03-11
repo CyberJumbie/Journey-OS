@@ -15,11 +15,11 @@
 
 import { AIMessage } from '@langchain/core/messages';
 import type { WorkbenchState } from '@journey-os/shared-types';
-import type { IPipelineNode } from '../PipelineNode.interface.js';
-import { WorkbenchStateBuilder } from '../WorkbenchStateBuilder.js';
-import { EmbedderService } from '../../ingestion/EmbedderService.js';
-import { config } from '../../config/config.js';
-import SupabaseClientSingleton from '../../lib/SupabaseClient.js';
+import type { IPipelineNode } from '../PipelineNode.interface';
+import { WorkbenchStateBuilder } from '../WorkbenchStateBuilder';
+import { EmbedderService } from '../../ingestion/EmbedderService';
+import { config } from '../../config/config';
+import SupabaseClientSingleton from '../../lib/SupabaseClient';
 
 interface StemSearchResult {
   item_id: string;

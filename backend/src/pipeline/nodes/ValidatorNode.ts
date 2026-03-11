@@ -19,11 +19,11 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { AIMessage } from '@langchain/core/messages';
 import type { WorkbenchState, ValidationResult } from '@journey-os/shared-types';
-import type { IPipelineNode } from '../PipelineNode.interface.js';
-import { WorkbenchStateBuilder } from '../WorkbenchStateBuilder.js';
-import { runAllRules } from '../validators/nbme-rules.js';
-import { runAllExtendedRules } from '../validators/rules-R011-R030.js';
-import AnthropicClient from '../../lib/AnthropicClient.js';
+import type { IPipelineNode } from '../PipelineNode.interface';
+import { WorkbenchStateBuilder } from '../WorkbenchStateBuilder';
+import { runAllRules } from '../validators/nbme-rules';
+import { runAllExtendedRules } from '../validators/rules-R011-R030';
+import AnthropicClient from '../../lib/AnthropicClient';
 
 /**
  * Load a prompt template from the prompts directory.

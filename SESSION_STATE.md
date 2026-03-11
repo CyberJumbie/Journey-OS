@@ -1,32 +1,34 @@
 # SESSION_STATE.md
-*Session ended: 2026-03-11*
+*Updated: 2026-03-11*
 
 ## Current Story
-**ID:** none
-**Status:** Epic 1.3 complete. GitHub repo + CI/CD set up.
-**Branch:** dev
+**ID:** DEMO epic (Demo Institution Data) | **Status:** COMPLETE | **Phase:** COMPOUND
 
-## Last 3 Completed Stories
-- Epic 1.3 (P1-016 through P1-023) — Generation Pipeline — 2026-03-10
-- Epic 1.2 (P1-009 through P1-015) — Ingestion Pipeline — 2026-03-10
-- Epic 1.1 (P1-001 through P1-008) — Infrastructure — 2026-03-10
+## Last 3 Completed
+- DEMO-001 through DEMO-005 — Demo Institution Data Epic — 2026-03-11
+- Epic 2.2 (P2-007 through P2-012) — Review Mode + Bulk Generation — 2026-03-11
+- Epic 2.1 (P2-001 through P2-006) — Pipeline Completion — 2026-03-11
 
-## Next Ready Queue
-1. P1-024 — Epic 1.4 (end-to-end wiring)
-2. P1-025 — Course selector UI
-3. P1-026 — Question bank UI
+## What Was Done (DEMO Epic)
+- Supabase seed: 1 institution, 11 courses, 5 users, 20 items, 100 options
+- Backend: DashboardRepository + DashboardService + DashboardController + dashboard routes
+- Frontend: 5 TanStack Query hooks (useDashboard.ts) + useCurrentUser.ts
+- Replaced mock data in 5 dashboard pages + 16 pages sidebar/auth cleanup
+- Shared types: packages/shared-types/src/dashboard.ts (9 interfaces)
 
-## Phase 1 Progress
-17/29 stories done | 0 in progress | Epic 1.1 + 1.2 + 1.3 complete
+## Solution Docs Written This Session
+- SOL-022: Dashboard API Pattern (Mock-to-Live Migration)
 
-## Infrastructure
-- GitHub: https://github.com/CyberJumbie/Journey-OS (private)
-- Branches: main (protected) + dev (protected)
-- CI/CD: .github/workflows/ci.yml (blocked on GitHub billing)
-- Vercel: linked + GitHub connected (secrets set)
-- Railway: not yet configured
+## Slim Context Updated
+- .context/routes.yaml — 5 dashboard endpoints
+- .context/components.yaml — 5 dashboard pages + useCurrentUser hook
+
+## Known TODOs
+- course_faculty join table (faculty courses return all institution courses for now)
+- student enrollment table (student courses return all institution courses for now)
+- Institution name not in JWT — sidebar uses fallback until institution API
 
 ## To Resume
-  1. Fix GitHub billing (github.com/settings/billing) to unblock CI
-  2. Read SESSION_STATE.md
-  3. /epic 1.4
+1. Read SESSION_STATE.md
+2. Run seed migration: `supabase db push` or apply 20250906000000_demo_seed_data.sql
+3. Continue with next epic or wire remaining prototype screens

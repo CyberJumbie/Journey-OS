@@ -12,9 +12,9 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { AIMessage } from '@langchain/core/messages';
 import type { WorkbenchState } from '@journey-os/shared-types';
-import type { IPipelineNode } from '../PipelineNode.interface.js';
-import { WorkbenchStateBuilder } from '../WorkbenchStateBuilder.js';
-import AnthropicClient from '../../lib/AnthropicClient.js';
+import type { IPipelineNode } from '../PipelineNode.interface';
+import { WorkbenchStateBuilder } from '../WorkbenchStateBuilder';
+import AnthropicClient from '../../lib/AnthropicClient';
 
 /** Claude Sonnet model ID for generation nodes. */
 const SONNET_MODEL = 'claude-sonnet-4-5-20250929';

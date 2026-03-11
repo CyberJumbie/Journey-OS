@@ -1,8 +1,12 @@
 import { Router } from 'express';
 import { ItemController } from '../controllers/item.controller';
+import { authMiddleware, requireRole } from '../middleware/auth.middleware';
 
 const router: Router = Router();
 const controller = new ItemController();
+
+// All item routes require faculty auth
+router.use(authMiddleware, requireRole(['faculty', 'superadmin']));
 
 // GET /api/v1/items — list assessment items (paginated, filterable)
 router.get('/', (req, res) => controller.list(req, res));

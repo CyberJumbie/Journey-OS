@@ -19,12 +19,12 @@ import { AIMessage } from '@langchain/core/messages';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { WorkbenchState, GeneratedOption } from '@journey-os/shared-types';
 import type { AssessmentItemRow, OptionInsert } from '@journey-os/shared-types';
-import type { IPipelineNode } from '../PipelineNode.interface.js';
-import { WorkbenchStateBuilder } from '../WorkbenchStateBuilder.js';
-import { DualWriteService } from '../../services/dual-write.service.js';
-import { GraphRepository } from '../../repositories/graph.repository.js';
-import { GenerationLogRepository } from '../../repositories/generation-log.repository.js';
-import SupabaseClientSingleton from '../../lib/SupabaseClient.js';
+import type { IPipelineNode } from '../PipelineNode.interface';
+import { WorkbenchStateBuilder } from '../WorkbenchStateBuilder';
+import { DualWriteService } from '../../services/dual-write.service';
+import { GraphRepository } from '../../repositories/graph.repository';
+import { GenerationLogRepository } from '../../repositories/generation-log.repository';
+import SupabaseClientSingleton from '../../lib/SupabaseClient';
 
 /** Default Bloom level when targetConcepts don't specify one. */
 const DEFAULT_BLOOM_LEVEL = 3; // Application

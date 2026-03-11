@@ -8,7 +8,7 @@
  */
 
 import type { ValidationResult } from '@journey-os/shared-types';
-import type { GeneratedQuestion, NbmeRule } from './nbme-rules.js';
+import type { GeneratedQuestion, NbmeRule } from './nbme-rules';
 
 // ── Helper Functions ─────────────────────────────────────────────────────────────
 

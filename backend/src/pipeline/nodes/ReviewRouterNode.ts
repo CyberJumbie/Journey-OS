@@ -16,11 +16,11 @@
 
 import { AIMessage } from '@langchain/core/messages';
 import type { WorkbenchState, AutoRoute, ValidationResult } from '@journey-os/shared-types';
-import type { IPipelineNode } from '../PipelineNode.interface.js';
-import { WorkbenchStateBuilder } from '../WorkbenchStateBuilder.js';
-import { ItemRepository } from '../../repositories/item.repository.js';
-import { GraphRepository } from '../../repositories/graph.repository.js';
-import SocketServer from '../../lib/SocketServer.js';
+import type { IPipelineNode } from '../PipelineNode.interface';
+import { WorkbenchStateBuilder } from '../WorkbenchStateBuilder';
+import { ItemRepository } from '../../repositories/item.repository';
+import { GraphRepository } from '../../repositories/graph.repository';
+import SocketServer from '../../lib/SocketServer';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 

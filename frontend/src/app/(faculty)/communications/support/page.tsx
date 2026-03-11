@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { Home, BookOpen, Target, BarChart3, Settings, Plus, HelpCircle, AlertCircle, CheckCircle, Clock, Filter } from "lucide-react";
 import { C, sans, serif, mono } from '@/lib/design-tokens';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 // ═══════════════════════════════════════════════════════════════
 // JOURNEY OS — STUDENT SUPPORT CENTER (STORY-C-2)
@@ -113,7 +114,8 @@ export default function StudentSupportCenter() {
     { key: "settings", label: "Settings", Icon: Settings, path: "/student/settings" },
   ];
 
-  const user = { name: "Jordan Smith", initials: "JS", role: "Student", year: "MS2" };
+  const { data: currentUser } = useCurrentUser();
+  const user = { name: currentUser?.displayName ?? "User", initials: currentUser?.initials ?? "??", role: currentUser?.roleLabel ?? "Student", year: "MS2" };
 
   const sidebarCollapsedWidth = 72;
   const sidebarExpandedWidth = 240;

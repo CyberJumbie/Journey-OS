@@ -1,9 +1,13 @@
 import { Router } from 'express';
 import multer from 'multer';
 import { UploadController } from '../controllers/upload.controller';
+import { authMiddleware, requireRole } from '../middleware/auth.middleware';
 
 const router: Router = Router();
 const controller = new UploadController();
+
+// All upload routes require faculty auth
+router.use(authMiddleware, requireRole(['faculty', 'superadmin']));
 
 // Multer config: memory storage, 50MB limit, PDF only
 const upload = multer({

@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { LayoutDashboard, BookOpen, Dumbbell, TrendingUp, BookMarked, HelpCircle, Settings } from "lucide-react";
 import { C, sans, serif, mono, WovenField, AscSquares, Sparkline } from '@/lib/design-tokens';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
+import { useStudentDashboard } from '@/hooks/useDashboard';
 
 // ═══════════════════════════════════════════════════════════════
 // JOURNEY OS — STUDENT DASHBOARD
@@ -45,42 +46,35 @@ export default function StudentDashboard() {
     else if (path === "/student-dashboard") setActiveNav("dashboard");
   }, [pathname]);
 
-  // ─── Mock data ────────────────────────────────────────────
-  const user = { name: "John Mitchell", initials: "JM", role: "Student", department: "M2" };
+  // ─── Data from API ────────────────────────────────────────
+  const { data: dashboardData } = useStudentDashboard();
+
+  const user = {
+    name: dashboardData?.user.displayName ?? "Student",
+    initials: (dashboardData?.user.displayName ?? "S").split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase(),
+    role: dashboardData?.user.role ?? "Student",
+    department: dashboardData?.user.yearLevel ?? "",
+  };
 
   const kpis = [
-    { label: "Questions Answered", value: "247", change: "+12 this week", spark: [205, 215, 218, 225, 230, 235, 247] },
-    { label: "Accuracy Rate", value: "78%", change: "+3% from last month", spark: [72, 73, 75, 76, 77, 77, 78] },
-    { label: "Current Streak", value: "12", change: "days in a row", spark: [5, 6, 7, 8, 9, 10, 11, 12] },
-    { label: "Study Time", value: "8.5h", change: "this week", spark: [5.2, 6.1, 7.3, 7.8, 8.1, 8.3, 8.5] },
+    { label: "Enrolled Courses", value: String(dashboardData?.kpis.enrolled_courses ?? 0), change: "current semester", spark: [0] },
+    { label: "Available Items", value: String(dashboardData?.kpis.available_items ?? 0), change: "in your courses", spark: [0] },
+    { label: "Approved Items", value: String(dashboardData?.kpis.approved_items ?? 0), change: "ready for practice", spark: [0] },
+    { label: "Courses", value: String(dashboardData?.courses?.length ?? 0), change: "active", spark: [0] },
   ];
 
-  const _courses = [
-    { name: "Medical Pharmacology I", code: "PHAR 501", progress: 68, nextTopic: "Cardiovascular Drugs", dueDate: "Feb 18", color: C.navyDeep },
-    { name: "Clinical Anatomy", code: "ANAT 502", progress: 82, nextTopic: "Thoracic Anatomy", dueDate: "Feb 20", color: C.blueMid },
-    { name: "Pathophysiology", code: "PATH 503", progress: 45, nextTopic: "Inflammatory Response", dueDate: "Feb 22", color: C.green },
-  ];
+  const _courses = (dashboardData?.courses ?? []).map((c, i) => ({
+    name: c.title,
+    code: c.code,
+    progress: 0,
+    nextTopic: "",
+    dueDate: "",
+    color: [C.navyDeep, C.blueMid, C.green][i % 3],
+  }));
 
-  const _upcomingPractice = [
-    { title: "Cardiovascular Pharmacology — Practice Set", questions: 20, due: "Today", priority: "high" },
-    { title: "Autonomic Nervous System — Review", questions: 15, due: "Tomorrow", priority: "medium" },
-    { title: "Receptor Pharmacology — Weak Areas", questions: 12, due: "Feb 19", priority: "high" },
-    { title: "Weekly Mixed Practice — All Topics", questions: 30, due: "Feb 21", priority: "low" },
-  ];
-
-  const _recentActivity = [
-    { type: "completed", text: "Completed Cardiovascular Drugs practice set — 18/20 correct", time: "2 hours ago", icon: "✓" },
-    { type: "milestone", text: "Reached 12-day study streak! Keep it going.", time: "1 day ago", icon: "◆" },
-    { type: "alert", text: "Falling behind in Inflammatory Response — schedule review", time: "1 day ago", icon: "▣" },
-    { type: "completed", text: "Finished Thoracic Anatomy quiz — 85% accuracy", time: "2 days ago", icon: "✓" },
-  ];
-
-  const _weakAreas = [
-    { topic: "Receptor Pharmacology", mastery: 0.42, trend: "improving" },
-    { topic: "Inflammatory Response", mastery: 0.38, trend: "declining" },
-    { topic: "Renal Pharmacology", mastery: 0.51, trend: "stable" },
-    { topic: "CNS Agents", mastery: 0.58, trend: "improving" },
-  ];
+  const _upcomingPractice: { title: string; questions: number; due: string; priority: string }[] = [];
+  const _recentActivity: { type: string; text: string; time: string; icon: string }[] = [];
+  const _weakAreas: { topic: string; mastery: number; trend: string }[] = [];
 
   const navItems = [
     { key: "dashboard", label: "Dashboard", Icon: LayoutDashboard, path: "/student-dashboard" },
@@ -142,9 +136,10 @@ export default function StudentDashboard() {
         )}
       </div>
       
+      {/* TODO: replace with dynamic institution name when institution API is available */}
       {(sidebarExpanded || !isDesktop) && (
         <div style={{ fontFamily: mono, fontSize: 9, color: C.textMuted, letterSpacing: "0.06em", padding: "0 8px", marginBottom: 28 }}>
-          MOREHOUSE SCHOOL OF MEDICINE
+          JOURNEY OS
         </div>
       )}
 

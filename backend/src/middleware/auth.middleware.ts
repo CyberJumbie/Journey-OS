@@ -22,10 +22,8 @@ declare module 'express-serve-static-core' {
 
 /**
  * Express middleware that validates a Supabase JWT from the Authorization header.
- * Extracts user profile from the `user_profiles` table and attaches to req.user.
- *
- * Usage:
- *   router.get('/protected', authMiddleware, controller.handler);
+ * Reads role + institution from JWT app_metadata (populated by sync_jwt_claims trigger).
+ * Falls back to user_profiles query if claims are not yet in the JWT.
  */
 export async function authMiddleware(
   req: Request,
@@ -39,12 +37,11 @@ export async function authMiddleware(
     return;
   }
 
-  const token = authHeader.slice(7); // Remove 'Bearer '
+  const token = authHeader.slice(7);
 
   try {
     const supabase = SupabaseClientSingleton.getInstance();
 
-    // Verify JWT and get the authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
     if (authError || !user) {
@@ -52,7 +49,22 @@ export async function authMiddleware(
       return;
     }
 
-    // Fetch user profile for role + institution info
+    const meta = user.app_metadata as Record<string, unknown> | undefined;
+
+    // Primary path: read from JWT claims (no DB query)
+    if (meta?.role) {
+      req.user = {
+        userId: user.id,
+        email: user.email ?? '',
+        role: meta.role as UserRole,
+        institutionId: (meta.institution_id as string) ?? null,
+        isCourseDirector: (meta.is_course_director as boolean) ?? false,
+      };
+      next();
+      return;
+    }
+
+    // Fallback: query DB (for users created before JWT trigger)
     const { data: profile, error: profileError } = await supabase
       .from('user_profiles')
       .select('id, role, institution_id, is_course_director')
@@ -82,9 +94,6 @@ export async function authMiddleware(
 /**
  * Factory for role-based access control middleware.
  * Must be used AFTER authMiddleware.
- *
- * Usage:
- *   router.get('/admin-only', authMiddleware, requireRole(['superadmin']), controller.handler);
  */
 export function requireRole(allowedRoles: UserRole[]) {
   return (req: Request, res: Response, next: NextFunction): void => {
@@ -95,6 +104,60 @@ export function requireRole(allowedRoles: UserRole[]) {
 
     if (!allowedRoles.includes(req.user.role)) {
       res.status(403).json({ error: 'Insufficient permissions' });
+      return;
+    }
+
+    next();
+  };
+}
+
+/**
+ * Guards Course Director-only endpoints.
+ * Must be used AFTER authMiddleware.
+ */
+export function requireCourseDirector(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  if (!req.user || req.user.role !== 'faculty' || !req.user.isCourseDirector) {
+    res.status(403).json({ error: 'Course Director access required' });
+    return;
+  }
+  next();
+}
+
+/**
+ * Prevents cross-institution data access.
+ * Reads institution_id from JWT — never from request body/params.
+ * Superadmin bypasses this check entirely.
+ *
+ * @param getResourceInstitutionId - async function that extracts the institution_id
+ *   of the resource being accessed from the request.
+ */
+export function requireInstitutionScope(
+  getResourceInstitutionId: (req: Request) => Promise<string | null>,
+) {
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    if (!req.user) {
+      res.status(401).json({ error: 'Not authenticated' });
+      return;
+    }
+
+    // Superadmin bypasses institution scoping — sees everything
+    if (req.user.role === 'superadmin') {
+      next();
+      return;
+    }
+
+    const resourceInstitutionId = await getResourceInstitutionId(req);
+    if (!resourceInstitutionId) {
+      res.status(404).json({ error: 'Resource not found' });
+      return;
+    }
+
+    if (resourceInstitutionId !== req.user.institutionId) {
+      res.status(403).json({ error: 'Cross-institution access denied' });
       return;
     }
 
