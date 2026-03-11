@@ -102,6 +102,22 @@ CREATE INDEX ON content_chunk_embeddings
   WITH (m = 16, ef_construction = 64);
 
 -- ============================================================================
+-- CONTENT CHUNK EMBEDDINGS — OPENAI (1536-dim, dual-embedding provider)
+-- No RLS on this table - accessed via service role for vector search
+-- ============================================================================
+CREATE TABLE content_chunk_embeddings_openai (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  chunk_id UUID UNIQUE REFERENCES content_chunks(id),
+  embedding vector(1536),
+  model_name TEXT DEFAULT 'text-embedding-3-small',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+-- HNSW index for fast cosine similarity search
+CREATE INDEX ON content_chunk_embeddings_openai
+  USING hnsw (embedding vector_cosine_ops)
+  WITH (m = 16, ef_construction = 64);
+
+-- ============================================================================
 -- ASSESSMENT ITEMS
 -- ============================================================================
 CREATE TABLE assessment_items (

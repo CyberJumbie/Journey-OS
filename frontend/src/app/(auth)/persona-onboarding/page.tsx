@@ -7,6 +7,7 @@ import { CheckCircle2, ArrowRight } from "lucide-react";
 
 import { C, sans, serif, mono } from '@/lib/design-tokens';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
+import { useCurrentUser, useCompleteOnboarding } from '@/hooks/useAuthMutations';
 
 type Role = "superadmin" | "institutional_admin" | "faculty" | "student" | "advisor";
 
@@ -192,36 +193,23 @@ export default function PersonaOnboarding() {
   const isMobile = bp === "mobile";
 
   const [mounted, setMounted] = useState(false);
-  const [_userRole, setUserRole] = useState<Role | null>(null);
+  const { data: userData } = useCurrentUser();
+  const completeOnboarding = useCompleteOnboarding();
+
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<Set<string>>(new Set());
   const [config, setConfig] = useState<OnboardingConfig | null>(null);
 
   useEffect(() => {
     setMounted(true);
-    
-    // Fetch user role from backend
-    const fetchUserRole = async () => {
-      try {
-        const response = await fetch("/api/v1/auth/me", {
-          credentials: "include",
-        });
-        if (response.ok) {
-          const data = await response.json();
-          const role = data.role as Role;
-          setUserRole(role);
-          setConfig(ONBOARDING_CONFIGS[role]);
-        }
-      } catch (err) {
-        console.error("Failed to fetch user role", err);
-        // Default to faculty for demo
-        setUserRole("faculty");
-        setConfig(ONBOARDING_CONFIGS.faculty);
-      }
-    };
-
-    fetchUserRole();
   }, []);
+
+  useEffect(() => {
+    if (userData) {
+      const role = userData.role as Role;
+      setConfig(ONBOARDING_CONFIGS[role]);
+    }
+  }, [userData]);
 
   const handleStepComplete = (stepId: string) => {
     setCompletedSteps((prev) => new Set(prev).add(stepId));
@@ -234,20 +222,15 @@ export default function PersonaOnboarding() {
     }
   };
 
-  const handleFinish = async () => {
+  const handleFinish = () => {
     if (!config) return;
 
     handleStepComplete(config.steps[currentStep].id);
 
     // Mark onboarding as complete
-    try {
-      await fetch("/api/v1/auth/onboarding/complete", {
-        method: "POST",
-        credentials: "include",
-      });
-    } catch (err) {
-      console.error("Failed to mark onboarding complete", err);
-    }
+    completeOnboarding.mutate(undefined, {
+      onError: (err) => console.error("Failed to mark onboarding complete", err),
+    });
 
     // Navigate to appropriate dashboard
     const dashboardRoutes: Record<Role, string> = {
@@ -261,15 +244,10 @@ export default function PersonaOnboarding() {
     router.push(dashboardRoutes[config.role]);
   };
 
-  const handleSkip = async () => {
-    try {
-      await fetch("/api/v1/auth/onboarding/complete", {
-        method: "POST",
-        credentials: "include",
-      });
-    } catch (err) {
-      console.error("Failed to mark onboarding complete", err);
-    }
+  const handleSkip = () => {
+    completeOnboarding.mutate(undefined, {
+      onError: (err) => console.error("Failed to mark onboarding complete", err),
+    });
 
     if (!config) return;
     const dashboardRoutes: Record<Role, string> = {

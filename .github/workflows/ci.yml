@@ -206,8 +206,8 @@ jobs:
         with:
           filters: |
             server:
-              - 'apps/server/**'
-              - 'services/kg-seeder/**'
+              - 'backend/**'
+              - 'seeder/**'
               - 'scripts/**'
 
       - name: Validate graph (if server/seeder changed)

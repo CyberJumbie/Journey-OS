@@ -18,14 +18,14 @@ import {
   copilotRuntimeNodeExpressEndpoint,
 } from '@copilotkit/runtime';
 import { LangGraphAgent } from '@copilotkit/runtime/langgraph';
-import Anthropic from '@anthropic-ai/sdk';
+import AnthropicClient from '../lib/AnthropicClient';
 import type { Request, Response } from 'express';
 
 // ── Anthropic adapter ───────────────────────────────────────────────────────────
 // Uses the ANTHROPIC_API_KEY from env (Anthropic SDK reads it automatically).
 // Haiku for cheap ops per Rule 6.
 
-const anthropicClient = new Anthropic();
+const anthropicClient = AnthropicClient.getInstance();
 
 const serviceAdapter = new AnthropicAdapter({
   anthropic: anthropicClient,

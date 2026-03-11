@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 import { useState, useEffect, useRef } from "react";
 import { C, sans, serif, mono } from '@/lib/design-tokens';
+import { useCurrentUser, useVerifyEmail, useResendVerification } from '@/hooks/useAuthMutations';
 
 type VerificationState = "default" | "sending" | "sent" | "rateLimited" | "verified";
 
@@ -20,33 +21,20 @@ function EmailVerification() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
+  const { data: userData } = useCurrentUser();
+  const verifyEmailMutation = useVerifyEmail();
+  const resendMutation = useResendVerification();
+
   const [mounted, setMounted] = useState(false);
   const [state, setState] = useState<VerificationState>("default");
   const [cooldown, setCooldown] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const userEmail = userData?.email ?? null;
 
   const cooldownInterval = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     setMounted(true);
-
-    // Check if user is logged in and get email
-    const checkAuth = async () => {
-      try {
-        const response = await fetch("/api/v1/auth/me", {
-          credentials: "include",
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setUserEmail(data.email);
-        }
-      } catch (err) {
-        console.error("Failed to fetch user data", err);
-      }
-    };
-
-    checkAuth();
 
     // Check if verifying from email link
     const token = searchParams.get("token");
@@ -76,70 +64,50 @@ function EmailVerification() {
   };
 
   // Verify email with token
-  const verifyEmail = async (token: string) => {
+  const verifyEmail = (token: string) => {
     setState("sending");
     setError(null);
 
-    try {
-      const response = await fetch("/api/v1/auth/verify-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token }),
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || "Verification failed");
-      }
-
-      setState("verified");
-      
-      // Redirect after 2 seconds
-      setTimeout(() => {
-        router.push("/onboarding");
-      }, 2000);
-    } catch (err) {
-      setState("default");
-      setError(err instanceof Error ? err.message : "Verification failed");
-    }
+    verifyEmailMutation.mutate(token, {
+      onSuccess: () => {
+        setState("verified");
+        setTimeout(() => {
+          router.push("/onboarding");
+        }, 2000);
+      },
+      onError: (err) => {
+        setState("default");
+        setError(err.message || "Verification failed");
+      },
+    });
   };
 
   // Resend verification email
-  const handleResend = async () => {
+  const handleResend = () => {
     if (cooldown > 0) return;
 
     setState("sending");
     setError(null);
 
-    try {
-      const response = await fetch("/api/v1/auth/resend-verification", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        if (response.status === 429) {
+    resendMutation.mutate(undefined, {
+      onSuccess: () => {
+        setState("sent");
+        startCooldown();
+        setTimeout(() => {
+          setState("default");
+        }, 3000);
+      },
+      onError: (err) => {
+        const status = (err as Error & { status?: number }).status;
+        if (status === 429) {
           setState("rateLimited");
           setError("Too many requests. Please wait before trying again.");
           return;
         }
-        const data = await response.json();
-        throw new Error(data.message || "Failed to resend email");
-      }
-
-      setState("sent");
-      startCooldown();
-
-      // Reset to default after showing success message
-      setTimeout(() => {
         setState("default");
-      }, 3000);
-    } catch (err) {
-      setState("default");
-      setError(err instanceof Error ? err.message : "Failed to resend email");
-    }
+        setError(err.message || "Failed to resend email");
+      },
+    });
   };
 
   const fadeIn = (d = 0) => ({

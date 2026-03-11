@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect } from "react";
 import { C } from '@/lib/design-tokens';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
+import { useWaitlistApplication } from '@/hooks/useAuthMutations';
 
 // ═══════════════════════════════════════════════════════════════
 // JOURNEY OS — INSTITUTION APPLICATION (3-STEP WIZARD)
@@ -55,9 +56,10 @@ export default function InstitutionApplication() {
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const waitlistMutation = useWaitlistApplication();
   const [isSuccess, setIsSuccess] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const isSubmitting = waitlistMutation.isPending;
 
   useEffect(() => {
     setMounted(true);
@@ -160,48 +162,37 @@ export default function InstitutionApplication() {
     setServerError(null);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!validateStep(3)) return;
 
-    setIsSubmitting(true);
     setServerError(null);
 
-    try {
-      const response = await fetch("/api/v1/waitlist", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+    waitlistMutation.mutate(
+      {
+        institution_name: formData.institution_name,
+        institution_type: formData.institution_type,
+        accreditation_body: formData.accreditation_body,
+        contact_name: formData.contact_name,
+        contact_email: formData.contact_email.toLowerCase().trim(),
+        contact_phone: formData.contact_phone || undefined,
+        student_count: Number(formData.student_count),
+        website_url: formData.website_url || undefined,
+        reason: formData.reason || undefined,
+      },
+      {
+        onSuccess: () => setIsSuccess(true),
+        onError: (error) => {
+          const status = (error as Error & { status?: number }).status;
+          if (status === 429) {
+            setServerError("Too many requests. Please try again later.");
+          } else if (status === 409) {
+            setServerError("This institution has already submitted an application.");
+          } else {
+            setServerError(error.message || "An unexpected error occurred");
+          }
         },
-        body: JSON.stringify({
-          institution_name: formData.institution_name,
-          institution_type: formData.institution_type,
-          accreditation_body: formData.accreditation_body,
-          contact_name: formData.contact_name,
-          contact_email: formData.contact_email.toLowerCase().trim(),
-          contact_phone: formData.contact_phone || undefined,
-          student_count: Number(formData.student_count),
-          website_url: formData.website_url || undefined,
-          reason: formData.reason || undefined,
-        }),
-      });
-
-      if (!response.ok) {
-        if (response.status === 429) {
-          throw new Error("Too many requests. Please try again later.");
-        } else if (response.status === 409) {
-          throw new Error("This institution has already submitted an application.");
-        } else {
-          const data = await response.json();
-          throw new Error(data.message || "Something went wrong. Please try again.");
-        }
-      }
-
-      setIsSuccess(true);
-    } catch (error) {
-      setServerError(error instanceof Error ? error.message : "An unexpected error occurred");
-    } finally {
-      setIsSubmitting(false);
-    }
+      },
+    );
   };
 
   const fadeIn = (d = 0) => ({

@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from "react";
 import { C, sans, serif, mono, WovenField, AscSquares } from '@/lib/design-tokens';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
+import { useValidateInvitation, useAcceptInvitation } from '@/hooks/useAuthMutations';
 
 type InvitationState = "validating" | "invalid" | "form" | "submitting" | "success" | "error";
 
@@ -15,13 +16,12 @@ export default function InvitationAccept() {
   const isMobile = bp === "mobile";
   const isTablet = bp === "tablet";
 
+  const token = searchParams.get("token");
+  const { data: invitationData, error: validationError, isLoading: isValidating } = useValidateInvitation(token);
+  const acceptInvitation = useAcceptInvitation();
+
   const [mounted, setMounted] = useState(false);
   const [state, setState] = useState<InvitationState>("validating");
-  const [invitationData, setInvitationData] = useState<{
-    email: string;
-    role: string;
-    institution_name: string;
-  } | null>(null);
 
   const [formData, setFormData] = useState({
     full_name: "",
@@ -43,34 +43,22 @@ export default function InvitationAccept() {
 
   useEffect(() => {
     setMounted(true);
-    const token = searchParams.get("token");
-    if (token) {
-      validateInvitation(token);
-    } else {
+    if (!token) {
       setState("invalid");
       setErrorMessage("No invitation token provided");
     }
-  }, [searchParams]);
+  }, [token]);
 
-  const validateInvitation = async (token: string) => {
-    try {
-      const response = await fetch(`/api/v1/auth/invitation/validate?token=${token}`);
-      
-      if (!response.ok) {
-        setState("invalid");
-        const data = await response.json();
-        setErrorMessage(data.message || "Invalid or expired invitation");
-        return;
-      }
-
-      const data = await response.json();
-      setInvitationData(data);
+  // Sync invitation query state to component state
+  useEffect(() => {
+    if (isValidating) return;
+    if (validationError) {
+      setState("invalid");
+      setErrorMessage(validationError.message || "Invalid or expired invitation");
+    } else if (invitationData) {
       setState("form");
-    } catch (_err) {
-      setState("error");
-      setErrorMessage("Failed to validate invitation. Please try again.");
     }
-  };
+  }, [isValidating, validationError, invitationData]);
 
   const handlePasswordChange = (value: string) => {
     setFormData((prev) => ({ ...prev, password: value }));
@@ -114,28 +102,16 @@ export default function InvitationAccept() {
     setState("submitting");
     setErrorMessage(null);
 
-    try {
-      const token = searchParams.get("token");
-      const response = await fetch("/api/v1/auth/invitation/accept", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          token,
-          full_name: formData.full_name,
-          password: formData.password,
-        }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || "Failed to accept invitation");
-      }
-
-      setState("success");
-    } catch (err) {
-      setState("error");
-      setErrorMessage(err instanceof Error ? err.message : "An unexpected error occurred");
-    }
+    acceptInvitation.mutate(
+      { token: token!, full_name: formData.full_name, password: formData.password },
+      {
+        onSuccess: () => setState("success"),
+        onError: (err) => {
+          setState("error");
+          setErrorMessage(err.message || "An unexpected error occurred");
+        },
+      },
+    );
   };
 
   const fadeIn = (d = 0) => ({

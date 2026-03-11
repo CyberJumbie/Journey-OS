@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect } from "react";
 import { C, sans, serif, mono, WovenField, AscSquares } from '@/lib/design-tokens';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
+import { useForgotPassword } from '@/hooks/useAuthMutations';
 
 export default function ForgotPassword() {
   const router = useRouter();
@@ -12,12 +13,13 @@ export default function ForgotPassword() {
   const isMobile = bp === "mobile";
   const isTablet = bp === "tablet";
 
+  const forgotPassword = useForgotPassword();
   const [mounted, setMounted] = useState(false);
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const isSubmitting = forgotPassword.isPending;
 
   useEffect(() => {
     setMounted(true);
@@ -41,35 +43,27 @@ export default function ForgotPassword() {
 
     if (!validateEmail(email)) return;
 
-    setIsSubmitting(true);
     setServerError(null);
 
-    try {
-      const response = await fetch("/api/v1/auth/forgot-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.toLowerCase().trim() }),
-      });
-
-      if (!response.ok) {
-        if (response.status === 429) {
-          throw new Error("Too many requests. Please try again later.");
-        } else if (response.status === 404) {
+    forgotPassword.mutate(email, {
+      onSuccess: () => {
+        setIsSuccess(true);
+      },
+      onError: (error) => {
+        const status = (error as Error & { status?: number }).status;
+        if (status === 404) {
           // Don't reveal if email exists - still show success
           setIsSuccess(true);
           return;
-        } else {
-          const data = await response.json();
-          throw new Error(data.message || "Something went wrong. Please try again.");
         }
-      }
+        if (status === 429) {
+          setServerError("Too many requests. Please try again later.");
+          return;
+        }
+        setServerError(error.message || "An unexpected error occurred");
+      },
+    });
 
-      setIsSuccess(true);
-    } catch (error) {
-      setServerError(error instanceof Error ? error.message : "An unexpected error occurred");
-    } finally {
-      setIsSubmitting(false);
-    }
   };
 
   const fadeIn = (d = 0) => ({
