@@ -7,13 +7,18 @@
  *
  * After merging, Haiku refines the context to a 4,000-token budget.
  *
- * Model: claude-haiku-4-5-20241022 (context refiner — cheap ops, Rule 6)
+ * Three ECD sub-steps (P2-016):
+ * 4a. Evidence Design — identifies evidentiary claim via Haiku
+ * 4b. Task Family selection — queries Neo4j for matching TaskShell
+ * 4c. Instance Specification — builds generation params from selected TaskShell
+ *
+ * Model: claude-haiku-4-5-20241022 (context refiner + evidence design — cheap ops, Rule 6)
  */
 
 import fs from 'fs';
 import path from 'path';
 import { AIMessage } from '@langchain/core/messages';
-import type { WorkbenchState } from '@journey-os/shared-types';
+import type { WorkbenchState, GenerationParams } from '@journey-os/shared-types';
 import type { IPipelineNode } from '../PipelineNode.interface';
 import { WorkbenchStateBuilder } from '../WorkbenchStateBuilder';
 import { GraphRepository } from '../../repositories/graph.repository';
@@ -33,6 +38,23 @@ const CONTEXT_CHAR_BUDGET = CONTEXT_TOKEN_BUDGET * CHARS_PER_TOKEN;
 
 /** RRF constant (standard value from the literature). */
 const RRF_K = 60;
+
+/** Default TaskShell ID when no ProficiencyVariable is found (AC 6). */
+const DEFAULT_TASK_SHELL_ID = 'TS-001';
+
+/** Default Bloom level when no Bloom data is available (AC 7). */
+const DEFAULT_BLOOM_LEVEL = 3;
+
+/** Default generation params matching TS-001 (Clinical Vignette MCQ). */
+const DEFAULT_GENERATION_PARAMS: GenerationParams = {
+  vignetteRequired: true,
+  optionCount: 5,
+  distractorStrategy: 'best-worst',
+  bloomTarget: DEFAULT_BLOOM_LEVEL,
+};
+
+/** Haiku model for cheap ops (evidence design + context refiner). */
+const HAIKU_MODEL = 'claude-haiku-4-5-20241022';
 
 /**
  * Load a prompt template from the prompts directory.
@@ -139,18 +161,35 @@ export class ContextCompilerNode implements IPipelineNode {
       console.log(`[${this.name}] Haiku refined context: ${refinedContext.length} chars`);
     }
 
-    // ── 6. Build state update ──────────────────────────────────────────────────
+    // ── 6. ECD Sub-Step 4a: Evidence Design ────────────────────────────────────
+    const evidenceClaim = await this.identifyEvidenceClaim(
+      state.targetConcepts,
+      refinedContext,
+    );
+    console.log(`[${this.name}] evidence claim: ${evidenceClaim.slice(0, 80)}...`);
+
+    // ── 7. ECD Sub-Step 4b: Task Family Selection ───────────────────────────────
+    const { taskShellId, taskShellData } = await this.selectTaskShell(state.targetConcepts);
+    console.log(`[${this.name}] selected TaskShell: ${taskShellId} (${taskShellData?.name ?? 'default'})`);
+
+    // ── 8. ECD Sub-Step 4c: Instance Specification ──────────────────────────────
+    const generationParams = this.buildGenerationParams(taskShellData);
+    console.log(`[${this.name}] generation params: bloom=${String(generationParams.bloomTarget)}, vignette=${String(generationParams.vignetteRequired)}, strategy=${generationParams.distractorStrategy}`);
+
+    // ── 9. Build state update ──────────────────────────────────────────────────
     // Store source chunk IDs so graph_writer can create GENERATED_FROM edges
     const usedChunkIds = chunks.map((chunk) => chunk.id);
 
     const stateUpdate = new WorkbenchStateBuilder()
       .withContext(refinedContext)
       .withSourceChunkIds(usedChunkIds)
+      .withTaskShellId(taskShellId)
+      .withGenerationParams(generationParams)
       .build();
 
-    // ── 7. TEXT_MESSAGE for CopilotKit UI ──────────────────────────────────────
+    // ── 10. TEXT_MESSAGE for CopilotKit UI ──────────────────────────────────────
     const textMessage = new AIMessage({
-      content: `Found ${chunks.length} relevant chunks from your course materials. Context compiled and ready for generation.`,
+      content: `Found ${chunks.length} relevant chunks. ECD grounding: TaskShell ${taskShellId}, Bloom target ${String(generationParams.bloomTarget)}. Ready for generation.`,
     });
 
     return {
@@ -229,7 +268,7 @@ export class ContextCompilerNode implements IPipelineNode {
     ].join('\n');
 
     const message = await anthropic.messages.create({
-      model: 'claude-haiku-4-5-20241022',
+      model: HAIKU_MODEL,
       system: systemPrompt,
       messages: [{ role: 'user', content: userPrompt }],
       max_tokens: CONTEXT_TOKEN_BUDGET,
@@ -243,5 +282,119 @@ export class ContextCompilerNode implements IPipelineNode {
     }
 
     return textBlock.text;
+  }
+
+  // ── ECD Sub-Step Methods (P2-016) ──────────────────────────────────────────
+
+  /**
+   * ECD Sub-Step 4a: Evidence Design
+   * Uses Haiku to identify the evidentiary claim to be tested.
+   * Rule 6: Haiku for cheap ops.
+   * Rule 8: Prompt loaded from separate .txt file.
+   */
+  private async identifyEvidenceClaim(
+    targetConcepts: string[],
+    context: string,
+  ): Promise<string> {
+    try {
+      const anthropic = AnthropicClient.getInstance();
+      const systemPrompt = loadPrompt('evidence-design-system');
+
+      const userPrompt = [
+        `Target concepts: ${targetConcepts.join(', ')}`,
+        '',
+        '## Curriculum Context',
+        '',
+        context,
+      ].join('\n');
+
+      const message = await anthropic.messages.create({
+        model: HAIKU_MODEL,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }],
+        max_tokens: 256,
+      });
+
+      const textBlock = message.content.find((block) => block.type === 'text');
+      if (!textBlock || textBlock.type !== 'text') {
+        console.warn(`[${this.name}] evidence design returned no text, using concept names as claim`);
+        return `Test student understanding of ${targetConcepts.join(' and ')}`;
+      }
+
+      return textBlock.text.trim();
+    } catch (err) {
+      console.warn(`[${this.name}] evidence design failed, using fallback claim:`, err);
+      return `Test student understanding of ${targetConcepts.join(' and ')}`;
+    }
+  }
+
+  /**
+   * ECD Sub-Step 4b: Task Family Selection
+   * Queries Neo4j for matching TaskShell via ProficiencyVariable -> ASSESSED_BY -> TaskShell.
+   * Fallback: if no ProficiencyVariable found, defaults to TS-001 (AC 6).
+   */
+  private async selectTaskShell(targetConcepts: string[]): Promise<{
+    taskShellId: string;
+    taskShellData: {
+      name: string;
+      bloomMin: number;
+      bloomMax: number;
+      vignetteRequired: boolean;
+      optionCount: number;
+      distractorStrategy: string;
+    } | null;
+  }> {
+    // Try each target concept until we find a TaskShell match
+    for (const concept of targetConcepts) {
+      try {
+        const taskShell = await this.graphRepo.findTaskShellBySubConcept(concept);
+        if (taskShell) {
+          return {
+            taskShellId: taskShell.shellId,
+            taskShellData: {
+              name: taskShell.name,
+              bloomMin: taskShell.bloomMin,
+              bloomMax: taskShell.bloomMax,
+              vignetteRequired: taskShell.vignetteRequired,
+              optionCount: taskShell.optionCount,
+              distractorStrategy: taskShell.distractorStrategy,
+            },
+          };
+        }
+      } catch (err) {
+        console.warn(`[${this.name}] TaskShell lookup failed for concept "${concept}":`, err);
+        // Continue with next concept
+      }
+    }
+
+    // Fallback: no ProficiencyVariable found for any concept (AC 6)
+    console.log(`[${this.name}] no TaskShell found via ProficiencyVariable, defaulting to ${DEFAULT_TASK_SHELL_ID}`);
+    return { taskShellId: DEFAULT_TASK_SHELL_ID, taskShellData: null };
+  }
+
+  /**
+   * ECD Sub-Step 4c: Instance Specification
+   * Builds generation parameters from the selected TaskShell properties.
+   * Fallback: if no TaskShell data, uses default params (AC 7).
+   */
+  private buildGenerationParams(
+    taskShellData: {
+      bloomMin: number;
+      bloomMax: number;
+      vignetteRequired: boolean;
+      optionCount: number;
+      distractorStrategy: string;
+    } | null,
+  ): GenerationParams {
+    if (!taskShellData) {
+      return { ...DEFAULT_GENERATION_PARAMS };
+    }
+
+    return {
+      vignetteRequired: taskShellData.vignetteRequired,
+      optionCount: taskShellData.optionCount,
+      distractorStrategy: taskShellData.distractorStrategy,
+      bloomTarget: Math.floor((taskShellData.bloomMin + taskShellData.bloomMax) / 2),
+    };
   }
 }

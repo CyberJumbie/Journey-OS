@@ -37,6 +37,7 @@ const INITIAL_STATE: WorkbenchState = {
   dupSimilarity: null,
   dupItemId: null,
   taskShellId: null,
+  generationParams: null,
   // Review mode fields (P2-007)
   reviewItemId: null,
   editInstruction: null,

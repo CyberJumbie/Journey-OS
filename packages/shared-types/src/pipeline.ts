@@ -105,6 +105,14 @@ export type ToulminArgument = z.infer<typeof ToulminArgumentSchema>;
 export const AutoRouteSchema = z.enum(['auto_approve', 'auto_reject', 'faculty_review']);
 export type AutoRoute = z.infer<typeof AutoRouteSchema>;
 
+export const GenerationParamsSchema = z.object({
+  vignetteRequired: z.boolean(),
+  optionCount: z.number().int().min(2).max(8),
+  distractorStrategy: z.string(),
+  bloomTarget: z.number().int().min(1).max(6),
+});
+export type GenerationParams = z.infer<typeof GenerationParamsSchema>;
+
 // ── WorkbenchState (AG-UI streaming contract) ──────────────────────────────────
 
 export const WorkbenchStateSchema = z.object({
@@ -134,6 +142,7 @@ export const WorkbenchStateSchema = z.object({
   dupSimilarity: z.number().nullable(),
   dupItemId: z.string().nullable(),
   taskShellId: z.string().nullable(),
+  generationParams: GenerationParamsSchema.nullable(),
 
   // Review mode fields (P2-007)
   reviewItemId: z.string().nullable(),

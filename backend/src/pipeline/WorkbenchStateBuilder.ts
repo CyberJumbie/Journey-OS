@@ -15,6 +15,7 @@ import type {
   ToulminArgument,
   AutoRoute,
   RefinementTarget,
+  GenerationParams,
 } from '@journey-os/shared-types';
 
 export class WorkbenchStateBuilder {
@@ -111,6 +112,11 @@ export class WorkbenchStateBuilder {
 
   withTaskShellId(taskShellId: string | null): this {
     this.state.taskShellId = taskShellId;
+    return this;
+  }
+
+  withGenerationParams(params: GenerationParams | null): this {
+    this.state.generationParams = params;
     return this;
   }
 

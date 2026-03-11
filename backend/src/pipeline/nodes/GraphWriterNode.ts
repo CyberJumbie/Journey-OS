@@ -81,6 +81,7 @@ export class GraphWriterNode implements IPipelineNode {
           courseId: state.courseId,
           targetConcepts: state.targetConcepts,
           sourceChunkIds: state.sourceChunkIds ?? [],
+          taskShellId: state.taskShellId ?? null,
         });
       },
 

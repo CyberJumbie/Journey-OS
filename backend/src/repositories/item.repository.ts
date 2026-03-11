@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { AssessmentItemRow, ItemStatus, OptionRow, GeneratedOption } from '@journey-os/shared-types';
+import type { AssessmentItemRow, ItemStatus, OptionRow, GeneratedOption, ToulminArgument } from '@journey-os/shared-types';
 import SupabaseClientSingleton from '../lib/SupabaseClient';
 
 /** Filter parameters for querying assessment items. */
@@ -190,6 +190,23 @@ export class ItemRepository {
 
     if (error) {
       throw new Error(`Failed to update critic scores for item ${id}: ${error.message}`);
+    }
+  }
+
+  /**
+   * Update Toulmin argument on an assessment item (ToulminGeneratorNode writes).
+   */
+  async updateToulmin(id: string, toulmin: ToulminArgument): Promise<void> {
+    const { error } = await this.supabase
+      .from('assessment_items')
+      .update({
+        toulmin,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id);
+
+    if (error) {
+      throw new Error(`Failed to update Toulmin for item ${id}: ${error.message}`);
     }
   }
 

@@ -187,6 +187,8 @@ By story 20, expect 3× story 1 speed.
 - RAW_OBJECT_RETURN: Returning raw `{ field: value }` from pipeline nodes. Use WorkbenchStateBuilder, spread with `messages` array: `return { ...builder.build(), messages }`.
 - MUTATION_IN_MOLECULE: Putting useMutation/useQuery in a molecule component. Molecules are pure presentational — lift mutations to parent organism and pass callbacks as props.
 - AUTH_SERVICE_DIRECT_DB: AuthService (or any service) querying `.from('table')` directly. Always route through a repository class, even for user_profiles.
+- DUAL_SYSTEM_PROMPT: Loading a prompt from .txt file BUT also passing a separate inline `system:` string to Anthropic. Use the loaded template as the complete prompt — never split across inline + file.
+- ECD_FALLBACK_REQUIRED: TaskShell selection and PV lookup can return null. Always provide fallback: TS-001 for missing TaskShell, Bloom 3 for missing bloom_level_guess.
 
 ---
 

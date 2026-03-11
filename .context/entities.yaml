@@ -11,7 +11,8 @@ uploads: "File record; status ENUM(pending|processing|completed|failed), storage
 content_chunks: "Semantic chunk; content TEXT, chunk_index int, source_type ENUM(syllabus|lecture_slide|textbook|other), source_page int, metadata JSONB, neo4j_node_id, sync_status ENUM(pending|synced|failed|orphaned)"
 content_chunk_embeddings: "Voyage vector store; chunk_id FK UNIQUE, embedding vector(1024), model_name DEFAULT voyage-large-2"
 content_chunk_embeddings_openai: "OpenAI vector store; chunk_id FK UNIQUE, embedding vector(1536), model_name DEFAULT text-embedding-3-small"
-assessment_items: "NBME question; vignette TEXT, stem TEXT, explanation TEXT, bloom_level INT, usmle_system TEXT, usmle_discipline TEXT, difficulty_estimate FLOAT, status ENUM(draft|pending_review|approved|rejected|retired), toulmin JSONB, generation_log_id FK, neo4j_node_id, sync_status ENUM(pending|synced|failed|orphaned) — options are a SEPARATE table"
+assessment_items: "NBME question; vignette TEXT, stem TEXT, explanation TEXT, bloom_level INT, usmle_system TEXT, usmle_discipline TEXT, difficulty_estimate FLOAT, status ENUM(draft|pending_review|approved|rejected|retired), toulmin JSONB, task_shell_id TEXT, generation_log_id FK, neo4j_node_id, sync_status — options are a SEPARATE table"
+proficiency_variables: "ECD measurable outcome; id UUID, name TEXT UNIQUE, sub_concept_id UUID (conceptual ref, no FK), neo4j_node_id TEXT, created_at"
 options: "Answer choice (separate table); label CHAR(1) A-E, option_text TEXT, is_correct bool, distractor_rationale TEXT, misconception_targeted TEXT"
 generation_logs: "Pipeline run; mode ENUM(single|bulk|review), input_message TEXT, pipeline_state JSONB, model_calls JSONB, total_tokens_in INT, total_tokens_out INT, total_cost_usd DECIMAL(10,6), duration_ms INT, status ENUM(running|completed|failed|cancelled)"
 

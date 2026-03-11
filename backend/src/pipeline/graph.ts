@@ -28,6 +28,7 @@ import type {
   ToulminArgument,
   AutoRoute,
   RefinementTarget,
+  GenerationParams,
 } from '@journey-os/shared-types';
 import { InitNode } from './nodes/InitNode';
 import { ContextCompilerNode } from './nodes/ContextCompilerNode';
@@ -145,6 +146,10 @@ export const WorkbenchAnnotation = Annotation.Root({
     default: () => null,
   }),
   taskShellId: Annotation<string | null>({
+    reducer: (_prev, next) => next,
+    default: () => null,
+  }),
+  generationParams: Annotation<GenerationParams | null>({
     reducer: (_prev, next) => next,
     default: () => null,
   }),

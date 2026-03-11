@@ -2,33 +2,30 @@
 *Updated: 2026-03-11*
 
 ## Current Story
-**ID:** DEMO epic (Demo Institution Data) | **Status:** COMPLETE | **Phase:** COMPOUND
+**ID:** Epic 2.3 (P2-013 through P2-017) | **Status:** COMPLETE | **Phase:** COMPOUND
 
 ## Last 3 Completed
+- Epic 2.3 (P2-013 through P2-017) — ECD + TaskShells — 2026-03-11
 - DEMO-001 through DEMO-005 — Demo Institution Data Epic — 2026-03-11
 - Epic 2.2 (P2-007 through P2-012) — Review Mode + Bulk Generation — 2026-03-11
-- Epic 2.1 (P2-001 through P2-006) — Pipeline Completion — 2026-03-11
 
-## What Was Done (DEMO Epic)
-- Supabase seed: 1 institution, 11 courses, 5 users, 20 items, 100 options
-- Backend: DashboardRepository + DashboardService + DashboardController + dashboard routes
-- Frontend: 5 TanStack Query hooks (useDashboard.ts) + useCurrentUser.ts
-- Replaced mock data in 5 dashboard pages + 16 pages sidebar/auth cleanup
-- Shared types: packages/shared-types/src/dashboard.ts (9 interfaces)
+## Next Ready Queue
+1. Epic 2.4 — Data Quality + Faculty Trust (P2-018 through P2-021)
+2. Epic 3.1 — Multi-Course Ingestion (P3-001 through P3-006)
 
 ## Solution Docs Written This Session
-- SOL-022: Dashboard API Pattern (Mock-to-Live Migration)
+- SOL-023: ECD Sub-Step Pattern (Node-Internal Expansion)
+
+## Error Patterns Added to CLAUDE.md
+- DUAL_SYSTEM_PROMPT: Loading .txt but also passing inline system string
+- ECD_FALLBACK_REQUIRED: TaskShell/PV lookups can return null — always provide fallback
 
 ## Slim Context Updated
-- .context/routes.yaml — 5 dashboard endpoints
-- .context/components.yaml — 5 dashboard pages + useCurrentUser hook
-
-## Known TODOs
-- course_faculty join table (faculty courses return all institution courses for now)
-- student enrollment table (student courses return all institution courses for now)
-- Institution name not in JWT — sidebar uses fallback until institution API
+- .context/pipeline.yaml — Phase 2 nodes marked built, toulmin_generator added, context_compiler updated with ECD
+- .context/entities.yaml — proficiency_variables table, task_shell_id on assessment_items
 
 ## To Resume
 1. Read SESSION_STATE.md
-2. Run seed migration: `supabase db push` or apply 20250906000000_demo_seed_data.sql
-3. Continue with next epic or wire remaining prototype screens
+2. Run `pnpm seed:layer3` to seed 12 TaskShell nodes
+3. Run `pnpm seed:pv-links` after ingestion to link PVs to TaskShells
+4. Next epic: Epic 2.4 (Data Quality + Faculty Trust)

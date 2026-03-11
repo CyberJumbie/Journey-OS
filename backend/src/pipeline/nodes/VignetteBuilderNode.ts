@@ -43,13 +43,26 @@ export class VignetteBuilderNode implements IPipelineNode {
     const systemPrompt = loadPrompt('vignette-builder-system');
 
     // ── 2. Build user prompt with context, concepts, and faculty request ─────────
-    const userPrompt = [
+    const userPromptParts = [
       `Target concepts: ${state.targetConcepts.join(', ')}`,
       `Faculty request: ${state.userMessage}`,
-      '',
-      'Curriculum context:',
-      state.context,
-    ].join('\n');
+    ];
+
+    // Inject TaskShell generation parameters if available (P2-016 ECD)
+    if (state.generationParams) {
+      userPromptParts.push('');
+      userPromptParts.push('## TaskShell Generation Parameters');
+      userPromptParts.push(`vignetteRequired: ${String(state.generationParams.vignetteRequired)}`);
+      userPromptParts.push(`optionCount: ${String(state.generationParams.optionCount)}`);
+      userPromptParts.push(`distractorStrategy: ${state.generationParams.distractorStrategy}`);
+      userPromptParts.push(`bloomTarget: ${String(state.generationParams.bloomTarget)}`);
+    }
+
+    userPromptParts.push('');
+    userPromptParts.push('Curriculum context:');
+    userPromptParts.push(state.context);
+
+    const userPrompt = userPromptParts.join('\n');
 
     // ── 3. Stream vignette from Claude Sonnet ───────────────────────────────────
     const anthropic = AnthropicClient.getInstance();

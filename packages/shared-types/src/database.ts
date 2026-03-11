@@ -319,3 +319,22 @@ export const BulkBatchItemRowSchema = z.object({
   created_at: z.string(),
 });
 export type BulkBatchItemRow = z.infer<typeof BulkBatchItemRowSchema>;
+
+// ── Proficiency Variable ──────────────────────────────────────────────────────
+
+export const ProficiencyVariableRowSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  sub_concept_id: z.string().uuid().nullable(),
+  neo4j_node_id: z.string().nullable(),
+  sync_status: SyncStatusSchema,
+  created_at: z.string(),
+});
+export type ProficiencyVariableRow = z.infer<typeof ProficiencyVariableRowSchema>;
+
+export const ProficiencyVariableInsertSchema = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string(),
+  sub_concept_id: z.string().uuid().optional(),
+});
+export type ProficiencyVariableInsert = z.infer<typeof ProficiencyVariableInsertSchema>;
