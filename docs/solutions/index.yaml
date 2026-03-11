@@ -84,3 +84,10 @@ SOL-007: classifier-noise-filter | P1-013 | pipeline — LangGraph node strips a
   summary: Every notification fires both Socket.io (real-time) AND writes to Supabase notifications table (persistent + Realtime). Frontend subscribes to both channels.
   phase: 4
   stories: [P4-012]
+
+- id: SOL-019
+  title: Pipeline Node Pattern (LangGraph.js Generation)
+  file: docs/solutions/SOL-019-pipeline-node-pattern.md
+  summary: IPipelineNode interface, readFileSync prompt loading, AnthropicClient singleton, WorkbenchStateBuilder, AIMessage TEXT_MESSAGE, streaming accumulation. One file per node.
+  phase: 1
+  stories: [P1-016, P1-017, P1-018, P1-019, P1-020, P1-021, P1-022, P1-023]

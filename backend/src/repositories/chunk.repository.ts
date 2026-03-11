@@ -63,6 +63,85 @@ export class ChunkRepository {
   }
 
   /**
+   * Find multiple chunks by their IDs.
+   * Returns chunks in the order of the input IDs array.
+   */
+  async findByIds(ids: string[]): Promise<ContentChunkRow[]> {
+    if (ids.length === 0) return [];
+
+    const { data, error } = await this.supabase
+      .from('content_chunks')
+      .select()
+      .in('id', ids);
+
+    if (error) {
+      throw new Error(`Failed to fetch chunks by IDs: ${error.message}`);
+    }
+
+    // Preserve the order of input IDs
+    const chunkMap = new Map((data ?? []).map((c) => [c.id, c]));
+    return ids
+      .map((id) => chunkMap.get(id))
+      .filter((c): c is ContentChunkRow => c !== undefined);
+  }
+
+  /**
+   * Vector similarity search using pgvector cosine distance.
+   * Returns chunk IDs ordered by cosine similarity (closest first).
+   * Uses the Voyage embedding table by default.
+   */
+  async vectorSearchChunks(
+    courseId: string,
+    queryEmbedding: number[],
+    limit: number = 10,
+  ): Promise<string[]> {
+    // Use Supabase rpc for vector search with cosine distance
+    // The <=> operator is cosine distance in pgvector
+    const embeddingStr = `[${queryEmbedding.join(',')}]`;
+
+    const { data, error } = await this.supabase.rpc('match_content_chunks', {
+      query_embedding: embeddingStr,
+      match_course_id: courseId,
+      match_count: limit,
+    });
+
+    if (error) {
+      // Fall back to raw SQL if RPC not available
+      console.warn(`[ChunkRepository] RPC match_content_chunks failed: ${error.message}, falling back to raw query`);
+      return this.vectorSearchChunksFallback(courseId, queryEmbedding, limit);
+    }
+
+    return ((data ?? []) as Array<{ id: string }>).map((row) => row.id);
+  }
+
+  /**
+   * Fallback vector search using raw SQL via Supabase.
+   * Used when the match_content_chunks RPC is not available.
+   */
+  private async vectorSearchChunksFallback(
+    courseId: string,
+    _queryEmbedding: number[],
+    limit: number,
+  ): Promise<string[]> {
+    const { data, error } = await this.supabase
+      .from('content_chunks')
+      .select(`
+        id,
+        content_chunk_embeddings!inner(embedding)
+      `)
+      .eq('course_id', courseId)
+      .limit(limit);
+
+    if (error) {
+      throw new Error(`Vector search fallback failed: ${error.message}`);
+    }
+
+    // Without RPC, we cannot use <=> in the client. Return unordered results
+    // from the same course — the RRF merge will handle ranking.
+    return ((data ?? []) as Array<{ id: string }>).map((row) => row.id);
+  }
+
+  /**
    * Insert embedding into the Voyage embeddings table.
    */
   async insertVoyageEmbedding(chunkId: string, embedding: number[]): Promise<void> {

@@ -183,6 +183,8 @@ By story 20, expect 3× story 1 speed.
 - INLINE_PROMPT: Writing Claude prompt text inline in node code. All prompts in backend/src/pipeline/prompts/*.txt.
 - OPUS_IN_PHASE1: Using claude-opus in Phase 1. Opus is Critic Agent only, Phase 2+.
 - STORAGE_API: Using localStorage or sessionStorage. Not supported — use useState or TanStack Query cache.
+- COPILOTKIT_SSR: CopilotKit hooks (useCoAgent, CopilotChat) fail during Next.js static prerendering. Use `dynamic(() => import('./component'), { ssr: false })` for any page with CopilotKit.
+- RAW_OBJECT_RETURN: Returning raw `{ field: value }` from pipeline nodes. Use WorkbenchStateBuilder, spread with `messages` array: `return { ...builder.build(), messages }`.
 
 ---
 

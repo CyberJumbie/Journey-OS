@@ -4,13 +4,13 @@
 # status: planned | built | tested
 
 # ── Phase 1 — 7-Node Pipeline ─────────────────────────────────────────────────
-init: "WorkbenchState → WorkbenchState+courseContext (no AI, DB reads) — planned"
-context_compiler: "courseContext → retrievedChunks via Graph RAG + Vector RAG + RRF (no AI) — planned"
-vignette_builder: "retrievedChunks → vignette string (Sonnet, STATE_DELTA stream) — planned"
-stem_writer: "vignette → leadInStem string (Sonnet) — planned"
-distractor_generator: "stem+vignette → Option[5] with rationales (Sonnet) — planned"
-validator: "AssessmentItem → ValidationResult; 10 of 30 NBME structural rules (rule-based, no AI) — planned"
-graph_writer: "ValidatedItem → DualWrite to Supabase+Neo4j (no AI) — planned"
+init: "WorkbenchState → WorkbenchState+courseContext+generationLogId (no AI, DB reads, Builder pattern) — built"
+context_compiler: "targetConcepts+userMessage → context string via Graph RAG + Vector RAG + RRF + Haiku refiner (4K token budget) — built"
+vignette_builder: "context+targetConcepts → vignette 150-200 word clinical vignette (Sonnet streaming) — built"
+stem_writer: "vignette+context → stem NBME lead-in question (Sonnet streaming) — built"
+distractor_generator: "stem+vignette → Option[5]; TWO-PHASE: reasoning artifact → JSON options (Sonnet, randomized position) — built"
+validator: "vignette+stem+options → ValidationResult[10]; pure functions, no AI (nbme-rules.ts) — built"
+graph_writer: "full state → DualWrite assessment_items+options to Supabase, MERGE AssessmentItem+rels to Neo4j — built"
 
 # ── Phase 2 Additions (not built yet) ─────────────────────────────────────────
 # tagger: "AssessmentItem → tags[USMLE_System, BloomLevel] (Haiku) — phase2"

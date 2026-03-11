@@ -56,6 +56,7 @@ export const WorkbenchStateSchema = z.object({
   pipelineStatus: PipelineStatusSchema,
   generationLogId: z.string(),
   itemId: z.string(),
+  sourceChunkIds: z.array(z.string()),
 });
 export type WorkbenchState = z.infer<typeof WorkbenchStateSchema>;
 
