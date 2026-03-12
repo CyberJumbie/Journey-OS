@@ -25,6 +25,10 @@ const envSchema = z.object({
   EMBEDDING_PROVIDERS: z.string().default('voyage'),
   EMBEDDING_SEARCH_PROVIDER: z.enum(['voyage', 'openai']).default('voyage'),
 
+  // Inngest (optional for local dev — Inngest Dev Server works without cloud credentials)
+  INNGEST_EVENT_KEY: z.string().optional(),
+  INNGEST_SIGNING_KEY: z.string().optional(),
+
   // Server
   PORT: z.string().default('3001'),
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),

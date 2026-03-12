@@ -1,29 +1,47 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { User, Building2, Calendar, Save, ArrowLeft } from "lucide-react";
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 
 export default function Profile() {
   const router = useRouter();
+  const { data: currentUser } = useCurrentUser();
   const [isEditing, setIsEditing] = useState(false);
+
+  const nameParts = (currentUser?.displayName ?? '').split(' ');
+  const defaultFirstName = nameParts[0] ?? '';
+  const defaultLastName = nameParts.slice(1).join(' ') ?? '';
+
   const [formData, setFormData] = useState({
-    firstName: "Sarah",
-    lastName: "Johnson",
-    email: "sarah.johnson@msm.edu",
-    phone: "(404) 555-0123",
-    department: "Internal Medicine",
-    title: "Associate Professor",
-    joinDate: "2019-08-15",
-    specialization: "Cardiology",
-    bio: "Board-certified internist with over 15 years of clinical and teaching experience. Passionate about medical education and curriculum development.",
+    firstName: defaultFirstName,
+    lastName: defaultLastName,
+    email: currentUser?.email ?? '',
+    phone: "",
+    department: "",
+    title: "",
+    joinDate: "",
+    specialization: "",
+    bio: "",
   });
+
+  // Sync form data when currentUser loads
+  useEffect(() => {
+    if (currentUser) {
+      const parts = currentUser.displayName.split(' ');
+      setFormData(prev => ({
+        ...prev,
+        firstName: parts[0] ?? prev.firstName,
+        lastName: parts.slice(1).join(' ') || prev.lastName,
+        email: currentUser.email || prev.email,
+      }));
+    }
+  }, [currentUser]);
 
   const handleSave = () => {
     // Save profile data
@@ -69,7 +87,7 @@ export default function Profile() {
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <div className="flex items-start gap-6">
             <div className="size-24 rounded-full bg-gradient-to-br from-[#FFC645] to-[#FFB020] flex items-center justify-center text-white text-3xl font-semibold">
-              SJ
+              {currentUser?.initials ?? '??'}
             </div>
             <div className="flex-1">
               <h3 className="font-semibold text-gray-900 mb-1">Profile Picture</h3>
@@ -203,7 +221,7 @@ export default function Profile() {
             </div>
             <div className="flex justify-between py-2 border-b border-gray-100">
               <span className="text-sm text-gray-600">Role</span>
-              <span className="text-sm font-medium text-gray-900">Faculty Member</span>
+              <span className="text-sm font-medium text-gray-900">{currentUser?.roleLabel ?? 'User'}</span>
             </div>
           </div>
         </div>

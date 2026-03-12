@@ -14,17 +14,31 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { useSignOut } from '@/lib/auth-client';
 
 interface TopNavigationProps {
   showSearch?: boolean;
 }
 
+const ROLE_BADGE_VARIANT: Record<string, string> = {
+  faculty: 'faculty',
+  institutional_admin: 'admin',
+  superadmin: 'admin',
+  student: 'default',
+  advisor: 'default',
+};
+
 export default function TopNavigation({ showSearch = false }: TopNavigationProps) {
   const router = useRouter();
+  const signOut = useSignOut();
+  const { data: user } = useCurrentUser();
 
-  const handleSignOut = () => {
-    router.push('/login');
-  };
+  const displayName = user?.displayName ?? 'User';
+  const email = user?.email ?? '';
+  const initials = user?.initials ?? '??';
+  const roleLabel = user?.roleLabel ?? 'User';
+  const badgeVariant = user ? (ROLE_BADGE_VARIANT[user.role] ?? 'default') : 'default';
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[var(--gray-300)]/40 bg-white shadow-sm">
@@ -91,16 +105,16 @@ export default function TopNavigation({ showSearch = false }: TopNavigationProps
               <Button variant="ghost" className="relative h-9 w-9 rounded-full hover:bg-[var(--parchment)]">
                 <Avatar>
                   <AvatarFallback className="bg-[var(--green)] text-[var(--navy)] font-semibold">
-                    DS
+                    {initials}
                   </AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-72" align="end">
               <div className="flex flex-col space-y-1 p-3">
-                <p className="text-sm font-semibold leading-none text-[var(--navy)]">Dr. Sarah Johnson</p>
-                <p className="text-[13px] leading-none text-[var(--gray-600)]">sarah.johnson@msm.edu</p>
-                <Badge variant="faculty" className="mt-2 w-fit">Faculty</Badge>
+                <p className="text-sm font-semibold leading-none text-[var(--navy)]">{displayName}</p>
+                <p className="text-[13px] leading-none text-[var(--gray-600)]">{email}</p>
+                <Badge variant={badgeVariant as 'faculty' | 'admin' | 'default'} className="mt-2 w-fit">{roleLabel}</Badge>
               </div>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => router.push('/profile')}>Profile</DropdownMenuItem>
@@ -112,7 +126,7 @@ export default function TopNavigation({ showSearch = false }: TopNavigationProps
               <DropdownMenuItem onClick={() => router.push('/settings')}>Settings</DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push('/help')}>Help & Support</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleSignOut} className="text-[var(--red)] focus:text-[var(--red)]">
+              <DropdownMenuItem onClick={() => signOut()} className="text-[var(--red)] focus:text-[var(--red)]">
                 Sign Out
               </DropdownMenuItem>
             </DropdownMenuContent>

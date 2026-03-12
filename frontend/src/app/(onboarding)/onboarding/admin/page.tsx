@@ -1,13 +1,11 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-
-
-import { useState } from "react";
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { ChevronRight, CheckCircle2 } from "lucide-react";
+import { useOnboarding } from '@/hooks/useOnboarding';
 
 const SETUP_TASKS = [
   {
@@ -34,8 +32,9 @@ const SETUP_TASKS = [
 
 export default function AdminOnboarding() {
   const router = useRouter();
-  const [step, setStep] = useState(1);
   const totalSteps = 2;
+  const { currentStep, nextStep, prevStep, complete, saving, error, isFirst, isLast } = useOnboarding({ totalSteps, role: 'institutional_admin' });
+  const step = currentStep + 1;
 
   const progress = (step / totalSteps) * 100;
 
@@ -152,23 +151,24 @@ export default function AdminOnboarding() {
             )}
 
             {/* Navigation Buttons */}
+            {error && <p className="text-sm text-red-600 mt-4">{error}</p>}
             <div className="flex items-center justify-between mt-8 pt-6 border-t">
-              {step > 1 ? (
-                <Button variant="outline" onClick={() => setStep(step - 1)}>
+              {!isFirst ? (
+                <Button variant="outline" onClick={prevStep} disabled={saving}>
                   Back
                 </Button>
               ) : (
                 <div />
               )}
 
-              {step < totalSteps ? (
-                <Button onClick={() => setStep(step + 1)}>
+              {!isLast ? (
+                <Button onClick={() => nextStep()} disabled={saving}>
                   Next
                   <ChevronRight className="size-4 ml-2" />
                 </Button>
               ) : (
-                <Button onClick={() => router.push("/admin")}>
-                  Go to Admin Dashboard
+                <Button onClick={() => complete()} disabled={saving}>
+                  {saving ? 'Saving...' : 'Go to Admin Dashboard'}
                   <ChevronRight className="size-4 ml-2" />
                 </Button>
               )}
@@ -177,11 +177,12 @@ export default function AdminOnboarding() {
         </Card>
 
         {/* Skip Option */}
-        {step < totalSteps && (
+        {!isLast && (
           <div className="text-center mt-6">
             <button
-              onClick={() => router.push("/admin")}
+              onClick={() => complete()}
               className="text-sm text-muted-foreground hover:text-foreground"
+              disabled={saving}
             >
               Skip for now
             </button>

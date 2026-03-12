@@ -1,5 +1,5 @@
 import type { Driver } from 'neo4j-driver';
-import Neo4jClient from '../lib/Neo4jClient.js';
+import Neo4jClient from '../lib/Neo4jClient';
 
 /** Lightweight course data returned from Neo4j (skinny node). */
 export interface CourseGraphData {
@@ -224,6 +224,149 @@ export class GraphRepository {
   }
 
   /**
+   * Update the status property on an AssessmentItem node in Neo4j.
+   * Skinny node: only updates the status field (Rule 4).
+   * Uses MERGE for idempotency (Rule 3).
+   */
+  async setItemStatus(neo4jNodeId: string, status: string): Promise<void> {
+    const session = this.driver.session();
+    try {
+      await session.run(
+        `MATCH (ai:AssessmentItem)
+         WHERE elementId(ai) = $nodeId
+         SET ai.status = $status`,
+        { nodeId: neo4jNodeId, status },
+      );
+    } finally {
+      await session.close();
+    }
+  }
+
+  /**
+   * Update taxonomy tags on an AssessmentItem node (skinny: bloom_level + difficulty only).
+   * Called by TaggerNode after Supabase write (DualWrite pattern).
+   */
+  async updateAssessmentItemTags(itemId: string, bloomLevel: number, difficulty: number): Promise<void> {
+    const session = this.driver.session();
+    try {
+      await session.run(
+        `MATCH (ai:AssessmentItem {uuid: $itemId})
+         SET ai.bloom_level = $bloomLevel, ai.difficulty = $difficulty`,
+        { itemId, bloomLevel, difficulty },
+      );
+    } finally {
+      await session.close();
+    }
+  }
+
+  /**
+   * MERGE a ProficiencyVariable node and link it to its SubConcept via MAPPED_TO.
+   * PV name convention: `pv_{subConceptName}`.
+   * Returns the Neo4j element ID.
+   */
+  async mergeProficiencyVariable(
+    pvUuid: string,
+    pvName: string,
+    subConceptUuid: string,
+  ): Promise<string> {
+    const session = this.driver.session();
+    try {
+      const result = await session.run(
+        `MERGE (pv:ProficiencyVariable {name: $pvName})
+         ON CREATE SET pv.uuid = $pvUuid, pv.subConceptUuid = $subConceptUuid, pv.createdAt = datetime()
+         WITH pv
+         MATCH (sc:SubConcept {uuid: $subConceptUuid})
+         MERGE (pv)-[:MAPPED_TO]->(sc)
+         RETURN elementId(pv) AS nodeId`,
+        { pvName, pvUuid, subConceptUuid },
+      );
+
+      const record = result.records[0];
+      if (!record) {
+        throw new Error(`Failed to merge ProficiencyVariable node: ${pvName}`);
+      }
+
+      return record.get('nodeId') as string;
+    } finally {
+      await session.close();
+    }
+  }
+
+  /**
+   * Link a ProficiencyVariable to up to 3 TaskShells via ASSESSED_BY relationships.
+   * Matches TaskShells whose Bloom range contains the given bloom_level_guess.
+   * Priority 1 = narrowest matching range, priority 2-3 = next narrowest.
+   */
+  async linkAssessedBy(pvUuid: string, bloomGuess: number): Promise<void> {
+    const session = this.driver.session();
+    try {
+      await session.run(
+        `MATCH (pv:ProficiencyVariable {uuid: $pvUuid})
+         MATCH (ts:TaskShell)
+         WHERE ts.bloomMin <= $bloomGuess AND ts.bloomMax >= $bloomGuess
+         WITH pv, ts, (ts.bloomMax - ts.bloomMin) AS bloomRange
+         ORDER BY bloomRange ASC
+         LIMIT 3
+         WITH pv, collect(ts) AS shells
+         UNWIND range(0, size(shells) - 1) AS idx
+         WITH pv, shells[idx] AS ts, idx + 1 AS priority
+         MERGE (pv)-[r:ASSESSED_BY]->(ts)
+         SET r.priority = priority`,
+        { pvUuid, bloomGuess },
+      );
+    } finally {
+      await session.close();
+    }
+  }
+
+  /**
+   * Find the highest-priority TaskShell for a given SubConcept name.
+   * Traverses: ProficiencyVariable -[:MAPPED_TO]-> SubConcept
+   *            ProficiencyVariable -[:ASSESSED_BY]-> TaskShell
+   * Returns null if no ProficiencyVariable or TaskShell found.
+   */
+  async findTaskShellBySubConcept(subConceptName: string): Promise<{
+    shellId: string;
+    name: string;
+    bloomMin: number;
+    bloomMax: number;
+    vignetteRequired: boolean;
+    optionCount: number;
+    distractorStrategy: string;
+  } | null> {
+    const session = this.driver.session();
+    try {
+      const result = await session.run(
+        `MATCH (pv:ProficiencyVariable)-[:MAPPED_TO]->(sc:SubConcept {name: $name})
+         MATCH (pv)-[r:ASSESSED_BY]->(ts:TaskShell)
+         RETURN ts.shellId AS shellId, ts.name AS name,
+                ts.bloomMin AS bloomMin, ts.bloomMax AS bloomMax,
+                ts.vignetteRequired AS vignetteRequired,
+                ts.optionCount AS optionCount,
+                ts.distractorStrategy AS distractorStrategy
+         ORDER BY r.priority ASC
+         LIMIT 1`,
+        { name: subConceptName },
+      );
+
+      const record = result.records[0];
+      if (!record) return null;
+
+      return {
+        shellId: record.get('shellId') as string,
+        name: record.get('name') as string,
+        bloomMin: (record.get('bloomMin') as { toNumber?: () => number }).toNumber?.() ?? (record.get('bloomMin') as number),
+        bloomMax: (record.get('bloomMax') as { toNumber?: () => number }).toNumber?.() ?? (record.get('bloomMax') as number),
+        vignetteRequired: record.get('vignetteRequired') as boolean,
+        optionCount: (record.get('optionCount') as { toNumber?: () => number }).toNumber?.() ?? (record.get('optionCount') as number),
+        distractorStrategy: record.get('distractorStrategy') as string,
+      };
+    } finally {
+      await session.close();
+    }
+  }
+
+  /**
    * MERGE an AssessmentItem node with all required relationships.
    * Skinny node: only uuid + bloom_level + status + created_at (Rule 4).
    * Full text (vignette, stem, rationale) stays in Supabase only.
@@ -242,6 +385,7 @@ export class GraphRepository {
     courseId: string;
     targetConcepts: string[];
     sourceChunkIds: string[];
+    taskShellId?: string | null;
   }): Promise<string> {
     const session = this.driver.session();
     try {
@@ -295,6 +439,16 @@ export class GraphRepository {
            MATCH (cc:ContentChunk {uuid: $chunkId})
            MERGE (ai)-[:GENERATED_FROM]->(cc)`,
           { itemId: params.itemId, chunkId },
+        );
+      }
+
+      // Step 6: MERGE INSTANTIATES relationship to TaskShell (backward compatible)
+      if (params.taskShellId) {
+        await session.run(
+          `MATCH (ai:AssessmentItem {uuid: $itemId})
+           MATCH (ts:TaskShell {shellId: $taskShellId})
+           MERGE (ai)-[:INSTANTIATES]->(ts)`,
+          { itemId: params.itemId, taskShellId: params.taskShellId },
         );
       }
 

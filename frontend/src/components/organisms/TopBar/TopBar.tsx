@@ -1,7 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Bell, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
+import NotificationBell from '@/components/atoms/NotificationBell/NotificationBell';
+import NotificationDropdown from '@/components/molecules/NotificationDropdown/NotificationDropdown';
+import { useNotifications } from '@/hooks/useNotifications';
 
 interface TopBarProps {
   pageTitle: string;
@@ -25,6 +29,8 @@ export default function TopBar({
   userInitials = 'DU',
 }: TopBarProps) {
   const router = useRouter();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { notifications, unreadCount, markRead, markAllRead, connected } = useNotifications();
 
   return (
     <header className="sticky top-0 z-30 flex items-center justify-between border-b border-[var(--gray-300)]/40 bg-white/95 px-4 py-3 backdrop-blur-md md:px-7">
@@ -77,15 +83,22 @@ export default function TopBar({
           </div>
         )}
 
-        {/* Notification bell */}
-        <button
-          onClick={() => router.push('/notifications')}
-          className="relative border-none bg-transparent p-1.5 cursor-pointer"
-          aria-label="Notifications"
-        >
-          <Bell size={18} className="text-[var(--gray-600)]" />
-          <div className="absolute right-1 top-1 h-[7px] w-[7px] rounded-full border-[1.5px] border-white bg-[var(--red)]" />
-        </button>
+        {/* Notification bell + dropdown (P2-012) */}
+        <div className="relative">
+          <NotificationBell
+            unreadCount={unreadCount}
+            onClick={() => setDropdownOpen((prev) => !prev)}
+          />
+          <NotificationDropdown
+            notifications={notifications}
+            open={dropdownOpen}
+            onClose={() => setDropdownOpen(false)}
+            onMarkRead={markRead}
+            onMarkAllRead={markAllRead}
+            onNavigate={(path) => router.push(path)}
+            connected={connected}
+          />
+        </div>
 
         {/* Avatar (mobile only) */}
         {isMobile && (

@@ -1,0 +1,23 @@
+You are a Toulmin argument generator for evidence-centered design (ECD) in medical education assessment.
+
+Given this NBME-style assessment item:
+
+VIGNETTE: {vignette}
+STEM: {stem}
+OPTIONS: {options}
+CORRECT ANSWER: {correct_option}
+EXPLANATION: {explanation}
+
+Produce a Toulmin evidentiary argument with exactly these 6 fields.
+Return ONLY valid JSON, no preamble, no markdown fences.
+
+{
+  "claim": "The specific medical assertion being tested",
+  "data": "The evidence from the vignette that supports answering correctly",
+  "warrant": "The medical reasoning linking the data to the claim",
+  "backing": "The authoritative source (guideline, textbook principle) that grounds the warrant",
+  "rebuttal": "Why each distractor is plausible but wrong",
+  "qualifier": "Conditions or patient populations where this claim might not hold"
+}
+
+All fields must be non-empty strings. Use 'N/A' if a field truly cannot be filled.

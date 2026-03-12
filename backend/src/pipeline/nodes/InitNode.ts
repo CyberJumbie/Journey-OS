@@ -13,10 +13,10 @@
 
 import { AIMessage } from '@langchain/core/messages';
 import type { WorkbenchState } from '@journey-os/shared-types';
-import type { IPipelineNode } from '../PipelineNode.interface.js';
-import { WorkbenchStateBuilder } from '../WorkbenchStateBuilder.js';
-import { GraphRepository } from '../../repositories/graph.repository.js';
-import { GenerationLogRepository } from '../../repositories/generation-log.repository.js';
+import type { IPipelineNode } from '../PipelineNode.interface';
+import { WorkbenchStateBuilder } from '../WorkbenchStateBuilder';
+import { GraphRepository } from '../../repositories/graph.repository';
+import { GenerationLogRepository } from '../../repositories/generation-log.repository';
 
 export class InitNode implements IPipelineNode {
   readonly name = 'init';

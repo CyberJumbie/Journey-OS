@@ -1,8 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-
-
 import { useState } from "react";
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -11,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { ChevronRight, ChevronLeft } from "lucide-react";
+import { useOnboarding } from '@/hooks/useOnboarding';
 
 const TEACHING_AREAS = [
   "Basic Sciences (Pre-clinical)",
@@ -37,9 +35,9 @@ const USAGE_GOALS = [
 ];
 
 export default function FacultyOnboarding() {
-  const router = useRouter();
-  const [step, setStep] = useState(1);
   const totalSteps = 4;
+  const { currentStep, nextStep, prevStep, complete, saving, error, isFirst, isLast } = useOnboarding({ totalSteps, role: 'faculty' });
+  const step = currentStep + 1;
 
   const [formData, setFormData] = useState({
     teachingAreas: [] as string[],
@@ -73,11 +71,6 @@ export default function FacultyOnboarding() {
         ? formData.usageGoals.filter((g) => g !== goal)
         : [...formData.usageGoals, goal],
     });
-  };
-
-  const handleComplete = () => {
-    // Save preferences and navigate to faculty dashboard
-    router.push("/dashboard");
   };
 
   const progress = (step / totalSteps) * 100;
@@ -241,9 +234,10 @@ export default function FacultyOnboarding() {
             )}
 
             {/* Navigation Buttons */}
+            {error && <p className="text-sm text-red-600 mt-4">{error}</p>}
             <div className="flex items-center justify-between mt-8 pt-6 border-t">
-              {step > 1 ? (
-                <Button variant="outline" onClick={() => setStep(step - 1)}>
+              {!isFirst ? (
+                <Button variant="outline" onClick={prevStep} disabled={saving}>
                   <ChevronLeft className="size-4 mr-2" />
                   Back
                 </Button>
@@ -251,14 +245,14 @@ export default function FacultyOnboarding() {
                 <div />
               )}
 
-              {step < totalSteps ? (
-                <Button onClick={() => setStep(step + 1)}>
+              {!isLast ? (
+                <Button onClick={() => nextStep()} disabled={saving}>
                   Next
                   <ChevronRight className="size-4 ml-2" />
                 </Button>
               ) : (
-                <Button onClick={handleComplete}>
-                  Complete Setup
+                <Button onClick={() => complete(formData)} disabled={saving}>
+                  {saving ? 'Saving...' : 'Complete Setup'}
                   <ChevronRight className="size-4 ml-2" />
                 </Button>
               )}
@@ -269,8 +263,9 @@ export default function FacultyOnboarding() {
         {/* Skip Option */}
         <div className="text-center mt-6">
           <button
-            onClick={() => router.push("/dashboard")}
+            onClick={() => complete()}
             className="text-sm text-muted-foreground hover:text-foreground"
+            disabled={saving}
           >
             Skip for now
           </button>

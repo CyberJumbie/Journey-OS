@@ -12,104 +12,51 @@ import {
 } from '@/components/ui/dropdown-menu';
 import {
   Search,
-  Plus,
   BookOpen,
-  Users,
   FileText,
-  Clock,
-  Filter,
-  MoreVertical,
   ArrowUpDown,
+  Layers,
+  Loader2,
 } from 'lucide-react';
-
-const courses = [
-  {
-    id: '1',
-    name: 'Advanced Cardiovascular Medicine',
-    code: 'CARD-501',
-    semester: 'Spring 2026',
-    students: 45,
-    questions: 127,
-    status: 'active',
-    lastUpdated: '2026-02-14',
-  },
-  {
-    id: '2',
-    name: 'Internal Medicine Fundamentals',
-    code: 'IM-301',
-    semester: 'Spring 2026',
-    students: 82,
-    questions: 243,
-    status: 'active',
-    lastUpdated: '2026-02-13',
-  },
-  {
-    id: '3',
-    name: 'Clinical Diagnosis & Reasoning',
-    code: 'DIAG-402',
-    semester: 'Fall 2025',
-    students: 38,
-    questions: 89,
-    status: 'archived',
-    lastUpdated: '2025-12-15',
-  },
-  {
-    id: '4',
-    name: 'Pharmacology in Practice',
-    code: 'PHARM-350',
-    semester: 'Spring 2026',
-    students: 67,
-    questions: 156,
-    status: 'active',
-    lastUpdated: '2026-02-10',
-  },
-  {
-    id: '5',
-    name: 'Emergency Medicine Protocols',
-    code: 'EM-450',
-    semester: 'Fall 2025',
-    students: 52,
-    questions: 178,
-    status: 'archived',
-    lastUpdated: '2025-11-30',
-  },
-  {
-    id: '6',
-    name: 'Pediatric Care Essentials',
-    code: 'PED-320',
-    semester: 'Spring 2026',
-    students: 41,
-    questions: 98,
-    status: 'active',
-    lastUpdated: '2026-02-11',
-  },
-];
+import { useCourses } from '@/hooks/useCourses';
+import type { CourseListItem } from '@/hooks/useCourses';
+import CourseStats from '@/components/molecules/CourseStats/CourseStats';
 
 export default function AllCourses() {
   const router = useRouter();
+  const { data: courses, isLoading, error } = useCourses();
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'archived'>('all');
-  const [sortBy, setSortBy] = useState<'name' | 'updated' | 'questions'>('updated');
+  const [sortBy, setSortBy] = useState<'title' | 'code' | 'items'>('title');
 
-  const filteredCourses = courses
-    .filter((course) => {
-      const matchesSearch =
-        course.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        course.code.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesFilter = filterStatus === 'all' || course.status === filterStatus;
-      return matchesSearch && matchesFilter;
+  const filteredCourses = (courses ?? [])
+    .filter((course: CourseListItem) => {
+      const q = searchQuery.toLowerCase();
+      return (
+        course.title.toLowerCase().includes(q) ||
+        course.code.toLowerCase().includes(q)
+      );
     })
-    .sort((a, b) => {
-      if (sortBy === 'name') return a.name.localeCompare(b.name);
-      if (sortBy === 'questions') return b.questions - a.questions;
-      return new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime();
+    .sort((a: CourseListItem, b: CourseListItem) => {
+      if (sortBy === 'title') return a.title.localeCompare(b.title);
+      if (sortBy === 'code') return a.code.localeCompare(b.code);
+      return b.item_count - a.item_count;
     });
 
-  const getStatusColor = (status: string) => {
-    return status === 'active'
-      ? 'bg-green-100 text-green-700'
-      : 'bg-gray-100 text-gray-600';
-  };
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="size-8 animate-spin text-[var(--blue-mid)]" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-600">Failed to load courses. Please try again.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -118,68 +65,17 @@ export default function AllCourses() {
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">All Courses</h1>
           <p className="text-sm text-gray-600 mt-1">
-            Manage and view all your courses
+            Select a course to open the Quest Workbench
           </p>
         </div>
-        <Button onClick={() => router.push('/courses/create')}>
-          <Plus className="size-4" />
-          Create New Course
-        </Button>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-[--radius-xl] border border-[--border-light] p-4 hover:border-[--blue-mid] hover:shadow-[--shadow-sm] transition-all">
-          <div className="flex items-center gap-3">
-            <div className="size-10 rounded-lg bg-[#FFC645]/10 flex items-center justify-center">
-              <BookOpen className="size-5 text-[#FFC645]" />
-            </div>
-            <div>
-              <p className="text-sm text-[--text-secondary]">Total Courses</p>
-              <p className="text-xl font-semibold text-[--ink]">{courses.length}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-[--radius-xl] border border-[--border-light] p-4 hover:border-[--blue-mid] hover:shadow-[--shadow-sm] transition-all">
-          <div className="flex items-center gap-3">
-            <div className="size-10 rounded-lg bg-green-100 flex items-center justify-center">
-              <Users className="size-5 text-green-600" />
-            </div>
-            <div>
-              <p className="text-sm text-[--text-secondary]">Total Students</p>
-              <p className="text-xl font-semibold text-[--ink]">
-                {courses.reduce((sum, c) => sum + c.students, 0)}
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-[--radius-xl] border border-[--border-light] p-4 hover:border-[--blue-mid] hover:shadow-[--shadow-sm] transition-all">
-          <div className="flex items-center gap-3">
-            <div className="size-10 rounded-lg bg-blue-100 flex items-center justify-center">
-              <FileText className="size-5 text-blue-600" />
-            </div>
-            <div>
-              <p className="text-sm text-[--text-secondary]">Total Questions</p>
-              <p className="text-xl font-semibold text-[--ink]">
-                {courses.reduce((sum, c) => sum + c.questions, 0)}
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-[--radius-xl] border border-[--border-light] p-4 hover:border-[--blue-mid] hover:shadow-[--shadow-sm] transition-all">
-          <div className="flex items-center gap-3">
-            <div className="size-10 rounded-lg bg-purple-100 flex items-center justify-center">
-              <Clock className="size-5 text-purple-600" />
-            </div>
-            <div>
-              <p className="text-sm text-[--text-secondary]">Active Courses</p>
-              <p className="text-xl font-semibold text-[--ink]">
-                {courses.filter((c) => c.status === 'active').length}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CourseStats
+        courseCount={courses?.length ?? 0}
+        itemCount={(courses ?? []).reduce((sum: number, c: CourseListItem) => sum + c.item_count, 0)}
+        subconceptCount={(courses ?? []).reduce((sum: number, c: CourseListItem) => sum + c.subconcept_count, 0)}
+      />
 
       {/* Filters and Search */}
       <div className="bg-white rounded-[--radius-xl] border border-[--border-light] p-4">
@@ -193,172 +89,70 @@ export default function AllCourses() {
               className="pl-10"
             />
           </div>
-          <div className="flex gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline">
-                  <Filter className="size-4" />
-                  Status: {filterStatus === 'all' ? 'All' : filterStatus === 'active' ? 'Active' : 'Archived'}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setFilterStatus('all')}>
-                  All Courses
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilterStatus('active')}>
-                  Active Only
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilterStatus('archived')}>
-                  Archived Only
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline">
-                  <ArrowUpDown className="size-4" />
-                  Sort by
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setSortBy('updated')}>
-                  Last Updated
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSortBy('name')}>
-                  Course Name
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSortBy('questions')}>
-                  Question Count
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                <ArrowUpDown className="size-4" />
+                Sort by
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setSortBy('title')}>
+                Course Title
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setSortBy('code')}>
+                Course Code
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setSortBy('items')}>
+                Item Count
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
-      {/* Course List */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                  Course
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                  Semester
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                  Students
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                  Questions
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                  Last Updated
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {filteredCourses.map((course) => (
-                <tr
-                  key={course.id}
-                  className="hover:bg-gray-50 cursor-pointer transition-colors"
-                  onClick={() => router.push(`/courses/${course.id}`)}
-                >
-                  <td className="px-6 py-4">
-                    <div>
-                      <p className="font-medium text-gray-900">{course.name}</p>
-                      <p className="text-sm text-gray-600">{course.code}</p>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    {course.semester}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    <div className="flex items-center gap-2">
-                      <Users className="size-4 text-gray-400" />
-                      {course.students}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    <div className="flex items-center gap-2">
-                      <FileText className="size-4 text-gray-400" />
-                      {course.questions}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(course.status)}`}
-                    >
-                      {course.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    <div className="flex items-center gap-2">
-                      <Clock className="size-4 text-gray-400" />
-                      {new Date(course.lastUpdated).toLocaleDateString()}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                        <Button variant="ghost" size="icon">
-                          <MoreVertical className="size-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            router.push(`/courses/${course.id}`);
-                          }}
-                        >
-                          View Details
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            router.push(`/courses/${course.id}/questions`);
-                          }}
-                        >
-                          View Questions
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            router.push(`/analytics/course/${course.id}`);
-                          }}
-                        >
-                          View Analytics
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
-                          {course.status === 'active' ? 'Archive Course' : 'Activate Course'}
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {/* Course Grid */}
+      {filteredCourses.length === 0 ? (
+        <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
+          <BookOpen className="size-12 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-600 mb-2">No courses yet. Upload a syllabus to get started.</p>
+          <p className="text-sm text-gray-500">
+            Courses appear here once your institution has been set up.
+          </p>
         </div>
-        {filteredCourses.length === 0 && (
-          <div className="text-center py-12">
-            <BookOpen className="size-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600 mb-2">No courses found</p>
-            <p className="text-sm text-gray-500">
-              Try adjusting your search or filters
-            </p>
-          </div>
-        )}
-      </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredCourses.map((course: CourseListItem) => (
+            <div
+              key={course.id}
+              onClick={() => router.push(`/workbench?courseId=${course.id}`)}
+              className="bg-white rounded-[--radius-xl] border border-[--border-light] p-5 cursor-pointer transition-all hover:border-[--blue-mid] hover:shadow-md"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <span className="font-mono text-[10px] tracking-wider uppercase text-white bg-[var(--navy)] px-2 py-0.5 rounded">
+                  {course.code}
+                </span>
+                {course.term && (
+                  <span className="text-xs text-[--text-secondary]">{course.term}</span>
+                )}
+              </div>
+              <h3 className="font-serif text-base font-semibold text-[var(--navy-deep)] mb-4 line-clamp-2">
+                {course.title}
+              </h3>
+              <div className="flex items-center gap-4 text-xs text-[--text-muted]">
+                <div className="flex items-center gap-1.5">
+                  <Layers className="size-3.5" />
+                  <span>{course.subconcept_count} concepts</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <FileText className="size-3.5" />
+                  <span>{course.item_count} items</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Bell } from 'lucide-react';
 import { useSignOut } from '@/lib/auth-client';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -18,6 +19,12 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 export default function AdminTopBar() {
   const router = useRouter();
   const signOut = useSignOut();
+  const { data: user } = useCurrentUser();
+
+  const displayName = user?.displayName ?? 'Admin';
+  const email = user?.email ?? '';
+  const initials = user?.initials ?? '??';
+  const roleLabel = user?.roleLabel ?? 'Administrator';
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[var(--gray-300)]/40 bg-white shadow-sm">
@@ -52,16 +59,16 @@ export default function AdminTopBar() {
               <Button variant="ghost" className="relative h-9 w-9 rounded-full hover:bg-[var(--parchment)]">
                 <Avatar>
                   <AvatarFallback className="bg-[var(--blue)] text-[var(--navy)] font-semibold">
-                    AD
+                    {initials}
                   </AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-72" align="end">
               <div className="flex flex-col space-y-1 p-3">
-                <p className="text-sm font-semibold leading-none text-[var(--navy)]">Admin User</p>
-                <p className="text-[13px] leading-none text-[var(--gray-600)]">admin@msm.edu</p>
-                <Badge variant="admin" className="mt-2 w-fit">Administrator</Badge>
+                <p className="text-sm font-semibold leading-none text-[var(--navy)]">{displayName}</p>
+                <p className="text-[13px] leading-none text-[var(--gray-600)]">{email}</p>
+                <Badge variant="admin" className="mt-2 w-fit">{roleLabel}</Badge>
               </div>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => router.push('/profile')}>Profile</DropdownMenuItem>

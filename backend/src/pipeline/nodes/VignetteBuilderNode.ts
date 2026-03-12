@@ -12,9 +12,9 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { AIMessage } from '@langchain/core/messages';
 import type { WorkbenchState } from '@journey-os/shared-types';
-import type { IPipelineNode } from '../PipelineNode.interface.js';
-import { WorkbenchStateBuilder } from '../WorkbenchStateBuilder.js';
-import AnthropicClient from '../../lib/AnthropicClient.js';
+import type { IPipelineNode } from '../PipelineNode.interface';
+import { WorkbenchStateBuilder } from '../WorkbenchStateBuilder';
+import AnthropicClient from '../../lib/AnthropicClient';
 
 /** Claude Sonnet model ID for generation nodes. */
 const SONNET_MODEL = 'claude-sonnet-4-5-20250929';
@@ -43,13 +43,26 @@ export class VignetteBuilderNode implements IPipelineNode {
     const systemPrompt = loadPrompt('vignette-builder-system');
 
     // ── 2. Build user prompt with context, concepts, and faculty request ─────────
-    const userPrompt = [
+    const userPromptParts = [
       `Target concepts: ${state.targetConcepts.join(', ')}`,
       `Faculty request: ${state.userMessage}`,
-      '',
-      'Curriculum context:',
-      state.context,
-    ].join('\n');
+    ];
+
+    // Inject TaskShell generation parameters if available (P2-016 ECD)
+    if (state.generationParams) {
+      userPromptParts.push('');
+      userPromptParts.push('## TaskShell Generation Parameters');
+      userPromptParts.push(`vignetteRequired: ${String(state.generationParams.vignetteRequired)}`);
+      userPromptParts.push(`optionCount: ${String(state.generationParams.optionCount)}`);
+      userPromptParts.push(`distractorStrategy: ${state.generationParams.distractorStrategy}`);
+      userPromptParts.push(`bloomTarget: ${String(state.generationParams.bloomTarget)}`);
+    }
+
+    userPromptParts.push('');
+    userPromptParts.push('Curriculum context:');
+    userPromptParts.push(state.context);
+
+    const userPrompt = userPromptParts.join('\n');
 
     // ── 3. Stream vignette from Claude Sonnet ───────────────────────────────────
     const anthropic = AnthropicClient.getInstance();

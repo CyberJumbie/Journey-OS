@@ -8,6 +8,7 @@ import { BarChart3, Users, Settings, Shield, Activity, Award, GitBranch, Graduat
 
 import { C, sans, serif, mono } from '@/lib/design-tokens';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 // ═══════════════════════════════════════════════════════════════
 // JOURNEY OS — INSTITUTIONAL USMLE COVERAGE
@@ -170,7 +171,8 @@ export default function InstitutionalUSMLECoverage() {
     { key: "settings", label: "Settings", Icon: Settings, path: "/institution/settings" },
   ];
 
-  const user = { name: "Dr. Sarah Johnson", initials: "SJ", role: "Institutional Admin", institution: "Morehouse School of Medicine" };
+  const { data: currentUser } = useCurrentUser();
+  const user = { name: currentUser?.displayName ?? "Admin", initials: currentUser?.initials ?? "??", role: currentUser?.roleLabel ?? "Institutional Admin", institution: "Morehouse School of Medicine" }; // TODO: replace institution with dynamic value when institution API is available
   const sidebarCollapsedWidth = 72;
   const sidebarExpandedWidth = 240;
   const sidebarWidth = isDesktop ? (sidebarExpanded ? sidebarExpandedWidth : sidebarCollapsedWidth) : (isTablet ? 220 : 260);

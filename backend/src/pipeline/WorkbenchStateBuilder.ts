@@ -5,7 +5,18 @@
  * Never construct WorkbenchState with object literals. Use this builder.
  */
 
-import type { WorkbenchState, PipelineStatus, GeneratedOption, ValidationResult } from '@journey-os/shared-types';
+import type {
+  WorkbenchState,
+  PipelineStatus,
+  GeneratedOption,
+  ValidationResult,
+  ItemTags,
+  CriticScore,
+  ToulminArgument,
+  AutoRoute,
+  RefinementTarget,
+  GenerationParams,
+} from '@journey-os/shared-types';
 
 export class WorkbenchStateBuilder {
   private state: Partial<WorkbenchState> = {};
@@ -57,6 +68,79 @@ export class WorkbenchStateBuilder {
 
   withSourceChunkIds(ids: string[]): this {
     this.state.sourceChunkIds = ids;
+    return this;
+  }
+
+  // ── Phase 2 builder methods ──────────────────────────────────────────────────
+
+  withTags(tags: ItemTags): this {
+    this.state.tags = tags;
+    return this;
+  }
+
+  withCriticScores(scores: CriticScore[]): this {
+    this.state.criticScores = scores;
+    return this;
+  }
+
+  withCriticComposite(score: number): this {
+    this.state.criticComposite = score;
+    return this;
+  }
+
+  withToulmin(toulmin: ToulminArgument): this {
+    this.state.toulmin = toulmin;
+    return this;
+  }
+
+  withAutoRoute(route: AutoRoute): this {
+    this.state.autoRoute = route;
+    return this;
+  }
+
+  withRetryCount(count: number): this {
+    this.state.retryCount = count;
+    return this;
+  }
+
+  withDedupResult(isDuplicate: boolean, similarity: number | null, itemId: string | null): this {
+    this.state.isDuplicate = isDuplicate;
+    this.state.dupSimilarity = similarity;
+    this.state.dupItemId = itemId;
+    return this;
+  }
+
+  withTaskShellId(taskShellId: string | null): this {
+    this.state.taskShellId = taskShellId;
+    return this;
+  }
+
+  withGenerationParams(params: GenerationParams | null): this {
+    this.state.generationParams = params;
+    return this;
+  }
+
+  // ── Review mode builder methods (P2-007) ─────────────────────────────────────
+
+  withReviewItemId(reviewItemId: string | null): this {
+    this.state.reviewItemId = reviewItemId;
+    return this;
+  }
+
+  withEditInstruction(editInstruction: string | null): this {
+    this.state.editInstruction = editInstruction;
+    return this;
+  }
+
+  withEditedSections(editedSections: string[]): this {
+    this.state.editedSections = editedSections;
+    return this;
+  }
+
+  // ── Refinement routing (P2-009) ───────────────────────────────────────────────
+
+  withRefinementTarget(target: RefinementTarget | null): this {
+    this.state.refinementTarget = target;
     return this;
   }
 
