@@ -189,6 +189,7 @@ By story 20, expect 3× story 1 speed.
 - AUTH_SERVICE_DIRECT_DB: AuthService (or any service) querying `.from('table')` directly. Always route through a repository class, even for user_profiles.
 - DUAL_SYSTEM_PROMPT: Loading a prompt from .txt file BUT also passing a separate inline `system:` string to Anthropic. Use the loaded template as the complete prompt — never split across inline + file.
 - ECD_FALLBACK_REQUIRED: TaskShell selection and PV lookup can return null. Always provide fallback: TS-001 for missing TaskShell, Bloom 3 for missing bloom_level_guess.
+- DUPLICATE_LAYOUT_SHELL: Prototype pages include their own sidebar+topbar+overlay inline. Route group layout.tsx files already wrap pages in DashboardTemplate. Never add layout chrome (sidebar, topbar, hamburger, overlay, marginLeft wrapper) inside a page component — the layout handles it.
 
 ---
 
